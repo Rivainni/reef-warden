@@ -51,10 +51,10 @@ public struct HexCoordinates
 
     public static HexCoordinates FromPosition(Vector3 position)
     {
-        float x = position.x / (HexMetrics.outerRadius * 1.5f);
+        float x = position.x / (HexMetrics.innerRadius * 2f);
         float y = -x;
 
-        float offset = position.z / (HexMetrics.outerRadius * 4f);
+        float offset = position.z / (HexMetrics.outerRadius * 3f);
         x -= offset;
         y -= offset;
 
@@ -64,7 +64,18 @@ public struct HexCoordinates
 
         if (iX + iY + iZ != 0)
         {
-            Debug.LogWarning("Rounding error!");
+            float dX = Mathf.Abs(x - iX);
+            float dY = Mathf.Abs(y - iY);
+            float dZ = Mathf.Abs(-x - y - iZ);
+
+            if (dX > dY && dX > dZ)
+            {
+                iX = -iY - iZ;
+            }
+            else if (dZ > dY)
+            {
+                iZ = -iX - iY;
+            }
         }
 
         return new HexCoordinates(iX, iZ);
