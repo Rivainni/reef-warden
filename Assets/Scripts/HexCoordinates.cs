@@ -35,7 +35,8 @@ public struct HexCoordinates
 
     public static HexCoordinates FromOffsetCoordinates(int x, int z)
     {
-        return new HexCoordinates(x, z - x / 2);
+        // return new HexCoordinates(x, z - x / 2);
+        return new HexCoordinates(x - z / 2, z);
     }
 
     public override string ToString()
@@ -53,7 +54,7 @@ public struct HexCoordinates
         float x = position.x / (HexMetrics.outerRadius * 1.5f);
         float y = -x;
 
-        float offset = position.z / (HexMetrics.innerRadius * 4f);
+        float offset = position.z / (HexMetrics.outerRadius * 4f);
         x -= offset;
         y -= offset;
 
