@@ -2,7 +2,7 @@
 
 public static class HexMetrics
 {
-
+    public const int chunkSizeX = 5, chunkSizeZ = 5;
     public const float outerRadius = 10f;
 
     public const float innerRadius = outerRadius * 0.866025404f;
