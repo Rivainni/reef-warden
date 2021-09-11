@@ -6,9 +6,9 @@ using UnityEngine;
 public class HexMesh : MonoBehaviour
 {
     Mesh hexMesh;
-    List<Vector3> vertices;
-    List<int> triangles;
-    List<Color> colors;
+    static List<Vector3> vertices = new List<Vector3>();
+    static List<int> triangles = new List<int>();
+    static List<Color> colors = new List<Color>();
     MeshCollider meshCollider;
 
     void Awake()
@@ -16,9 +16,6 @@ public class HexMesh : MonoBehaviour
         GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
         meshCollider = gameObject.AddComponent<MeshCollider>();
         hexMesh.name = "Hex Mesh";
-        vertices = new List<Vector3>();
-        colors = new List<Color>();
-        triangles = new List<int>();
     }
 
     public void Triangulate(HexCell[] cells)
@@ -53,7 +50,7 @@ public class HexMesh : MonoBehaviour
     {
         Vector3 center = cell.transform.localPosition;
         AddTriangle(center, center + HexMetrics.GetFirstCorner(direction), center + HexMetrics.GetSecondCorner(direction));
-        AddTriangleColor(cell.color);
+        AddTriangleColor(cell.Color);
     }
 
     void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3)

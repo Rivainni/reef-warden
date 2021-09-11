@@ -67,7 +67,7 @@ public class HexGrid : MonoBehaviour
         HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
         cell.transform.localPosition = position;
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-        cell.color = defaultColor;
+        cell.Color = defaultColor;
 
         // Set neighbours
         // x = 0 has no neighbours west. We start with west neighbours.
