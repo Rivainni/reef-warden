@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 64715734128579546}
   - component: {fileID: -6283204732262520918}
   m_Layer: 0
-  m_Name: Hex Cell
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

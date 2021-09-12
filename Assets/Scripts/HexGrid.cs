@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour
 {
-    public int chunkCountX = 4, chunkCountZ = 3;
+    public int chunkCountX = 6, chunkCountZ = 4;
     public HexGridChunk chunkPrefab;
     int cellCountX, cellCountZ;
     public Color defaultColor = Color.white;
     public Color touchedColor = Color.magenta;
-    public HexCell cellPrefab;
+    public HexCell water;
+    public HexCell land;
     public Text cellLabelPrefab;
+    public State initState;
 
     HexGridChunk[] chunks;
     HexCell[] cells;
@@ -64,10 +66,23 @@ public class HexGrid : MonoBehaviour
         // position.y = 0f;
         // position.z = (z + x * 0.5f - x / 2) * (HexMetrics.innerRadius * 2f);
 
-        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
+        HexCell cell;
+        HexCoordinates computed = HexCoordinates.FromOffsetCoordinates(x, z);
+
+        if (initState.IsLand(new Vector2(computed.X, computed.Z)))
+        {
+            cell = cells[i] = Instantiate<HexCell>(land);
+            cell.IsImpassable = true;
+        }
+        else
+        {
+            cell = cells[i] = Instantiate<HexCell>(water);
+            cell.IsImpassable = false;
+        }
+
         cell.transform.localPosition = position;
-        cell.transform.localScale = new Vector3(15.0f, 1.0f, 15.0f);
-        cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+        cell.transform.localScale = new Vector3(17.0f, 1.0f, 17.0f);
+        cell.coordinates = computed;
         // cell.Color = defaultColor;
 
         // Set neighbours
@@ -124,5 +139,62 @@ public class HexGrid : MonoBehaviour
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
         int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
         return cells[index];
+    }
+
+    public void FindPath(HexCell fromCell, HexCell toCell)
+    {
+        StopAllCoroutines();
+        StartCoroutine(Search(fromCell, toCell));
+    }
+
+    IEnumerator Search(HexCell fromCell, HexCell toCell)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Distance = int.MaxValue;
+            cells[i].DisableHighlight();
+        }
+        fromCell.EnableHighlight(Color.blue);
+        toCell.EnableHighlight(Color.red);
+
+        WaitForSeconds delay = new WaitForSeconds(1 / 60f);
+        List<HexCell> frontier = new List<HexCell>();
+        fromCell.Distance = 0;
+        frontier.Add(fromCell);
+        while (frontier.Count > 0)
+        {
+            yield return delay;
+            HexCell current = frontier[0];
+            frontier.RemoveAt(0);
+
+            if (current == toCell)
+            {
+                current = current.PathFrom;
+                while (current != fromCell)
+                {
+                    current.EnableHighlight(Color.white);
+                    current = current.PathFrom;
+                }
+                break;
+            }
+
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = current.GetNeighbor(d);
+                if (neighbor == null || neighbor.Distance != int.MaxValue)
+                {
+                    continue;
+                }
+                if (neighbor.IsImpassable)
+                {
+                    continue;
+                }
+                neighbor.Distance = current.Distance + 1;
+                neighbor.PathFrom = current;
+                neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
+                frontier.Add(neighbor);
+                frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
+            }
+        }
     }
 }
