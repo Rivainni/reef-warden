@@ -141,46 +141,49 @@ public class HexGrid : MonoBehaviour
         return cells[index];
     }
 
-    public void FindPath(HexCell fromCell, HexCell toCell)
+    public void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
-        StopAllCoroutines();
-        StartCoroutine(Search(fromCell, toCell));
+        Search(fromCell, toCell, speed);
     }
 
-    IEnumerator Search(HexCell fromCell, HexCell toCell)
+    void Search(HexCell fromCell, HexCell toCell, int speed)
     {
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Distance = int.MaxValue;
+            cells[i].SetLabel(null);
             cells[i].DisableHighlight();
         }
         fromCell.EnableHighlight(Color.blue);
-        toCell.EnableHighlight(Color.red);
 
-        WaitForSeconds delay = new WaitForSeconds(1 / 60f);
         List<HexCell> frontier = new List<HexCell>();
         fromCell.Distance = 0;
         frontier.Add(fromCell);
         while (frontier.Count > 0)
         {
-            yield return delay;
             HexCell current = frontier[0];
             frontier.RemoveAt(0);
 
             if (current == toCell)
             {
-                current = current.PathFrom;
                 while (current != fromCell)
                 {
+                    int turn = current.Distance / speed;
+                    current.SetLabel(turn.ToString());
                     current.EnableHighlight(Color.white);
                     current = current.PathFrom;
                 }
+                toCell.EnableHighlight(Color.red);
                 break;
             }
+
+            int currentTurn = current.Distance / speed;
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
+                // We didn't plan to have variable move costs (e.g. certain parts of the map have you move faster), but we do have variable "speeds"
+                int moveCost = 1;
                 if (neighbor == null || neighbor.Distance != int.MaxValue)
                 {
                     continue;
@@ -189,7 +192,9 @@ public class HexGrid : MonoBehaviour
                 {
                     continue;
                 }
-                neighbor.Distance = current.Distance + 1;
+
+                int distance = current.Distance + moveCost;
+                neighbor.Distance = distance;
                 neighbor.PathFrom = current;
                 neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
                 frontier.Add(neighbor);

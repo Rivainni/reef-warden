@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class HexMapEditor : MonoBehaviour
+public class MapInteraction : MonoBehaviour
 {
     public Color[] colors;
     public HexGrid hexGrid;
@@ -48,21 +48,25 @@ public class HexMapEditor : MonoBehaviour
 
             if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
             {
-                if (searchFromCell)
+                searchFromCell = currentCell;
+                if (searchFromCell != currentCell)
                 {
                     searchFromCell.DisableHighlight();
                 }
-                searchFromCell = currentCell;
+
                 searchFromCell.EnableHighlight(Color.blue);
                 if (searchToCell)
                 {
-                    hexGrid.FindPath(searchFromCell, searchToCell);
+                    hexGrid.FindPath(searchFromCell, searchToCell, 5); // change 5 to points that depend on the selected unit
                 }
             }
             else if (searchFromCell && searchFromCell != currentCell)
             {
-                searchToCell = currentCell;
-                hexGrid.FindPath(searchFromCell, searchToCell);
+                if (searchToCell != currentCell)
+                {
+                    searchToCell = currentCell;
+                    hexGrid.FindPath(searchFromCell, searchToCell, 5);
+                }
             }
             previousCell = currentCell;
         }
