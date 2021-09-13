@@ -46,7 +46,7 @@ public class HexMapEditor : MonoBehaviour
         }
     }
 
-    void HandleInput()
+    void HandleInput() // leaving this for now
     {
         HexCell currentCell = GetCellUnderCursor();
         if (currentCell)
