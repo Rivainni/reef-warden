@@ -17,6 +17,14 @@ public class HexGrid : MonoBehaviour
     public State initState;
     public HexUnit unitPrefab;
 
+    public bool HasPath
+    {
+        get
+        {
+            return currentPathExists;
+        }
+    }
+
     HexCell currentPathFrom, currentPathTo;
     bool currentPathExists;
     HexGridChunk[] chunks;
@@ -233,7 +241,24 @@ public class HexGrid : MonoBehaviour
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    void ClearPath()
+    public int withinTurnPath(int speed)
+    {
+        if (currentPathExists)
+        {
+            HexCell current = currentPathTo;
+            if (current.Distance < speed)
+            {
+                return speed - current.Distance;
+            }
+            else
+            {
+                return int.MaxValue;
+            }
+        }
+        return int.MaxValue;
+    }
+
+    public void ClearPath()
     {
         if (currentPathExists)
         {
@@ -276,6 +301,14 @@ public class HexGrid : MonoBehaviour
     {
         units.Remove(unit);
         unit.Die();
+    }
+
+    public void ResetPoints()
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            units[i].MovementPoints = 4;
+        }
     }
 
     // public void Save(BinaryWriter writer)

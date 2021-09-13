@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class MainUI : MonoBehaviour
 {
@@ -7,6 +8,19 @@ public class MainUI : MonoBehaviour
 
     HexCell currentCell;
     HexUnit selectedUnit;
+
+    int currentTurn;
+
+    [SerializeField] PlayerState initState;
+
+    PlayerState currentState;
+
+    void Start()
+    {
+        currentState = initState;
+        currentState.Clean();
+        currentTurn = currentState.GetTurn();
+    }
 
     void Update()
     {
@@ -18,7 +32,14 @@ public class MainUI : MonoBehaviour
             }
             else if (selectedUnit)
             {
-                DoPathfinding();
+                if (Input.GetMouseButtonDown(1))
+                {
+                    DoMove();
+                }
+                else
+                {
+                    DoPathfinding();
+                }
             }
         }
     }
@@ -35,6 +56,7 @@ public class MainUI : MonoBehaviour
 
     void DoSelection()
     {
+        grid.ClearPath();
         UpdateCurrentCell();
         if (currentCell)
         {
@@ -46,14 +68,39 @@ public class MainUI : MonoBehaviour
     {
         if (UpdateCurrentCell())
         {
-            grid.FindPath(selectedUnit.Location, currentCell, 3);
+            if (currentCell && selectedUnit.IsValidDestination(currentCell))
+            {
+                grid.FindPath(selectedUnit.Location, currentCell, selectedUnit.MovementPoints);
+            }
+            else
+            {
+                grid.ClearPath();
+            }
         }
     }
 
+    void DoMove()
+    {
+        if (grid.HasPath && grid.withinTurnPath(selectedUnit.MovementPoints) != int.MaxValue && selectedUnit.MovementPoints > 0)
+        {
+            selectedUnit.Location = currentCell;
+            selectedUnit.MovementPoints = grid.withinTurnPath(selectedUnit.MovementPoints);
+            grid.ClearPath();
+        }
+    }
+
+    public void EndTurn(Button clicked)
+    {
+        currentState.endTurn();
+        clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
+        grid.ResetPoints();
+        selectedUnit = null;
+        grid.ClearPath();
+    }
     public void SetEditMode(bool toggle)
     {
         enabled = !toggle;
         grid.ShowUI(!toggle);
-        Debug.Log("Game mode is now" + !toggle);
+        grid.ClearPath();
     }
 }

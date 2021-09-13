@@ -4,6 +4,21 @@ using System.IO;
 public class HexUnit : MonoBehaviour
 {
     public static HexUnit unitPrefab;
+    public int MovementPoints
+    {
+        get
+        {
+            return movementPoints;
+        }
+        set
+        {
+            movementPoints = value;
+        }
+    }
+
+    int movementPoints = 4;
+
+    public bool takenTurn;
     public HexCell Location
     {
         get
@@ -12,6 +27,10 @@ public class HexUnit : MonoBehaviour
         }
         set
         {
+            if (location)
+            {
+                location.Unit = null;
+            }
             location = value;
             value.Unit = this;
             transform.localPosition = value.Position;
@@ -43,6 +62,12 @@ public class HexUnit : MonoBehaviour
         location.Unit = null;
         Destroy(gameObject);
     }
+
+    public bool IsValidDestination(HexCell cell)
+    {
+        return !cell.IsImpassable && !cell.Unit;
+    }
+
 
     // public void Save(BinaryWriter writer)
     // {
