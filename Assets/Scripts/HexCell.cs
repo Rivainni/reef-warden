@@ -1,12 +1,20 @@
 using UnityEngine.UI;
 using UnityEngine;
+using System.IO;
 
 public class HexCell : MonoBehaviour
 {
     public HexCoordinates coordinates;
-    [SerializeField] HexCell[] neighbors;
+    public HexCell[] neighbors;
     public RectTransform uiRect;
     public HexGridChunk chunk;
+    public Vector3 Position
+    {
+        get
+        {
+            return transform.localPosition;
+        }
+    }
     public int SearchHeuristic { get; set; }
     public int SearchPriority
     {
@@ -47,6 +55,8 @@ public class HexCell : MonoBehaviour
     }
     int distance;
 
+    public HexUnit Unit { get; set; }
+
     public HexCell GetNeighbor(HexDirection direction)
     {
         return neighbors[(int)direction];
@@ -75,4 +85,14 @@ public class HexCell : MonoBehaviour
         highlight.color = color;
         highlight.enabled = true;
     }
+
+    // public void Save(BinaryWriter writer)
+    // {
+    //     writer.Write(IsImpassable);
+    // }
+
+    // public void Load(BinaryReader reader)
+    // {
+    //     IsImpassable = reader.ReadBoolean();
+    // }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class HexGrid : MonoBehaviour
 {
@@ -14,17 +15,19 @@ public class HexGrid : MonoBehaviour
     public HexCell land;
     public Text cellLabelPrefab;
     public State initState;
+    public HexUnit unitPrefab;
 
     HexCell currentPathFrom, currentPathTo;
     bool currentPathExists;
     HexGridChunk[] chunks;
     HexCell[] cells;
+    List<HexUnit> units = new List<HexUnit>();
 
     void Awake()
     {
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
-
+        HexUnit.unitPrefab = unitPrefab;
         CreateChunks();
         CreateCells();
     }
@@ -83,7 +86,7 @@ public class HexGrid : MonoBehaviour
         }
 
         cell.transform.localPosition = position;
-        cell.transform.localScale = new Vector3(17.0f, 1.0f, 17.0f);
+        cell.transform.localScale = new Vector3(17.2f, 1.0f, 17.2f);
         cell.coordinates = computed;
         // cell.Color = defaultColor;
 
@@ -118,7 +121,6 @@ public class HexGrid : MonoBehaviour
 
         Text label = Instantiate<Text>(cellLabelPrefab);
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
-        label.text = "";
         cell.uiRect = label.rectTransform;
 
         AddCellToChunk(x, z, cell);
@@ -141,6 +143,21 @@ public class HexGrid : MonoBehaviour
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
         int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
         return cells[index];
+    }
+
+    public HexCell GetCell(HexCoordinates coordinates)
+    {
+        int z = coordinates.Z;
+        int x = coordinates.X + z / 2;
+        return cells[x + z * cellCountX];
+    }
+
+    public void ShowUI(bool visible)
+    {
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].ShowUI(visible);
+        }
     }
 
     public void FindPath(HexCell fromCell, HexCell toCell, int speed)
@@ -236,5 +253,66 @@ public class HexGrid : MonoBehaviour
             currentPathTo.DisableHighlight();
         }
         currentPathFrom = currentPathTo = null;
+    }
+
+    void ClearUnits()
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            units[i].Die();
+        }
+        units.Clear();
+    }
+
+    public void AddUnit(HexUnit unit, HexCell location, float orientation)
+    {
+        units.Add(unit);
+        unit.transform.SetParent(transform, false);
+        unit.Location = location;
+        unit.Orientation = orientation;
+    }
+
+    public void RemoveUnit(HexUnit unit)
+    {
+        units.Remove(unit);
+        unit.Die();
+    }
+
+    // public void Save(BinaryWriter writer)
+    // {
+    //     writer.Write(cellCountX);
+    //     writer.Write(cellCountZ);
+
+    //     writer.Write(units.Count);
+    //     for (int i = 0; i < cells.Length; i++)
+    //     {
+    //         cells[i].Save(writer);
+    //     }
+    // }
+
+    // public void Load(BinaryReader reader)
+    // {
+    //     ClearPath();
+    //     ClearUnits();
+    //     for (int i = 0; i < cells.Length; i++)
+    //     {
+    //         cells[i].Load(reader);
+    //     }
+
+    //     int unitCount = reader.ReadInt32();
+    //     for (int i = 0; i < unitCount; i++)
+    //     {
+    //         HexUnit.Load(reader, this);
+    //     }
+    // }
+
+    public HexCell GetCell(Ray ray)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            return GetCell(hit.point);
+        }
+        return null;
     }
 }
