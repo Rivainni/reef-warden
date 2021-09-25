@@ -9,8 +9,6 @@ public class MainUI : MonoBehaviour
     HexCell currentCell;
     HexUnit selectedUnit;
 
-    int currentTurn;
-
     [SerializeField] PlayerState initState;
 
     PlayerState currentState;
@@ -19,7 +17,6 @@ public class MainUI : MonoBehaviour
     {
         currentState = initState;
         currentState.Clean();
-        currentTurn = currentState.GetTurn();
     }
 
     void Update()
@@ -46,6 +43,7 @@ public class MainUI : MonoBehaviour
     bool UpdateCurrentCell()
     {
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
         if (cell != currentCell)
         {
             currentCell = cell;
@@ -81,10 +79,11 @@ public class MainUI : MonoBehaviour
 
     void DoMove()
     {
-        if (grid.HasPath && grid.withinTurnPath(selectedUnit.MovementPoints) != int.MaxValue && selectedUnit.MovementPoints > 0)
+        if (grid.HasPath && grid.WithinTurnPath(selectedUnit.MovementPoints) < int.MaxValue && selectedUnit.MovementPoints > 0)
         {
+            selectedUnit.movement = true;
             selectedUnit.Location = currentCell;
-            selectedUnit.MovementPoints = grid.withinTurnPath(selectedUnit.MovementPoints);
+            selectedUnit.MovementPoints = grid.WithinTurnPath(selectedUnit.MovementPoints);
             grid.ClearPath();
         }
     }

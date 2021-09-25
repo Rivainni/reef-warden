@@ -3,7 +3,19 @@ using System.IO;
 
 public class HexUnit : MonoBehaviour
 {
-    public static HexUnit unitPrefab;
+    public string UnitType
+    {
+        get
+        {
+            return unitType;
+        }
+        set
+        {
+            unitType = value;
+        }
+    }
+    string unitType;
+
     public int MovementPoints
     {
         get
@@ -16,9 +28,10 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    int movementPoints = 4;
+    int movementPoints;
 
     public bool takenTurn;
+    public bool movement;
     public HexCell Location
     {
         get
