@@ -94,7 +94,7 @@ public class HexGrid : MonoBehaviour
         }
 
         cell.transform.localPosition = position;
-        cell.transform.localScale = new Vector3(17.2f, 1.0f, 17.2f);
+        cell.transform.localScale = new Vector3(17.2f, 17.2f, 17.2f);
         cell.coordinates = computed;
         // cell.Color = defaultColor;
 
@@ -142,6 +142,11 @@ public class HexGrid : MonoBehaviour
                 unitSpawner.SpawnUnit(cell, "Service Boat");
                 Debug.Log("S spawned.");
                 break;
+        }
+
+        if (initState.HasStructure(check))
+        {
+
         }
 
         AddCellToChunk(x, z, cell);

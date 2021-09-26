@@ -21,15 +21,19 @@ public class State : ScriptableObject
         }
     }
 
-    public bool HasStructure(Vector2 coordinates)
+    public int HasStructure(Vector2 coordinates)
     {
-        if (structureLocations.Contains(coordinates))
+        if (coordinates == structureLocations[0])
         {
-            return true;
+            return 0;
+        }
+        else if (structureLocations.Contains(coordinates))
+        {
+            return 1;
         }
         else
         {
-            return false;
+            return 2;
         }
     }
 

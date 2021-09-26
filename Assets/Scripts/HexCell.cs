@@ -56,6 +56,7 @@ public class HexCell : MonoBehaviour
     int distance;
 
     public HexUnit Unit { get; set; }
+    public HexStructure Structure { get; set; }
 
     public HexCell GetNeighbor(HexDirection direction)
     {
