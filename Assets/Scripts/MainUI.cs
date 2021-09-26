@@ -64,6 +64,7 @@ public class MainUI : MonoBehaviour
             selectedUnit = currentCell.Unit;
             Debug.Log("Selected " + selectedUnit.UnitType);
         }
+        grid.ShowUI(true);
     }
 
     void DoPathfinding()
@@ -89,6 +90,7 @@ public class MainUI : MonoBehaviour
             selectedUnit.Location = currentCell;
             selectedUnit.MovementPoints = grid.WithinTurnPath(selectedUnit.MovementPoints);
             grid.ClearPath();
+            grid.ShowUI(false);
         }
     }
 
