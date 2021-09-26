@@ -43,9 +43,9 @@ public class MainUI : MonoBehaviour
     bool UpdateCurrentCell()
     {
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-        Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
         if (cell != currentCell)
         {
+            Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
             currentCell = cell;
             return true;
         }
@@ -59,6 +59,7 @@ public class MainUI : MonoBehaviour
         if (currentCell)
         {
             selectedUnit = currentCell.Unit;
+            Debug.Log("Selected " + selectedUnit.UnitType);
         }
     }
 
@@ -94,12 +95,6 @@ public class MainUI : MonoBehaviour
         clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
         grid.ResetPoints();
         selectedUnit = null;
-        grid.ClearPath();
-    }
-    public void SetEditMode(bool toggle)
-    {
-        enabled = !toggle;
-        grid.ShowUI(!toggle);
         grid.ClearPath();
     }
 }

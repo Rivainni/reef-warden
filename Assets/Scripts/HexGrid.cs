@@ -93,18 +93,6 @@ public class HexGrid : MonoBehaviour
             cell.IsImpassable = false;
         }
 
-        switch (initState.HasInitialUnit(check))
-        {
-            case 0:
-                unitSpawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
-                Debug.Log("P1 spawned.");
-                break;
-            case 1:
-                unitSpawner.SpawnUnit(cell, "Service Boat");
-                Debug.Log("S spawned.");
-                break;
-        }
-
         cell.transform.localPosition = position;
         cell.transform.localScale = new Vector3(17.2f, 1.0f, 17.2f);
         cell.coordinates = computed;
@@ -142,6 +130,19 @@ public class HexGrid : MonoBehaviour
         Text label = Instantiate<Text>(cellLabelPrefab);
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
         cell.uiRect = label.rectTransform;
+
+        // add units *after* the cell has spawned
+        switch (initState.HasInitialUnit(check))
+        {
+            case 0:
+                unitSpawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
+                Debug.Log("P1 spawned.");
+                break;
+            case 1:
+                unitSpawner.SpawnUnit(cell, "Service Boat");
+                Debug.Log("S spawned.");
+                break;
+        }
 
         AddCellToChunk(x, z, cell);
     }

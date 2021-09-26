@@ -27,7 +27,10 @@ public class UnitSpawner : MonoBehaviour
     public void SpawnUnit(HexCell cell, string unitType)
     {
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
-        hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
+        if (cell && !cell.Unit)
+        {
+            hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
+        }
     }
 
     public void DestroyUnit(HexUnit unit)
