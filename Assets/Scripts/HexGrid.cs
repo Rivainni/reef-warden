@@ -292,6 +292,21 @@ public class HexGrid : MonoBehaviour
         }
         currentPathFrom = currentPathTo = null;
     }
+    public List<HexCell> GetPath()
+    {
+        if (!currentPathExists)
+        {
+            return null;
+        }
+        List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
+        for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
+        {
+            path.Add(c);
+        }
+        path.Add(currentPathFrom);
+        path.Reverse();
+        return path;
+    }
 
     void ClearUnits()
     {

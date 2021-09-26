@@ -87,7 +87,7 @@ public class MainUI : MonoBehaviour
         if (grid.HasPath && grid.WithinTurnPath(selectedUnit.MovementPoints) < int.MaxValue && selectedUnit.MovementPoints > 0)
         {
             selectedUnit.movement = true;
-            selectedUnit.Location = currentCell;
+            selectedUnit.Travel(grid.GetPath());
             selectedUnit.MovementPoints = grid.WithinTurnPath(selectedUnit.MovementPoints);
             grid.ClearPath();
             grid.ShowUI(false);
