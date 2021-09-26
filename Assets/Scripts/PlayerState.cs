@@ -152,9 +152,9 @@ public class PlayerState : ScriptableObject
 
     public void Clean()
     {
-        money = 0;
-        research = 0;
-        manpower = 0;
+        money = 10000;
+        research = 250;
+        manpower = 6;
         tourists = 0;
         morale = 50;
         security = 50;

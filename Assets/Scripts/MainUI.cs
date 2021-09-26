@@ -14,6 +14,7 @@ public class MainUI : MonoBehaviour
 
     PlayerState currentState;
     [SerializeField] GameObject panelPrefab;
+    [SerializeField] GameObject valuesContainer;
     List<string> contextMenuContent = new List<string>();
 
     void Start()
@@ -114,7 +115,7 @@ public class MainUI : MonoBehaviour
 
         // clear the context menu
         contextMenuContent = null;
-        GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+        GameObject contextMenu = Instantiate(panelPrefab, spawnAt + new Vector3(0, 500f, 0), Quaternion.identity, transform);
 
         if (selectedUnit.UnitType.Contains("Patrol Boat"))
         {
