@@ -13,12 +13,25 @@ public class UnitSpawner : MonoBehaviour
     [SerializeField] int[] movementPoints;
     [SerializeField] HexUnit[] unitPrefabs;
 
+    // PLAYER: Buoy, Ranger Station, Basketball Court, Rec Room, Radio, AIS, Radar, IGSAT, Souvenir Stand, 3rd Party Marketing Agencies
+    [SerializeField] string[] structureTypes;
+    [SerializeField] HexStructure[] structurePrefabs;
+
     public void SpawnUnit(HexCell cell, string unitType)
     {
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
         if (cell && !cell.Unit)
         {
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
+        }
+    }
+
+    public void SpawnStructure(HexCell cell, string structureType)
+    {
+        int structureIndex = System.Array.IndexOf(structureTypes, structureType);
+        if (cell && !cell.Structure)
+        {
+            hexGrid.AddStructure(Instantiate(structurePrefabs[structureIndex]), cell, Random.Range(0f, 360f), structureType);
         }
     }
 

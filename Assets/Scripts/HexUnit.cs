@@ -17,20 +17,22 @@ public class HexUnit : MonoBehaviour
     }
     string unitType;
 
-    public int MovementPoints
+    public int ActionPoints
     {
         get
         {
-            return movementPoints;
+            return actionPoints;
         }
         set
         {
-            movementPoints = value;
+            actionPoints = value;
         }
     }
 
-    int movementPoints;
-    int maxMovementPoints;
+    int actionPoints;
+    int maxActionPoints;
+
+    public int hp;
 
     public bool takenTurn;
     public bool movement;
@@ -74,7 +76,7 @@ public class HexUnit : MonoBehaviour
     // methods beyond this point
     void Start()
     {
-        maxMovementPoints = MovementPoints;
+        maxActionPoints = actionPoints;
     }
 
     public void ValidateLocation()
@@ -164,9 +166,14 @@ public class HexUnit : MonoBehaviour
         orientation = transform.localRotation.eulerAngles.y;
     }
 
+    public void decreaseHP()
+    {
+        hp -= (maxActionPoints - actionPoints);
+    }
+
     public void ResetMovement()
     {
-        MovementPoints = maxMovementPoints;
+        ActionPoints = maxActionPoints;
     }
 
 

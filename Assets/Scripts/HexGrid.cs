@@ -30,6 +30,7 @@ public class HexGrid : MonoBehaviour
     HexGridChunk[] chunks;
     HexCell[] cells;
     List<HexUnit> units = new List<HexUnit>();
+    List<HexStructure> structures = new List<HexStructure>();
 
     void Awake()
     {
@@ -94,7 +95,7 @@ public class HexGrid : MonoBehaviour
         }
 
         cell.transform.localPosition = position;
-        cell.transform.localScale = new Vector3(17.2f, 17.2f, 17.2f);
+        cell.transform.localScale = new Vector3(17.2f, 1.0f, 17.2f);
         cell.coordinates = computed;
         // cell.Color = defaultColor;
 
@@ -144,9 +145,16 @@ public class HexGrid : MonoBehaviour
                 break;
         }
 
-        if (initState.HasStructure(check))
+        switch (initState.HasStructure(check))
         {
-
+            case 0:
+                unitSpawner.SpawnStructure(cell, "Ranger Station");
+                Debug.Log("RS spawned.");
+                break;
+            case 1:
+                unitSpawner.SpawnStructure(cell, "Buoy");
+                Debug.Log("B spawned.");
+                break;
         }
 
         AddCellToChunk(x, z, cell);
@@ -322,20 +330,29 @@ public class HexGrid : MonoBehaviour
         units.Clear();
     }
 
-    public void AddUnit(HexUnit unit, HexCell location, float orientation, string unitType, int movementPoints)
+    public void AddUnit(HexUnit unit, HexCell location, float orientation, string unitType, int actionPoints)
     {
         units.Add(unit);
         unit.transform.SetParent(transform, false);
         unit.Location = location;
         unit.Orientation = orientation;
         unit.UnitType = unitType;
-        unit.MovementPoints = movementPoints;
+        unit.ActionPoints = actionPoints;
     }
 
     public void RemoveUnit(HexUnit unit)
     {
         units.Remove(unit);
         unit.Die();
+    }
+
+    public void AddStructure(HexStructure structure, HexCell location, float orientation, string structureType)
+    {
+        structures.Add(structure);
+        structure.transform.SetParent(transform, false);
+        structure.Location = location;
+        structure.Orientation = orientation;
+        structure.StructureType = structureType;
     }
 
     public void ResetPoints()
@@ -382,5 +399,15 @@ public class HexGrid : MonoBehaviour
             return GetCell(hit.point);
         }
         return null;
+    }
+
+    public Vector3 GetClickPosition(Ray ray)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            return hit.point;
+        }
+        return new Vector3(0.0f, 0.0f, 0.0f);
     }
 }
