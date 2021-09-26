@@ -29,6 +29,7 @@ public class HexUnit : MonoBehaviour
     }
 
     int movementPoints;
+    int maxMovementPoints;
 
     public bool takenTurn;
     public bool movement;
@@ -63,7 +64,13 @@ public class HexUnit : MonoBehaviour
             transform.localRotation = Quaternion.Euler(0f, value, 0f);
         }
     }
+
     float orientation;
+
+    void Start()
+    {
+        maxMovementPoints = MovementPoints;
+    }
 
     public void ValidateLocation()
     {
@@ -79,6 +86,11 @@ public class HexUnit : MonoBehaviour
     public bool IsValidDestination(HexCell cell)
     {
         return !cell.IsImpassable && !cell.Unit;
+    }
+
+    public void ResetMovement()
+    {
+        MovementPoints = maxMovementPoints;
     }
 
 

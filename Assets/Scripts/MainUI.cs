@@ -43,11 +43,14 @@ public class MainUI : MonoBehaviour
     bool UpdateCurrentCell()
     {
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-        if (cell != currentCell)
+        if (cell)
         {
-            Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
-            currentCell = cell;
-            return true;
+            if (cell != currentCell)
+            {
+                Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
+                currentCell = cell;
+                return true;
+            }
         }
         return false;
     }

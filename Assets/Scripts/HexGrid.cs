@@ -322,7 +322,7 @@ public class HexGrid : MonoBehaviour
     {
         for (int i = 0; i < units.Count; i++)
         {
-            units[i].MovementPoints = 4;
+            units[i].ResetMovement();
         }
     }
 
