@@ -221,7 +221,7 @@ public class HexGrid : MonoBehaviour
                 {
                     continue;
                 }
-                if (neighbor.IsImpassable)
+                if (neighbor.IsImpassable || neighbor.Unit)
                 {
                     continue;
                 }

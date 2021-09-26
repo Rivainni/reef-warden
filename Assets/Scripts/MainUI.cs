@@ -56,7 +56,7 @@ public class MainUI : MonoBehaviour
     {
         grid.ClearPath();
         UpdateCurrentCell();
-        if (currentCell)
+        if (currentCell.Unit)
         {
             selectedUnit = currentCell.Unit;
             Debug.Log("Selected " + selectedUnit.UnitType);
@@ -67,7 +67,7 @@ public class MainUI : MonoBehaviour
     {
         if (UpdateCurrentCell())
         {
-            if (currentCell && selectedUnit.IsValidDestination(currentCell))
+            if (currentCell && selectedUnit.IsValidDestination(currentCell) && selectedUnit.MovementPoints > 0)
             {
                 grid.FindPath(selectedUnit.Location, currentCell, selectedUnit.MovementPoints);
             }
