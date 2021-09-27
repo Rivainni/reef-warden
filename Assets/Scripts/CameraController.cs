@@ -42,34 +42,34 @@ public class CameraController : MonoBehaviour
             newZoom += Input.mouseScrollDelta.y * zoomAmount;
         }
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
+        // if (Input.GetMouseButtonDown(1))
+        // {
+        //     Plane plane = new Plane(Vector3.up, Vector3.zero);
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            float entry;
+        //     float entry;
 
-            if (plane.Raycast(ray, out entry))
-            {
-                dragStartPosition = ray.GetPoint(entry);
-            }
-        }
-        if (Input.GetMouseButton(1))
-        {
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
+        //     if (plane.Raycast(ray, out entry))
+        //     {
+        //         dragStartPosition = ray.GetPoint(entry);
+        //     }
+        // }
+        // if (Input.GetMouseButton(1))
+        // {
+        //     Plane plane = new Plane(Vector3.up, Vector3.zero);
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            float entry;
+        //     float entry;
 
-            if (plane.Raycast(ray, out entry))
-            {
-                dragCurrentPosition = ray.GetPoint(entry);
+        //     if (plane.Raycast(ray, out entry))
+        //     {
+        //         dragCurrentPosition = ray.GetPoint(entry);
 
-                newPosition = transform.position + dragStartPosition - dragCurrentPosition;
-            }
-        }
+        //         newPosition = transform.position + dragStartPosition - dragCurrentPosition;
+        //     }
+        // }
 
         if (Input.GetMouseButtonDown(2))
         {

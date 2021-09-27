@@ -6,16 +6,16 @@ using System.IO;
 
 public class HexGrid : MonoBehaviour
 {
-    public int chunkCountX = 6, chunkCountZ = 4;
+    public int chunkCountX, chunkCountZ;
     public HexGridChunk chunkPrefab;
     int cellCountX, cellCountZ;
     public Color defaultColor = Color.white;
     public Color touchedColor = Color.magenta;
     public HexCell water;
     public HexCell land;
+    public UnitSpawner unitSpawner;
     public Text cellLabelPrefab;
     public State initState;
-    public HexUnit unitPrefab;
 
     public bool HasPath
     {
@@ -30,12 +30,12 @@ public class HexGrid : MonoBehaviour
     HexGridChunk[] chunks;
     HexCell[] cells;
     List<HexUnit> units = new List<HexUnit>();
+    List<HexStructure> structures = new List<HexStructure>();
 
     void Awake()
     {
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
-        HexUnit.unitPrefab = unitPrefab;
         CreateChunks();
         CreateCells();
     }
@@ -81,8 +81,9 @@ public class HexGrid : MonoBehaviour
 
         HexCell cell;
         HexCoordinates computed = HexCoordinates.FromOffsetCoordinates(x, z);
+        Vector2 check = new Vector2(computed.X, computed.Z);
 
-        if (initState.IsLand(new Vector2(computed.X, computed.Z)))
+        if (initState.IsLand(check))
         {
             cell = cells[i] = Instantiate<HexCell>(land);
             cell.IsImpassable = true;
@@ -130,6 +131,31 @@ public class HexGrid : MonoBehaviour
         Text label = Instantiate<Text>(cellLabelPrefab);
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
         cell.uiRect = label.rectTransform;
+
+        // add units *after* the cell has spawned
+        switch (initState.HasInitialUnit(check))
+        {
+            case 0:
+                unitSpawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
+                Debug.Log("P1 spawned.");
+                break;
+            case 1:
+                unitSpawner.SpawnUnit(cell, "Service Boat");
+                Debug.Log("S spawned.");
+                break;
+        }
+
+        switch (initState.HasStructure(check))
+        {
+            case 0:
+                unitSpawner.SpawnStructure(cell, "Ranger Station");
+                Debug.Log("RS spawned.");
+                break;
+            case 1:
+                unitSpawner.SpawnStructure(cell, "Buoy");
+                Debug.Log("B spawned.");
+                break;
+        }
 
         AddCellToChunk(x, z, cell);
     }
@@ -197,7 +223,7 @@ public class HexGrid : MonoBehaviour
                 return true;
             }
 
-            int currentTurn = current.Distance / speed;
+            int currentTurn = (current.Distance - 1) / speed;
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
@@ -208,7 +234,7 @@ public class HexGrid : MonoBehaviour
                 {
                     continue;
                 }
-                if (neighbor.IsImpassable)
+                if (neighbor.IsImpassable || neighbor.Unit)
                 {
                     continue;
                 }
@@ -231,7 +257,7 @@ public class HexGrid : MonoBehaviour
             HexCell current = currentPathTo;
             while (current != currentPathFrom)
             {
-                int turn = current.Distance / speed;
+                int turn = (current.Distance - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
                 current.EnableHighlight(Color.white);
                 current = current.PathFrom;
@@ -241,12 +267,12 @@ public class HexGrid : MonoBehaviour
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    public int withinTurnPath(int speed)
+    public int WithinTurnPath(int speed)
     {
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
-            if (current.Distance < speed)
+            if (current.Distance <= speed)
             {
                 return speed - current.Distance;
             }
@@ -279,6 +305,21 @@ public class HexGrid : MonoBehaviour
         }
         currentPathFrom = currentPathTo = null;
     }
+    public List<HexCell> GetPath()
+    {
+        if (!currentPathExists)
+        {
+            return null;
+        }
+        List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
+        for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
+        {
+            path.Add(c);
+        }
+        path.Add(currentPathFrom);
+        path.Reverse();
+        return path;
+    }
 
     void ClearUnits()
     {
@@ -289,12 +330,14 @@ public class HexGrid : MonoBehaviour
         units.Clear();
     }
 
-    public void AddUnit(HexUnit unit, HexCell location, float orientation)
+    public void AddUnit(HexUnit unit, HexCell location, float orientation, string unitType, int actionPoints)
     {
         units.Add(unit);
         unit.transform.SetParent(transform, false);
         unit.Location = location;
         unit.Orientation = orientation;
+        unit.UnitType = unitType;
+        unit.ActionPoints = actionPoints;
     }
 
     public void RemoveUnit(HexUnit unit)
@@ -303,11 +346,20 @@ public class HexGrid : MonoBehaviour
         unit.Die();
     }
 
+    public void AddStructure(HexStructure structure, HexCell location, float orientation, string structureType)
+    {
+        structures.Add(structure);
+        structure.transform.SetParent(transform, false);
+        structure.Location = location;
+        structure.Orientation = orientation;
+        structure.StructureType = structureType;
+    }
+
     public void ResetPoints()
     {
         for (int i = 0; i < units.Count; i++)
         {
-            units[i].MovementPoints = 4;
+            units[i].ResetMovement();
         }
     }
 

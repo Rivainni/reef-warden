@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class MainUI : MonoBehaviour
 {
@@ -9,17 +10,19 @@ public class MainUI : MonoBehaviour
     HexCell currentCell;
     HexUnit selectedUnit;
 
-    int currentTurn;
-
     [SerializeField] PlayerState initState;
 
     PlayerState currentState;
+    [SerializeField] GameObject panelPrefab;
+    [SerializeField] GameObject buttonPrefab;
+    [SerializeField] GameObject valuesContainer;
+    List<string> contextMenuContent = new List<string>();
 
     void Start()
     {
         currentState = initState;
         currentState.Clean();
-        currentTurn = currentState.GetTurn();
+        UpdateUIElements();
     }
 
     void Update()
@@ -34,7 +37,7 @@ public class MainUI : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(1))
                 {
-                    DoMove();
+                    HexAction();
                 }
                 else
                 {
@@ -46,10 +49,14 @@ public class MainUI : MonoBehaviour
     bool UpdateCurrentCell()
     {
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-        if (cell != currentCell)
+        if (cell)
         {
-            currentCell = cell;
-            return true;
+            if (cell != currentCell)
+            {
+                Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
+                currentCell = cell;
+                return true;
+            }
         }
         return false;
     }
@@ -58,19 +65,27 @@ public class MainUI : MonoBehaviour
     {
         grid.ClearPath();
         UpdateCurrentCell();
-        if (currentCell)
+
+        if (selectedUnit == currentCell.Unit)
+        {
+            selectedUnit = null;
+        }
+        else if (currentCell.Unit)
         {
             selectedUnit = currentCell.Unit;
+            Debug.Log("Selected " + selectedUnit.UnitType);
         }
+
+        grid.ShowUI(true);
     }
 
     void DoPathfinding()
     {
         if (UpdateCurrentCell())
         {
-            if (currentCell && selectedUnit.IsValidDestination(currentCell))
+            if (currentCell && selectedUnit.IsValidDestination(currentCell) && selectedUnit.ActionPoints > 0)
             {
-                grid.FindPath(selectedUnit.Location, currentCell, selectedUnit.MovementPoints);
+                grid.FindPath(selectedUnit.Location, currentCell, selectedUnit.ActionPoints);
             }
             else
             {
@@ -81,26 +96,73 @@ public class MainUI : MonoBehaviour
 
     void DoMove()
     {
-        if (grid.HasPath && grid.withinTurnPath(selectedUnit.MovementPoints) != int.MaxValue && selectedUnit.MovementPoints > 0)
+        if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
         {
-            selectedUnit.Location = currentCell;
-            selectedUnit.MovementPoints = grid.withinTurnPath(selectedUnit.MovementPoints);
+            selectedUnit.movement = true;
+            selectedUnit.Travel(grid.GetPath());
+            selectedUnit.ActionPoints = grid.WithinTurnPath(selectedUnit.ActionPoints);
             grid.ClearPath();
+            grid.ShowUI(false);
         }
+    }
+
+    void HexAction()
+    {
+        Vector3 spawnAt = Input.mousePosition;
+        HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+
+        // clear the context menu
+        contextMenuContent.Clear();
+        GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+
+        if (selectedUnit.UnitType.Contains("Patrol Boat"))
+        {
+            if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
+            {
+                contextMenuContent.Add("Patrol");
+            }
+        }
+
+        foreach (string item in contextMenuContent)
+        {
+            GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
+            Button currentButton = generic.GetComponent<Button>();
+            currentButton.GetComponentInChildren<Text>().text = item;
+            currentButton.onClick.AddListener(() => Patrol(cell, contextMenu));
+        }
+    }
+
+    void Patrol(HexCell destination, GameObject remove)
+    {
+        float factor = destination.Distance * 0.5f;
+        currentState.AddSecurity(factor);
+        Debug.Log(currentState.GetSecurity());
+        DoMove();
+        UpdateUIElements();
+        Destroy(remove);
+    }
+
+    void UpdateUIElements()
+    {
+        UpdateText[] toUpdate = GetComponentsInChildren<UpdateText>();
+        foreach (UpdateText item in toUpdate)
+        {
+            item.UpdateUIElement();
+        }
+    }
+
+    public PlayerState GetPlayerState()
+    {
+        return currentState;
     }
 
     public void EndTurn(Button clicked)
     {
-        currentState.endTurn();
+        currentState.nextTurn();
         clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
         grid.ResetPoints();
         selectedUnit = null;
         grid.ClearPath();
-    }
-    public void SetEditMode(bool toggle)
-    {
-        enabled = !toggle;
-        grid.ShowUI(!toggle);
-        grid.ClearPath();
+        UpdateUIElements();
     }
 }
