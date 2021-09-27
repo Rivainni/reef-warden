@@ -25,6 +25,9 @@ public class PlayerState : ScriptableObject
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
 
+    const float moraleLambda = 0.04f;
+    const float securityLambda = 0.04f;
+
 
     public int GetMoney()
     {
@@ -70,6 +73,44 @@ public class PlayerState : ScriptableObject
     {
         return possibleActions;
     }
+
+    public int GetIncome()
+    {
+        return income;
+    }
+
+    public void SetIncome(int replacement)
+    {
+        income = replacement;
+    }
+
+    public void AddResearch(int RP)
+    {
+        research += RP;
+    }
+
+    public void AddManpower(int RP)
+    {
+        manpower += RP;
+    }
+
+
+    public void AddTourists(int toAdd)
+    {
+        tourists += toAdd;
+    }
+
+
+    public void AddMorale(int toAdd)
+    {
+        morale += toAdd;
+    }
+
+    public void AddSecurity(int toAdd)
+    {
+        security += toAdd;
+    }
+
 
     public int FetchCD(string type)
     {
@@ -172,5 +213,8 @@ public class PlayerState : ScriptableObject
     public void nextTurn()
     {
         turn++;
+        money += income;
+        morale *= Mathf.Exp(-moraleLambda * 1);
+        security *= Mathf.Exp(-securityLambda * 1);
     }
 }
