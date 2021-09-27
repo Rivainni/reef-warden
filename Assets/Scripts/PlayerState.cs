@@ -101,12 +101,12 @@ public class PlayerState : ScriptableObject
     }
 
 
-    public void AddMorale(int toAdd)
+    public void AddMorale(float toAdd)
     {
         morale += toAdd;
     }
 
-    public void AddSecurity(int toAdd)
+    public void AddSecurity(float toAdd)
     {
         security += toAdd;
     }

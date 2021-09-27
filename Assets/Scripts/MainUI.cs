@@ -112,28 +112,36 @@ public class MainUI : MonoBehaviour
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
         // clear the context menu
-        contextMenuContent = null;
-        GameObject contextMenu = Instantiate(panelPrefab, spawnAt + new Vector3(0, 500f, 0), Quaternion.identity, transform);
+        contextMenuContent.Clear();
+        GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
 
         if (selectedUnit.UnitType.Contains("Patrol Boat"))
         {
             if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
             {
                 contextMenuContent.Add("Patrol");
-                Button first = contextMenu.GetComponent<Button>();
-                first.GetComponent<Text>().text = "Patrol";
             }
         }
 
         foreach (string item in contextMenuContent)
         {
-
+            GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
+            Button currentButton = generic.GetComponent<Button>();
+            currentButton.GetComponentInChildren<Text>().text = item;
+            currentButton.onClick.AddListener(() => Patrol(cell, contextMenu));
         }
+
+        contextMenu.transform.Translate(new Vector3(buttonPrefab.GetComponent<RectTransform>().rect.width * 2, buttonPrefab.GetComponent<RectTransform>().rect.height * 2, 0));
     }
 
-    void Patrol()
+    void Patrol(HexCell destination, GameObject remove)
     {
+        float factor = destination.Distance * 0.5f;
+        currentState.AddSecurity(factor);
+        Debug.Log(currentState.GetSecurity());
         DoMove();
+        UpdateUIElements();
+        Destroy(remove);
     }
 
     void UpdateUIElements()
