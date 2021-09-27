@@ -400,14 +400,4 @@ public class HexGrid : MonoBehaviour
         }
         return null;
     }
-
-    public Vector3 GetClickPosition(Ray ray)
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
-        {
-            return hit.point;
-        }
-        return new Vector3(0.0f, 0.0f, 0.0f);
-    }
 }

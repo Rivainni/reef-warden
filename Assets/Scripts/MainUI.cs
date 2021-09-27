@@ -108,7 +108,7 @@ public class MainUI : MonoBehaviour
 
     void HexAction()
     {
-        Vector3 spawnAt = grid.GetClickPosition(Camera.main.ScreenPointToRay(Input.mousePosition));
+        Vector3 spawnAt = Input.mousePosition;
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
         // clear the context menu
@@ -130,8 +130,6 @@ public class MainUI : MonoBehaviour
             currentButton.GetComponentInChildren<Text>().text = item;
             currentButton.onClick.AddListener(() => Patrol(cell, contextMenu));
         }
-
-        contextMenu.transform.Translate(new Vector3(buttonPrefab.GetComponent<RectTransform>().rect.width * 2, buttonPrefab.GetComponent<RectTransform>().rect.height * 2, 0));
     }
 
     void Patrol(HexCell destination, GameObject remove)
