@@ -14,6 +14,7 @@ public class MainUI : MonoBehaviour
 
     PlayerState currentState;
     [SerializeField] GameObject panelPrefab;
+    [SerializeField] GameObject buttonPrefab;
     [SerializeField] GameObject valuesContainer;
     List<string> contextMenuContent = new List<string>();
 
@@ -21,6 +22,7 @@ public class MainUI : MonoBehaviour
     {
         currentState = initState;
         currentState.Clean();
+        UpdateUIElements();
     }
 
     void Update()
@@ -42,10 +44,6 @@ public class MainUI : MonoBehaviour
                     DoPathfinding();
                 }
             }
-        }
-        else
-        {
-
         }
     }
     bool UpdateCurrentCell()
@@ -126,11 +124,30 @@ public class MainUI : MonoBehaviour
                 first.GetComponent<Text>().text = "Patrol";
             }
         }
+
+        foreach (string item in contextMenuContent)
+        {
+
+        }
     }
 
     void Patrol()
     {
         DoMove();
+    }
+
+    void UpdateUIElements()
+    {
+        UpdateText[] toUpdate = GetComponentsInChildren<UpdateText>();
+        foreach (UpdateText item in toUpdate)
+        {
+            item.UpdateUIElement();
+        }
+    }
+
+    public PlayerState GetPlayerState()
+    {
+        return currentState;
     }
 
     public void EndTurn(Button clicked)
@@ -140,10 +157,6 @@ public class MainUI : MonoBehaviour
         grid.ResetPoints();
         selectedUnit = null;
         grid.ClearPath();
-    }
-
-    void UpdateUIElements()
-    {
-
+        UpdateUIElements();
     }
 }
