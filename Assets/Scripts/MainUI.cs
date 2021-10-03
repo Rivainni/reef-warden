@@ -128,7 +128,7 @@ public class MainUI : MonoBehaviour
                 for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
                 {
                     HexCell toCheckCell = cell.GetNeighbor(d);
-                    if (toCheckCell != null && toCheckCell.Unit)
+                    if (toCheckCell != null && toCheckCell.Unit != null)
                     {
                         if (cell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
                         {
