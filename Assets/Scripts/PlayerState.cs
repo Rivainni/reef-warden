@@ -11,7 +11,8 @@ public class PlayerState : ScriptableObject
     [SerializeField] int tourists;
     [SerializeField] float morale;
     [SerializeField] float security;
-    [SerializeField] float reefHealth;
+    [SerializeField] float trueReefHealth;
+    float seenReefHealth;
 
     [SerializeField] int turn;
     [SerializeField] int checkHealthCD1;
@@ -61,7 +62,7 @@ public class PlayerState : ScriptableObject
 
     public float GetHealth()
     {
-        return reefHealth;
+        return seenReefHealth;
     }
 
     public int GetTurn()
@@ -109,6 +110,16 @@ public class PlayerState : ScriptableObject
     public void AddSecurity(float toAdd)
     {
         security += toAdd;
+    }
+
+    public void DecreaseHealth(float toDecrease)
+    {
+        trueReefHealth -= toDecrease;
+    }
+
+    public void UpdateHealth()
+    {
+        seenReefHealth = trueReefHealth;
     }
 
 
@@ -199,7 +210,8 @@ public class PlayerState : ScriptableObject
         tourists = 0;
         morale = 50;
         security = 50;
-        reefHealth = 100;
+        trueReefHealth = 100;
+        seenReefHealth = 100;
         turn = 1;
         checkHealthCD1 = 0;
         checkHealthCD2 = 0;

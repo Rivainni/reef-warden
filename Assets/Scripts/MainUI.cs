@@ -22,6 +22,7 @@ public class MainUI : MonoBehaviour
     {
         currentState = initState;
         currentState.Clean();
+        currentState.UpdateHealth();
         UpdateUIElements();
     }
 
@@ -120,6 +121,25 @@ public class MainUI : MonoBehaviour
             if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
             {
                 contextMenuContent.Add("Patrol");
+
+                // moving this check once we've marked the location of the reefs
+                contextMenuContent.Add("Check Reef Health");
+
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+                {
+                    HexCell toCheckCell = cell.GetNeighbor(d);
+                    if (toCheckCell != null && toCheckCell.Unit)
+                    {
+                        if (cell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
+                        {
+                            contextMenuContent.Add("Catch Fisherman");
+                        }
+                        else if (cell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
+                        {
+                            contextMenuContent.Add("Inspect Tourist");
+                        }
+                    }
+                }
             }
         }
 
@@ -128,8 +148,30 @@ public class MainUI : MonoBehaviour
             GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
             Button currentButton = generic.GetComponent<Button>();
             currentButton.GetComponentInChildren<Text>().text = item;
-            currentButton.onClick.AddListener(() => Patrol(cell, contextMenu));
+            if (item == "Patrol")
+            {
+                currentButton.onClick.AddListener(() => Patrol(cell, contextMenu));
+            }
+            else if (item == "Check Reef Health")
+            {
+                currentButton.onClick.AddListener(() => CheckHealth(cell, contextMenu));
+            }
+            else if (item == "Catch Fisherman")
+            {
+                currentButton.onClick.AddListener(() => CatchFisherman(cell, contextMenu, cell.Unit));
+            }
+            else if (item == "Inspect Tourist")
+            {
+                currentButton.onClick.AddListener(() => InspectTourist(cell, contextMenu, cell.Unit));
+            }
         }
+    }
+
+    void AfterAction(GameObject remove)
+    {
+        DoMove();
+        UpdateUIElements();
+        Destroy(remove);
     }
 
     void Patrol(HexCell destination, GameObject remove)
@@ -137,9 +179,25 @@ public class MainUI : MonoBehaviour
         float factor = destination.Distance * 0.5f;
         currentState.AddSecurity(factor);
         Debug.Log(currentState.GetSecurity());
-        DoMove();
-        UpdateUIElements();
-        Destroy(remove);
+        AfterAction(remove);
+    }
+
+    void CheckHealth(HexCell destination, GameObject remove)
+    {
+        currentState.UpdateHealth();
+        AfterAction(remove);
+    }
+
+    void InspectTourist(HexCell destination, GameObject remove, HexUnit target)
+    {
+        // mini game
+        AfterAction(remove);
+    }
+
+    void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
+    {
+        // despawn fisherman
+        AfterAction(remove);
     }
 
     void UpdateUIElements()
