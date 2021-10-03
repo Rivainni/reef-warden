@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class MainUI : MonoBehaviour
 {
     public HexGrid grid;
+    public UnitSpawner unitSpawner;
 
     HexCell currentCell;
     HexUnit selectedUnit;
@@ -209,8 +210,7 @@ public class MainUI : MonoBehaviour
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
     {
-        destination.Unit = null;
-        Destroy(target);
+        unitSpawner.DestroyUnit(target);
         currentState.AddSecurity(2);
         AfterAction(remove);
     }
