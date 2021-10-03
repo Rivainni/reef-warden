@@ -38,7 +38,10 @@ public class MainUI : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(1))
                 {
-                    HexAction();
+                    if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
+                    {
+                        HexAction();
+                    }
                 }
                 else
                 {
@@ -97,24 +100,22 @@ public class MainUI : MonoBehaviour
 
     void DoMove()
     {
-        if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
-        {
-            selectedUnit.movement = true;
-            selectedUnit.Travel(grid.GetPath());
-            selectedUnit.ActionPoints = grid.WithinTurnPath(selectedUnit.ActionPoints);
-            grid.ClearPath();
-            grid.ShowUI(false);
-        }
+        selectedUnit.movement = true;
+        selectedUnit.Travel(grid.GetPath());
+        selectedUnit.ActionPoints = grid.WithinTurnPath(selectedUnit.ActionPoints);
+        grid.ClearPath();
+        grid.ShowUI(false);
     }
 
     void HexAction()
     {
         Vector3 spawnAt = Input.mousePosition;
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        HexCell tempA = null;
+        HexCell tempB = null;
 
         // clear the context menu
         contextMenuContent.Clear();
-        GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
 
         if (selectedUnit.UnitType.Contains("Patrol Boat"))
         {
@@ -133,36 +134,43 @@ public class MainUI : MonoBehaviour
                         if (cell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
                         {
                             contextMenuContent.Add("Catch Fisherman");
+                            tempA = toCheckCell;
                         }
                         else if (cell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
                         {
                             contextMenuContent.Add("Inspect Tourist");
+                            tempB = toCheckCell;
                         }
                     }
                 }
             }
         }
 
-        foreach (string item in contextMenuContent)
+        if (contextMenuContent.Count > 0)
         {
-            GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
-            Button currentButton = generic.GetComponent<Button>();
-            currentButton.GetComponentInChildren<Text>().text = item;
-            if (item == "Patrol")
+            GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+
+            foreach (string item in contextMenuContent)
             {
-                currentButton.onClick.AddListener(() => Patrol(cell, contextMenu));
-            }
-            else if (item == "Check Reef Health")
-            {
-                currentButton.onClick.AddListener(() => CheckHealth(cell, contextMenu));
-            }
-            else if (item == "Catch Fisherman")
-            {
-                currentButton.onClick.AddListener(() => CatchFisherman(cell, contextMenu, cell.Unit));
-            }
-            else if (item == "Inspect Tourist")
-            {
-                currentButton.onClick.AddListener(() => InspectTourist(cell, contextMenu, cell.Unit));
+                GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
+                Button currentButton = generic.GetComponent<Button>();
+                currentButton.GetComponentInChildren<Text>().text = item;
+                if (item == "Patrol")
+                {
+                    currentButton.onClick.AddListener(() => Patrol(cell, contextMenu));
+                }
+                else if (item == "Check Reef Health")
+                {
+                    currentButton.onClick.AddListener(() => CheckHealth(cell, contextMenu));
+                }
+                else if (item == "Catch Fisherman")
+                {
+                    currentButton.onClick.AddListener(() => CatchFisherman(tempA, contextMenu, cell.Unit));
+                }
+                else if (item == "Inspect Tourist")
+                {
+                    currentButton.onClick.AddListener(() => InspectTourist(tempB, contextMenu, cell.Unit));
+                }
             }
         }
     }
@@ -197,6 +205,7 @@ public class MainUI : MonoBehaviour
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
     {
         // despawn fisherman
+        Destroy(target);
         AfterAction(remove);
     }
 
