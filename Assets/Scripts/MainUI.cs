@@ -198,14 +198,20 @@ public class MainUI : MonoBehaviour
 
     void InspectTourist(HexCell destination, GameObject remove, HexUnit target)
     {
+        bool success = true;
         // mini game
+        if (success)
+        {
+            currentState.AddSecurity(5);
+        }
         AfterAction(remove);
     }
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
     {
-        // despawn fisherman
+        destination.Unit = null;
         Destroy(target);
+        currentState.AddSecurity(2);
         AfterAction(remove);
     }
 
