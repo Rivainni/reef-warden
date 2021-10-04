@@ -49,6 +49,10 @@ public class MainUI : MonoBehaviour
                     DoPathfinding();
                 }
             }
+            else if (Input.GetMouseButtonDown(1) && grid.CheckUpgradeCell(currentCell))
+            {
+                DoUpgrade();
+            }
         }
     }
     bool UpdateCurrentCell()
@@ -213,6 +217,34 @@ public class MainUI : MonoBehaviour
         unitSpawner.DestroyUnit(target);
         currentState.AddSecurity(2);
         AfterAction(remove);
+    }
+
+    void DoUpgrade()
+    {
+        Vector3 spawnAt = Camera.main.ScreenToWorldPoint(new Vector3(0.0f, Screen.height * 0.75f, 0.0f));
+        HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+
+        // clear the context menu
+        contextMenuContent.Clear();
+
+        foreach (string item in unitSpawner.GetStructureTypes())
+        {
+            if (item != "Ranger Station" && item != "Buoy")
+            {
+                contextMenuContent.Add(item);
+            }
+        }
+        if (contextMenuContent.Count > 0)
+        {
+            GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+
+            foreach (string item in contextMenuContent)
+            {
+                GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
+                Button currentButton = generic.GetComponent<Button>();
+                currentButton.GetComponentInChildren<Text>().text = item;
+            }
+        }
     }
 
     void UpdateUIElements()

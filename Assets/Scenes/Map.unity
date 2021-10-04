@@ -420,9 +420,12 @@ MonoBehaviour:
   structureTypes:
   - Ranger Station
   - Buoy
+  - Radar
+  - AIS
   structurePrefabs:
   - {fileID: -7004922079092598185, guid: c5e298bea1d79974ab29c48130044abf, type: 3}
   - {fileID: 4681984382541474508, guid: b1fb8dc7bedb1364fb8cc7f77b0c48e1, type: 3}
+  - {fileID: -1705836515165840530, guid: 946f04025eb07954c90f9aa2a6d6cc44, type: 3}
 --- !u!4 &356808184
 Transform:
   m_ObjectHideFlags: 0

@@ -40,6 +40,11 @@ public class UnitSpawner : MonoBehaviour
         hexGrid.RemoveUnit(unit);
     }
 
+    public string[] GetStructureTypes()
+    {
+        return structureTypes;
+    }
+
     HexCell GetCellUnderCursor()
     {
         return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));

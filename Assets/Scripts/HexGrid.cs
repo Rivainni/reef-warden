@@ -31,6 +31,7 @@ public class HexGrid : MonoBehaviour
     HexCell[] cells;
     List<HexUnit> units = new List<HexUnit>();
     List<HexStructure> structures = new List<HexStructure>();
+    List<HexCell> upgradeCells = new List<HexCell>();
 
     void Awake()
     {
@@ -150,6 +151,11 @@ public class HexGrid : MonoBehaviour
             case 0:
                 unitSpawner.SpawnStructure(cell, "Ranger Station");
                 Debug.Log("RS spawned.");
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+                {
+                    HexCell eligible = cell.GetNeighbor(d);
+                    upgradeCells.Add(eligible);
+                }
                 break;
             case 1:
                 unitSpawner.SpawnStructure(cell, "Buoy");
@@ -360,6 +366,18 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < units.Count; i++)
         {
             units[i].ResetMovement();
+        }
+    }
+
+    public bool CheckUpgradeCell(HexCell upgrade)
+    {
+        if (upgradeCells.Contains(upgrade))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
