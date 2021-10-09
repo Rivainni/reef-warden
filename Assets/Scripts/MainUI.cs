@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class MainUI : MonoBehaviour
 {
     public HexGrid grid;
-    public UnitSpawner unitSpawner;
+    public Spawner spawner;
 
     HexCell currentCell;
     HexUnit selectedUnit;
@@ -75,7 +75,7 @@ public class MainUI : MonoBehaviour
         grid.ClearPath();
         UpdateCurrentCell();
 
-        if (selectedUnit == currentCell.Unit)
+        if (selectedUnit == currentCell.Unit || !currentCell.Unit)
         {
             selectedUnit = null;
         }
@@ -214,20 +214,20 @@ public class MainUI : MonoBehaviour
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
     {
-        unitSpawner.DestroyUnit(target);
+        spawner.DestroyUnit(target);
         currentState.AddSecurity(2);
         AfterAction(remove);
     }
 
     void DoUpgrade()
     {
-        Vector3 spawnAt = Camera.main.ScreenToWorldPoint(new Vector3(0.0f, Screen.height * 0.75f, 0.0f));
+        Vector3 spawnAt = Input.mousePosition;
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
         // clear the context menu
         contextMenuContent.Clear();
 
-        foreach (string item in unitSpawner.GetStructureTypes())
+        foreach (string item in spawner.GetStructureTypes())
         {
             if (item != "Ranger Station" && item != "Buoy")
             {
@@ -243,8 +243,16 @@ public class MainUI : MonoBehaviour
                 GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
                 Button currentButton = generic.GetComponent<Button>();
                 currentButton.GetComponentInChildren<Text>().text = item;
+                currentButton.onClick.AddListener(() => AddUpgrade(cell, item, contextMenu));
             }
         }
+    }
+
+    void AddUpgrade(HexCell currentCell, string upgrade, GameObject remove)
+    {
+        Debug.Log("Reached addupgade");
+        spawner.SpawnStructure(currentCell, upgrade);
+        Destroy(remove);
     }
 
     void UpdateUIElements()

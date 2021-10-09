@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitSpawner : MonoBehaviour
+public class Spawner : MonoBehaviour
 {
     public HexGrid hexGrid;
     // PLAYER: Tier 1 Patrol Boat, Tier 2 Patrol Boat, Service Boat

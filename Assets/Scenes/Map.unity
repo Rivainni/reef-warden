@@ -355,7 +355,7 @@ MonoBehaviour:
   touchedColor: {r: 1, g: 0, b: 1, a: 1}
   water: {fileID: -6283204732262520918, guid: cd4f2cbde7d033f45a5d96afb77a69e1, type: 3}
   land: {fileID: -4583013346327355518, guid: 8bf655974e76bee4686e26a1a0d0e773, type: 3}
-  unitSpawner: {fileID: 356808183}
+  spawner: {fileID: 356808183}
   cellLabelPrefab: {fileID: 8365395652673976220, guid: f078f3abc320eb24787e6080890efdca, type: 3}
   initState: {fileID: 11400000, guid: 665d78d65c16d664fa588a54ab13b76d, type: 2}
 --- !u!4 &306096921
@@ -400,7 +400,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 356808182}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6a2a024c67bedb428d80da91fbc037f, type: 3}
+  m_Script: {fileID: 11500000, guid: e4e5709fe4d12104cb8a7261482d17b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hexGrid: {fileID: 306096920}
@@ -425,6 +425,7 @@ MonoBehaviour:
   structurePrefabs:
   - {fileID: -7004922079092598185, guid: c5e298bea1d79974ab29c48130044abf, type: 3}
   - {fileID: 4681984382541474508, guid: b1fb8dc7bedb1364fb8cc7f77b0c48e1, type: 3}
+  - {fileID: -1705836515165840530, guid: 946f04025eb07954c90f9aa2a6d6cc44, type: 3}
   - {fileID: -1705836515165840530, guid: 946f04025eb07954c90f9aa2a6d6cc44, type: 3}
 --- !u!4 &356808184
 Transform:
@@ -2096,7 +2097,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 306096920}
-  unitSpawner: {fileID: 356808183}
+  spawner: {fileID: 356808183}
   initState: {fileID: 11400000, guid: a429a786ca9053e4ebebb97060993ff9, type: 2}
   panelPrefab: {fileID: 3570511537018259731, guid: afcb14234acda204193094e07159e97b, type: 3}
   buttonPrefab: {fileID: 938404568772974516, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}

@@ -25,7 +25,7 @@ public class PlayerState : ScriptableObject
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
-
+    [SerializeField] List<HexStructure> currentUpgrades;
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
 
@@ -220,6 +220,7 @@ public class PlayerState : ScriptableObject
         clamCD = 0;
         turtleCD = 0;
         researchCD = 0;
+        currentUpgrades = new List<HexStructure>();
     }
 
     public void nextTurn()
