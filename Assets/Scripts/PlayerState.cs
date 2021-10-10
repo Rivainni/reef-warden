@@ -26,8 +26,10 @@ public class PlayerState : ScriptableObject
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
     [SerializeField] List<HexStructure> currentUpgrades;
+    [SerializeField] List<string> upgradeQueue;
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
+    bool day = true;
 
 
     public int GetMoney()
@@ -73,6 +75,11 @@ public class PlayerState : ScriptableObject
     public string[] GetPossibleActions()
     {
         return possibleActions;
+    }
+
+    public List<string> GetQueue()
+    {
+        return upgradeQueue;
     }
 
     public int GetIncome()
@@ -221,13 +228,51 @@ public class PlayerState : ScriptableObject
         turtleCD = 0;
         researchCD = 0;
         currentUpgrades = new List<HexStructure>();
+        day = true;
     }
 
-    public void nextTurn()
+    public void NextTurn()
     {
         turn++;
         money += income;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
+        if (turn % 4 == 0)
+        {
+            day = false;
+        }
+        else
+        {
+            day = true;
+        }
+
+
+    }
+
+    public void QueueUpgrade(string upgradeType, int constructionTime)
+    {
+        upgradeQueue.Add(upgradeType + ", " + constructionTime);
+    }
+
+    void UpdateUpgradeQueue()
+    {
+        foreach (string item in upgradeQueue)
+        {
+            int update = item[item.Length - 1];
+            update--;
+        }
+    }
+
+    public string CheckUpgrade(string upgradeType)
+    {
+        foreach (string item in upgradeQueue)
+        {
+            if (item.Contains(upgradeType))
+            {
+                return item;
+            }
+        }
+
+        return null;
     }
 }

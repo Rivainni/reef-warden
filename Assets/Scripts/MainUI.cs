@@ -15,7 +15,9 @@ public class MainUI : MonoBehaviour
 
     PlayerState currentState;
     [SerializeField] GameObject panelPrefab;
+    [SerializeField] GameObject doublePanelPrefab;
     [SerializeField] GameObject buttonPrefab;
+    [SerializeField] GameObject textPrefab;
     [SerializeField] GameObject valuesContainer;
     List<string> contextMenuContent = new List<string>();
 
@@ -221,7 +223,7 @@ public class MainUI : MonoBehaviour
 
     void DoUpgrade()
     {
-        Vector3 spawnAt = Input.mousePosition;
+        Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
         // clear the context menu
@@ -236,23 +238,59 @@ public class MainUI : MonoBehaviour
         }
         if (contextMenuContent.Count > 0)
         {
-            GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+            GameObject upgradePanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
 
-            foreach (string item in contextMenuContent)
+            for (int i = 0; i < 2; i++)
             {
-                GameObject generic = Instantiate(buttonPrefab, contextMenu.transform.position, Quaternion.identity, contextMenu.transform);
-                Button currentButton = generic.GetComponent<Button>();
-                currentButton.GetComponentInChildren<Text>().text = item;
-                currentButton.onClick.AddListener(() => AddUpgrade(cell, item, contextMenu));
+                if (i == 0)
+                {
+                    foreach (string item in contextMenuContent)
+                    {
+                        GameObject generic = Instantiate(buttonPrefab, upgradePanel.transform.GetChild(i).position, Quaternion.identity, upgradePanel.transform.GetChild(i));
+                        Button currentButton = generic.GetComponent<Button>();
+                        currentButton.GetComponentInChildren<Text>().text = item;
+                        currentButton.onClick.AddListener(() => UpgradeText(item, currentButton, upgradePanel));
+                    }
+                }
+                else
+                {
+                    GameObject generic = Instantiate(textPrefab, upgradePanel.transform.GetChild(i).position, Quaternion.identity, upgradePanel.transform.GetChild(i));
+                    Text currentText = generic.GetComponent<Text>();
+                    currentText.text = "Select an available upgrade to get started!";
+                }
             }
         }
     }
 
-    void AddUpgrade(HexCell currentCell, string upgrade, GameObject remove)
+    void AddUpgrade(string upgrade, GameObject remove)
     {
-        Debug.Log("Reached addupgade");
-        spawner.SpawnStructure(currentCell, upgrade);
+        if (currentState.CheckUpgrade(upgrade) != null)
+        {
+            spawner.SpawnStructure(currentCell, upgrade);
+            currentState.QueueUpgrade(upgrade, 1);
+        }
         Destroy(remove);
+    }
+
+    void UpgradeText(string upgradeType, Button button, GameObject toRemove)
+    {
+        GameObject toReplace = button.transform.parent.parent.GetChild(1).GetChild(0).gameObject;
+        if (upgradeType == "Radar")
+        {
+            toReplace.GetComponent<Text>().text = "When triggered, it gives the player map-wide visibility for one turn. May be used again after 5 turns.";
+            toReplace.GetComponent<Text>().text += "\n\nCosts(x).Requires(y) RP.Has upkeep of(z) per turn.";
+            toReplace.GetComponent<Text>().text += "\nRequires(x) turns and(y) manpower to construct.";
+        }
+        else if (upgradeType == "AIS")
+        {
+            toReplace.GetComponent<Text>().text = "Lets the player know the information of the vessels in the area by Identifying their purpose.";
+            toReplace.GetComponent<Text>().text += "\n\nCosts (x). Requires (y) RP. Has upkeep of (z) per turn. ";
+        }
+
+        GameObject generic = Instantiate(buttonPrefab, toReplace.transform.parent.position, Quaternion.identity, toReplace.transform.parent);
+        Button currentButton = generic.GetComponent<Button>();
+        currentButton.GetComponentInChildren<Text>().text = "BUILD";
+        currentButton.onClick.AddListener(() => AddUpgrade(upgradeType, toRemove));
     }
 
     void UpdateUIElements()
@@ -271,7 +309,7 @@ public class MainUI : MonoBehaviour
 
     public void EndTurn(Button clicked)
     {
-        currentState.nextTurn();
+        currentState.NextTurn();
         clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
         grid.ResetPoints();
         selectedUnit = null;

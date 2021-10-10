@@ -2100,5 +2100,7 @@ MonoBehaviour:
   spawner: {fileID: 356808183}
   initState: {fileID: 11400000, guid: a429a786ca9053e4ebebb97060993ff9, type: 2}
   panelPrefab: {fileID: 3570511537018259731, guid: afcb14234acda204193094e07159e97b, type: 3}
+  doublePanelPrefab: {fileID: 3570511537018259731, guid: f6ba87f59061a3446a3a83c2512a3b53, type: 3}
   buttonPrefab: {fileID: 938404568772974516, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
+  textPrefab: {fileID: 6520570075929674871, guid: 28ccfa1843a66e34d8240e47d2e607fd, type: 3}
   valuesContainer: {fileID: 184876450}
