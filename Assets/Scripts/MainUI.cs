@@ -20,7 +20,6 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] GameObject textPrefab;
     [SerializeField] GameObject valuesContainer;
-    List<string> contextMenuContent = new List<string>();
 
     void Start()
     {
@@ -122,8 +121,7 @@ public class MainUI : MonoBehaviour
         HexCell tempA = null;
         HexCell tempB = null;
 
-        // clear the context menu
-        contextMenuContent.Clear();
+        List<string> contextMenuContent = new List<string>();
 
         if (selectedUnit.UnitType.Contains("Patrol Boat"))
         {
@@ -132,19 +130,22 @@ public class MainUI : MonoBehaviour
                 contextMenuContent.Add("Patrol");
 
                 // moving this check once we've marked the location of the reefs
-                contextMenuContent.Add("Check Reef Health");
+                if (currentState.FetchCD("CH1") == 0 && currentState.FetchCD("CH2") == 0 && currentState.FetchCD("CH3") == 0)
+                {
+                    contextMenuContent.Add("Check Reef Health");
+                }
 
                 for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
                 {
                     HexCell toCheckCell = cell.GetNeighbor(d);
                     if (toCheckCell != null && toCheckCell.Unit != null)
                     {
-                        if (cell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
+                        if (toCheckCell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
                         {
                             contextMenuContent.Add("Catch Fisherman");
                             tempA = toCheckCell;
                         }
-                        else if (cell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
+                        else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
                         {
                             contextMenuContent.Add("Inspect Tourist");
                             tempB = toCheckCell;
@@ -201,6 +202,10 @@ public class MainUI : MonoBehaviour
     void CheckHealth(HexCell destination, GameObject remove)
     {
         currentState.UpdateHealth();
+        currentState.AddResearch(250);
+        currentState.ResetCD("CH1");
+        currentState.ResetCD("CH2");
+        currentState.ResetCD("CH3");
         AfterAction(remove);
     }
 
@@ -228,7 +233,7 @@ public class MainUI : MonoBehaviour
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
         // clear the context menu
-        contextMenuContent.Clear();
+        List<string> contextMenuContent = new List<string>();
 
         foreach (string item in spawner.GetStructureTypes())
         {

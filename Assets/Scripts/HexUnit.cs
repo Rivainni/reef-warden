@@ -166,7 +166,7 @@ public class HexUnit : MonoBehaviour
         orientation = transform.localRotation.eulerAngles.y;
     }
 
-    public void decreaseHP()
+    public void DecreaseHP()
     {
         hp -= (maxActionPoints - actionPoints);
     }

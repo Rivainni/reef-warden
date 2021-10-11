@@ -264,6 +264,7 @@ public class PlayerState : ScriptableObject
         }
 
         UpdateUpgradeQueue();
+        ReduceCD();
     }
 
     public void QueueUpgrade(string upgradeType, int constructionTime)
