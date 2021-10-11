@@ -19,6 +19,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject doublePanelPrefab;
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] GameObject textPrefab;
+    [SerializeField] GameObject researchPrefab;
     [SerializeField] GameObject valuesContainer;
 
     void Start()
@@ -349,5 +350,11 @@ public class MainUI : MonoBehaviour
         selectedUnit = null;
         grid.ClearPath();
         UpdateUIElements();
+    }
+
+    public void Research(Button clicked)
+    {
+        Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
+        GameObject researchPanel = Instantiate(researchPrefab, spawnAt, Quaternion.identity, transform);
     }
 }

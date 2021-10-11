@@ -27,6 +27,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
     [SerializeField] Queue<UpgradeItem> upgradeQueue = new Queue<UpgradeItem>();
+    [SerializeField] Queue<UpgradeItem> researchQueue = new Queue<UpgradeItem>();
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
     bool day = true;
