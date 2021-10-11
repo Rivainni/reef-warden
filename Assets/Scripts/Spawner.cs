@@ -15,7 +15,9 @@ public class Spawner : MonoBehaviour
 
     // PLAYER: Buoy, Ranger Station, Basketball Court, Rec Room, Radio, AIS, Radar, IGSAT, Souvenir Stand, 3rd Party Marketing Agencies
     [SerializeField] string[] structureTypes;
+    [SerializeField] string[] upgradeTypes;
     [SerializeField] HexStructure[] structurePrefabs;
+    [SerializeField] Upgrade[] upgradePrefabs;
 
     public void SpawnUnit(HexCell cell, string unitType)
     {
@@ -32,6 +34,15 @@ public class Spawner : MonoBehaviour
         if (cell && !cell.Structure)
         {
             hexGrid.AddStructure(Instantiate(structurePrefabs[structureIndex]), cell, Random.Range(0f, 360f), structureType);
+        }
+    }
+
+    public void SpawnUpgrade(HexCell cell, string upgradeType, int constructionTime, int researchCost, int buildCost)
+    {
+        int upgradeIndex = System.Array.IndexOf(upgradeTypes, upgradeType);
+        if (cell && !cell.Structure)
+        {
+            hexGrid.AddUpgrade(Instantiate(upgradePrefabs[upgradeIndex]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost);
         }
     }
 

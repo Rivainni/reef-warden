@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 
 public class MainUI : MonoBehaviour
@@ -262,35 +263,63 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    void AddUpgrade(string upgrade, GameObject remove)
+    void BuildUpgrade(string upgrade, int constructionTime, int researchCost, int buildCost, GameObject remove)
     {
-        if (currentState.CheckUpgrade(upgrade) != null)
-        {
-            spawner.SpawnStructure(currentCell, upgrade);
-            currentState.QueueUpgrade(upgrade, 1);
-        }
+        currentState.QueueUpgrade(upgrade, constructionTime);
         Destroy(remove);
+        currentState.AdjustMoney(-buildCost);
+        currentState.AddManpower(-1);
+        UpdateUIElements();
+        StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost));
     }
 
-    void UpgradeText(string upgradeType, Button button, GameObject toRemove)
+    IEnumerator DelayedBuild(string upgrade, int constructionTime, int researchCost, int buildCost)
+    {
+        yield return new WaitUntil(() => currentState.CheckUpgrade(upgrade) == 0);
+        spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost);
+        currentState.AddManpower(1);
+        UpdateUIElements();
+    }
+
+    void UpgradeText(string upgrade, Button button, GameObject toRemove)
     {
         GameObject toReplace = button.transform.parent.parent.GetChild(1).GetChild(0).gameObject;
-        if (upgradeType == "Radar")
+        int constructionTime = 0;
+        int researchCost = 0;
+        int buildCost = 0;
+
+        if (upgrade == "Radar")
         {
             toReplace.GetComponent<Text>().text = "When triggered, it gives the player map-wide visibility for one turn. May be used again after 5 turns.";
-            toReplace.GetComponent<Text>().text += "\n\nCosts(x).Requires(y) RP.Has upkeep of(z) per turn.";
-            toReplace.GetComponent<Text>().text += "\nRequires(x) turns and(y) manpower to construct.";
+            toReplace.GetComponent<Text>().text += "\n\nCosts 2000. Requires 250 RP. Has upkeep of 200 per turn.";
+            toReplace.GetComponent<Text>().text += "\nRequires 1 turn and 1 manpower to construct.";
+
+            constructionTime = 1;
+            researchCost = 250;
+            buildCost = 2000;
         }
-        else if (upgradeType == "AIS")
+        else if (upgrade == "AIS")
         {
             toReplace.GetComponent<Text>().text = "Lets the player know the information of the vessels in the area by Identifying their purpose.";
-            toReplace.GetComponent<Text>().text += "\n\nCosts (x). Requires (y) RP. Has upkeep of (z) per turn. ";
+            toReplace.GetComponent<Text>().text += "\n\nCosts 2500. Requires 250 RP. Has upkeep of 250 per turn. ";
+
+            constructionTime = 1;
+            researchCost = 250;
+            buildCost = 2500;
         }
 
         GameObject generic = Instantiate(buttonPrefab, toReplace.transform.parent.position, Quaternion.identity, toReplace.transform.parent);
         Button currentButton = generic.GetComponent<Button>();
-        currentButton.GetComponentInChildren<Text>().text = "BUILD";
-        currentButton.onClick.AddListener(() => AddUpgrade(upgradeType, toRemove));
+
+        if (currentState.CheckUpgrade(upgrade) > 0)
+        {
+            currentButton.GetComponentInChildren<Text>().text = "IN QUEUE (" + currentState.CheckUpgrade(upgrade) + " TURNS)";
+        }
+        else
+        {
+            currentButton.GetComponentInChildren<Text>().text = "BUILD";
+            currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, toRemove));
+        }
     }
 
     void UpdateUIElements()

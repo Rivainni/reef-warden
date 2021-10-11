@@ -8,6 +8,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int money;
     [SerializeField] int research;
     [SerializeField] int manpower;
+    [SerializeField] int manpowerCap;
     [SerializeField] int tourists;
     [SerializeField] float morale;
     [SerializeField] float security;
@@ -25,11 +26,22 @@ public class PlayerState : ScriptableObject
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
-    [SerializeField] List<HexStructure> currentUpgrades;
-    [SerializeField] List<string> upgradeQueue;
+    [SerializeField] Queue<UpgradeItem> upgradeQueue = new Queue<UpgradeItem>();
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
     bool day = true;
+
+    struct UpgradeItem
+    {
+        public UpgradeItem(string name, int turns)
+        {
+            this.name = name;
+            this.turns = turns;
+        }
+
+        public string name { get; set; }
+        public int turns { get; set; }
+    }
 
 
     public int GetMoney()
@@ -77,11 +89,6 @@ public class PlayerState : ScriptableObject
         return possibleActions;
     }
 
-    public List<string> GetQueue()
-    {
-        return upgradeQueue;
-    }
-
     public int GetIncome()
     {
         return income;
@@ -90,6 +97,16 @@ public class PlayerState : ScriptableObject
     public void SetIncome(int replacement)
     {
         income = replacement;
+    }
+
+    public void AdjustIncome(int factor)
+    {
+        income += factor;
+    }
+
+    public void AdjustMoney(int factor)
+    {
+        money += factor;
     }
 
     public void AddResearch(int RP)
@@ -214,6 +231,7 @@ public class PlayerState : ScriptableObject
         money = 10000;
         research = 250;
         manpower = 6;
+        manpowerCap = 6;
         tourists = 0;
         morale = 50;
         security = 50;
@@ -227,7 +245,6 @@ public class PlayerState : ScriptableObject
         clamCD = 0;
         turtleCD = 0;
         researchCD = 0;
-        currentUpgrades = new List<HexStructure>();
         day = true;
     }
 
@@ -246,33 +263,38 @@ public class PlayerState : ScriptableObject
             day = true;
         }
 
-
+        UpdateUpgradeQueue();
     }
 
     public void QueueUpgrade(string upgradeType, int constructionTime)
     {
-        upgradeQueue.Add(upgradeType + ", " + constructionTime);
+        upgradeQueue.Enqueue(new UpgradeItem(upgradeType, constructionTime));
     }
 
     void UpdateUpgradeQueue()
     {
-        foreach (string item in upgradeQueue)
+        UpgradeItem current = upgradeQueue.Peek();
+
+        current.turns -= 1;
+        if (current.turns <= 0)
         {
-            int update = item[item.Length - 1];
-            update--;
+            upgradeQueue.Dequeue();
         }
     }
 
-    public string CheckUpgrade(string upgradeType)
+    public int CheckUpgrade(string upgradeType)
     {
-        foreach (string item in upgradeQueue)
+        if (upgradeQueue.Count > 0)
         {
-            if (item.Contains(upgradeType))
+            foreach (UpgradeItem item in upgradeQueue)
             {
-                return item;
+                if (item.name.Contains(upgradeType))
+                {
+                    return item.turns;
+                }
             }
         }
 
-        return null;
+        return 0;
     }
 }

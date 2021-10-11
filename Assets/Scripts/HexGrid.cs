@@ -359,6 +359,19 @@ public class HexGrid : MonoBehaviour
         structure.StructureType = structureType;
     }
 
+    public void AddUpgrade(Upgrade upgrade, HexCell location, float orientation, string upgradeType, int constructionTime, int researchCost, int constructionCost)
+    {
+        structures.Add(upgrade);
+        upgrade.transform.SetParent(transform, false);
+        upgrade.Location = location;
+        upgrade.Orientation = orientation;
+        upgrade.UpgradeType = upgradeType;
+
+        upgrade.SetBuildTime(constructionTime);
+        upgrade.SetResearchCost(researchCost);
+        upgrade.SetBuildCost(constructionCost);
+    }
+
     public void ResetPoints()
     {
         for (int i = 0; i < units.Count; i++)
