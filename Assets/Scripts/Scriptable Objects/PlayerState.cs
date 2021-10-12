@@ -35,7 +35,6 @@ public class PlayerState : ScriptableObject
     const float securityLambda = 0.04f;
     bool day = true;
     bool radarActive = false;
-    bool radarAvailable = false;
 
     struct UpgradeItem
     {
@@ -397,7 +396,6 @@ public class PlayerState : ScriptableObject
     public void ActivateRadar()
     {
         radarActive = true;
-        radarAvailable = false;
         ResetCD("RADAR");
     }
 
