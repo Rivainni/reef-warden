@@ -5,10 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "PlayerState")]
 public class PlayerState : ScriptableObject
 {
+    [SerializeField] string username;
     [SerializeField] int money;
     [SerializeField] int research;
     [SerializeField] int manpower;
-    [SerializeField] int manpowerCap;
     [SerializeField] int tourists;
     [SerializeField] float morale;
     [SerializeField] float security;
@@ -46,6 +46,16 @@ public class PlayerState : ScriptableObject
 
         public string name { get; set; }
         public int turns { get; set; }
+    }
+
+    public string GetName()
+    {
+        return username;
+    }
+
+    public void SetName(string newName)
+    {
+        username = newName;
     }
 
     public int GetMoney()
@@ -244,7 +254,6 @@ public class PlayerState : ScriptableObject
         money = 10000;
         research = 250;
         manpower = 6;
-        manpowerCap = 6;
         tourists = 0;
         morale = 50;
         security = 50;
