@@ -207,11 +207,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2078076715}
         m_TargetAssemblyTypeName: MainUI, Assembly-CSharp
-        m_MethodName: Research
-        m_Mode: 2
+        m_MethodName: UseRadar
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 89648778}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2494,3 +2494,4 @@ MonoBehaviour:
   textPrefab: {fileID: 6520570075929674871, guid: 28ccfa1843a66e34d8240e47d2e607fd, type: 3}
   researchPrefab: {fileID: 3570511537018259731, guid: aba1c7afa2aef234e89c588d24ee4473, type: 3}
   valuesContainer: {fileID: 184876450}
+  radarButton: {fileID: 89648778}

@@ -23,6 +23,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int clamCD;
     [SerializeField] int turtleCD;
     [SerializeField] int researchCD;
+    [SerializeField] int radarCD;
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
@@ -33,6 +34,8 @@ public class PlayerState : ScriptableObject
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
     bool day = true;
+    bool radarActive = false;
+    bool radarAvailable = false;
 
     struct UpgradeItem
     {
@@ -179,6 +182,10 @@ public class PlayerState : ScriptableObject
         {
             return researchCD;
         }
+        else if (type.Equals("RADAR"))
+        {
+            return radarCD;
+        }
         else
         {
             return 0;
@@ -194,6 +201,7 @@ public class PlayerState : ScriptableObject
         clamCD = (clamCD > 0) ? clamCD -= 1 : clamCD;
         turtleCD = (turtleCD > 0) ? turtleCD -= 1 : turtleCD;
         researchCD = (researchCD > 0) ? researchCD -= 1 : researchCD;
+        radarCD = (radarCD > 0) ? radarCD -= 1 : radarCD;
     }
 
     public void ResetCD(string type)
@@ -225,6 +233,10 @@ public class PlayerState : ScriptableObject
         else if (type.Equals("R"))
         {
             researchCD = 10;
+        }
+        else if (type.Equals("RADAR"))
+        {
+            radarCD = 5;
         }
     }
 
@@ -375,5 +387,22 @@ public class PlayerState : ScriptableObject
     public void UnlockUpgrade(string name)
     {
         unlockedUpgrades.Add(name);
+    }
+
+    public bool GetRadarState()
+    {
+        return radarActive;
+    }
+
+    public void ActivateRadar()
+    {
+        radarActive = true;
+        radarAvailable = false;
+        ResetCD("RADAR");
+    }
+
+    public void DeactivateRadar()
+    {
+        radarActive = false;
     }
 }

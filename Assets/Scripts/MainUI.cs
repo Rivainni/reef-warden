@@ -22,6 +22,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject textPrefab;
     [SerializeField] GameObject researchPrefab;
     [SerializeField] GameObject valuesContainer;
+    [SerializeField] Button radarButton;
 
     void Start()
     {
@@ -29,8 +30,6 @@ public class MainUI : MonoBehaviour
         currentState.Clean();
         currentState.UpdateHealth();
         UpdateUIElements();
-        spawner.RandomSpawn("Fishing Boat");
-        spawner.RandomSpawn("Tourist Boat");
     }
 
     void Update()
@@ -327,6 +326,10 @@ public class MainUI : MonoBehaviour
         yield return new WaitUntil(() => currentState.CheckUpgrade(upgrade) == 0);
         spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost);
         currentState.AddManpower(1);
+        if (upgrade == "RADAR")
+        {
+            radarButton.interactable = true;
+        }
         UpdateUIElements();
     }
 
@@ -459,6 +462,21 @@ public class MainUI : MonoBehaviour
 
     public void UseRadar()
     {
+        currentState.ActivateRadar();
+        radarButton.interactable = false;
+        int startTurn = currentState.GetTurn();
+        StartCoroutine(OffRadar(startTurn));
+    }
 
+    IEnumerator OffRadar(int startTurn)
+    {
+        yield return new WaitUntil(() => currentState.GetTurn() > startTurn);
+        currentState.DeactivateRadar();
+        StartCoroutine(UnlockRadar());
+    }
+    IEnumerator UnlockRadar()
+    {
+        yield return new WaitUntil(() => currentState.FetchCD("RADAR") == 0);
+        radarButton.interactable = true;
     }
 }
