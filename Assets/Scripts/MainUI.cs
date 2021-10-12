@@ -15,6 +15,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] PlayerState initState;
 
     PlayerState currentState;
+    [SerializeField] MinigameData minigameData;
     [SerializeField] GameObject panelPrefab;
     [SerializeField] GameObject doublePanelPrefab;
     [SerializeField] GameObject buttonPrefab;
@@ -28,6 +29,8 @@ public class MainUI : MonoBehaviour
         currentState.Clean();
         currentState.UpdateHealth();
         UpdateUIElements();
+        spawner.RandomSpawn("Fishing Boat");
+        spawner.RandomSpawn("Tourist Boat");
     }
 
     void Update()
@@ -121,6 +124,8 @@ public class MainUI : MonoBehaviour
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         HexCell tempA = null;
         HexCell tempB = null;
+        HexUnit targetA = null;
+        HexUnit targetB = null;
 
         List<string> contextMenuContent = new List<string>();
 
@@ -145,11 +150,13 @@ public class MainUI : MonoBehaviour
                         {
                             contextMenuContent.Add("Catch Fisherman");
                             tempA = toCheckCell;
+                            targetA = toCheckCell.Unit;
                         }
                         else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
                         {
                             contextMenuContent.Add("Inspect Tourist");
                             tempB = toCheckCell;
+                            targetB = toCheckCell.Unit;
                         }
                     }
                 }
@@ -175,11 +182,11 @@ public class MainUI : MonoBehaviour
                 }
                 else if (item == "Catch Fisherman")
                 {
-                    currentButton.onClick.AddListener(() => CatchFisherman(tempA, contextMenu, cell.Unit));
+                    currentButton.onClick.AddListener(() => CatchFisherman(tempA, contextMenu, targetA));
                 }
                 else if (item == "Inspect Tourist")
                 {
-                    currentButton.onClick.AddListener(() => InspectTourist(tempB, contextMenu, cell.Unit));
+                    currentButton.onClick.AddListener(() => InspectTourist(tempB, contextMenu, targetB));
                 }
             }
         }
@@ -212,13 +219,52 @@ public class MainUI : MonoBehaviour
 
     void InspectTourist(HexCell destination, GameObject remove, HexUnit target)
     {
-        bool success = true;
-        // mini game
-        if (success)
+        InspectTouristGame(target);
+        AfterAction(remove);
+    }
+
+    void InspectTouristGame(HexUnit target)
+    {
+        Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
+        GameObject gamePanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
+
+        for (int i = 0; i < 2; i++)
+        {
+            GameObject toShow = Instantiate(textPrefab, gamePanel.transform.GetChild(i).position, Quaternion.identity, gamePanel.transform.GetChild(i));
+            Text matchText = toShow.GetComponent<Text>();
+            matchText.text = minigameData.GenerateSet(0, 0);
+        }
+
+        // determine if value should be true or not
+        bool correctValue = false;
+
+        GameObject approvePanel = Instantiate(panelPrefab, gamePanel.transform.position, Quaternion.identity, gamePanel.transform);
+        GameObject buttonA = Instantiate(buttonPrefab, approvePanel.transform.position, Quaternion.identity, approvePanel.transform);
+        GameObject buttonB = Instantiate(buttonPrefab, approvePanel.transform.position, Quaternion.identity, approvePanel.transform);
+        Button actualButtonA = buttonA.GetComponent<Button>();
+        Button actualButtonB = buttonB.GetComponent<Button>();
+
+        actualButtonA.GetComponentInChildren<Text>().text = "Approve";
+        actualButtonB.GetComponentInChildren<Text>().text = "Disapprove";
+
+        actualButtonA.onClick.AddListener(() => InspectTouristGameApprove(correctValue, gamePanel));
+        actualButtonB.onClick.AddListener(() => InspectTouristGameDisapprove(correctValue, target, gamePanel));
+    }
+
+    void InspectTouristGameApprove(bool correctValue, GameObject toRemove)
+    {
+        Destroy(toRemove);
+    }
+
+    void InspectTouristGameDisapprove(bool correctValue, HexUnit target, GameObject toRemove)
+    {
+        spawner.DestroyUnit(target);
+        if (!correctValue)
         {
             currentState.AddSecurity(5);
+            UpdateUIElements();
         }
-        AfterAction(remove);
+        Destroy(toRemove);
     }
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
@@ -409,5 +455,10 @@ public class MainUI : MonoBehaviour
     void Close(GameObject toRemove)
     {
         Destroy(toRemove);
+    }
+
+    public void UseRadar()
+    {
+
     }
 }

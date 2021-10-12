@@ -438,4 +438,9 @@ public class HexGrid : MonoBehaviour
         }
         return null;
     }
+
+    public HexCell[] GetCells()
+    {
+        return cells;
+    }
 }

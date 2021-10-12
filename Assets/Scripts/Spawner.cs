@@ -61,6 +61,25 @@ public class Spawner : MonoBehaviour
         return upgradeTypes;
     }
 
+    // actually spawning other types
+    public void RandomSpawn(string unitType)
+    {
+        int random = Random.Range(0, 624);
+        HexCell cell = hexGrid.GetCells()[random];
+
+        while (cell.IsImpassable)
+        {
+            random = Random.Range(0, 624);
+            cell = hexGrid.GetCells()[random];
+        }
+
+        int unitIndex = System.Array.IndexOf(unitTypes, unitType);
+        if (cell && !cell.Unit)
+        {
+            hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
+        }
+    }
+
     HexCell GetCellUnderCursor()
     {
         return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));

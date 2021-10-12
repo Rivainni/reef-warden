@@ -27,6 +27,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
     [SerializeField] List<string> unlockedUpgrades;
+    [SerializeField] List<string> builtUpgrades;
     [SerializeField] Queue<UpgradeItem> upgradeQueue = new Queue<UpgradeItem>();
     [SerializeField] Queue<UpgradeItem> researchQueue = new Queue<UpgradeItem>();
     const float moraleLambda = 0.04f;
@@ -307,6 +308,23 @@ public class PlayerState : ScriptableObject
         }
 
         return 0;
+    }
+
+    public bool CheckBuilt(string upgradeType)
+    {
+        foreach (string item in builtUpgrades)
+        {
+            if (item == upgradeType)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public void AddUpgrade(string upgradeType)
+    {
+        builtUpgrades.Add(upgradeType);
     }
 
     public void QueueResearch(string name, int researchTime)
