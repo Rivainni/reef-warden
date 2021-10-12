@@ -552,9 +552,8 @@ MonoBehaviour:
   structureTypes:
   - Ranger Station
   - Buoy
-  - Radar
   upgradeTypes:
-  - Radar
+  - RADAR
   structurePrefabs:
   - {fileID: -7004922079092598185, guid: c5e298bea1d79974ab29c48130044abf, type: 3}
   - {fileID: 4681984382541474508, guid: b1fb8dc7bedb1364fb8cc7f77b0c48e1, type: 3}

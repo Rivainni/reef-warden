@@ -26,6 +26,7 @@ public class PlayerState : ScriptableObject
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
+    [SerializeField] List<string> unlockedUpgrades;
     [SerializeField] Queue<UpgradeItem> upgradeQueue = new Queue<UpgradeItem>();
     [SerializeField] Queue<UpgradeItem> researchQueue = new Queue<UpgradeItem>();
     const float moraleLambda = 0.04f;
@@ -43,7 +44,6 @@ public class PlayerState : ScriptableObject
         public string name { get; set; }
         public int turns { get; set; }
     }
-
 
     public int GetMoney()
     {
@@ -247,6 +247,7 @@ public class PlayerState : ScriptableObject
         turtleCD = 0;
         researchCD = 0;
         day = true;
+        unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };
     }
 
     public void NextTurn()
@@ -264,7 +265,15 @@ public class PlayerState : ScriptableObject
             day = true;
         }
 
-        UpdateUpgradeQueue();
+        if (upgradeQueue.Count > 0)
+        {
+            UpdateUpgradeQueue();
+        }
+        if (researchQueue.Count > 0)
+        {
+            UpdateResearchQueue();
+        }
+
         ReduceCD();
     }
 
@@ -298,5 +307,55 @@ public class PlayerState : ScriptableObject
         }
 
         return 0;
+    }
+
+    public void QueueResearch(string name, int researchTime)
+    {
+        researchQueue.Enqueue(new UpgradeItem(name, researchTime));
+    }
+
+    void UpdateResearchQueue()
+    {
+        UpgradeItem current = researchQueue.Peek();
+
+        current.turns -= 1;
+        if (current.turns <= 0)
+        {
+            researchQueue.Dequeue();
+        }
+    }
+
+    public int CheckResearchQueue(string name)
+    {
+        if (researchQueue.Count > 0)
+        {
+            foreach (UpgradeItem item in researchQueue)
+            {
+                if (item.name.Contains(name))
+                {
+                    return item.turns;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    public bool CheckResearched(string name)
+    {
+        foreach (string item in unlockedUpgrades)
+        {
+            if (item == name)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void UnlockUpgrade(string name)
+    {
+        unlockedUpgrades.Add(name);
     }
 }

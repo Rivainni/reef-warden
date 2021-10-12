@@ -15,10 +15,11 @@ MonoBehaviour:
   money: 10000
   research: 250
   manpower: 6
+  manpowerCap: 6
   tourists: 0
   morale: 50
   security: 50
-  reefHealth: 100
+  trueReefHealth: 100
   turn: 1
   checkHealthCD1: 0
   checkHealthCD2: 0
@@ -29,3 +30,7 @@ MonoBehaviour:
   researchCD: 0
   income: 10000
   possibleActions: []
+  unlockedUpgrades:
+  - Basketball Court
+  - Radio
+  - Service Boat

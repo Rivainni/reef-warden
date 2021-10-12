@@ -236,12 +236,9 @@ public class MainUI : MonoBehaviour
         // clear the context menu
         List<string> contextMenuContent = new List<string>();
 
-        foreach (string item in spawner.GetStructureTypes())
+        foreach (string item in spawner.GetUpgradeTypes())
         {
-            if (item != "Ranger Station" && item != "Buoy")
-            {
-                contextMenuContent.Add(item);
-            }
+            contextMenuContent.Add(item);
         }
         if (contextMenuContent.Count > 0)
         {
@@ -294,7 +291,7 @@ public class MainUI : MonoBehaviour
         int researchCost = 0;
         int buildCost = 0;
 
-        if (upgrade == "Radar")
+        if (upgrade == "RADAR")
         {
             toReplace.GetComponent<Text>().text = "When triggered, it gives the player map-wide visibility for one turn. May be used again after 5 turns.";
             toReplace.GetComponent<Text>().text += "\n\nCosts 2000. Requires 250 RP. Has upkeep of 200 per turn.";
@@ -320,6 +317,11 @@ public class MainUI : MonoBehaviour
         if (currentState.CheckUpgrade(upgrade) > 0)
         {
             currentButton.GetComponentInChildren<Text>().text = "IN QUEUE (" + currentState.CheckUpgrade(upgrade) + " TURNS)";
+        }
+        else if (!currentState.CheckResearched(upgrade) || buildCost > currentState.GetMoney())
+        {
+            currentButton.GetComponentInChildren<Text>().text = "CLOSE";
+            currentButton.onClick.AddListener(() => Close(toRemove));
         }
         else
         {
@@ -356,5 +358,56 @@ public class MainUI : MonoBehaviour
     {
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject researchPanel = Instantiate(researchPrefab, spawnAt, Quaternion.identity, transform);
+
+        Button[] buttons = researchPanel.GetComponentsInChildren<Button>(true);
+
+        foreach (Button button in buttons)
+        {
+            if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text))
+            {
+                button.interactable = false;
+            }
+            else
+            {
+                button.interactable = true;
+                button.onClick.AddListener(() => ResearchUpgrade(button));
+            }
+        }
+    }
+
+    void ResearchUpgrade(Button clicked)
+    {
+        string name = clicked.GetComponentInChildren<Text>().text;
+        GameObject window = clicked.transform.parent.parent.gameObject;
+
+        int researchTime = 0;
+        int researchCost = 0;
+
+        if (name == "RADAR")
+        {
+            researchTime = 1;
+            researchCost = 250;
+        }
+
+        if (currentState.GetResearch() >= researchCost)
+        {
+            currentState.QueueResearch(name, researchTime);
+            Destroy(window);
+            currentState.AddResearch(-researchCost);
+            UpdateUIElements();
+            StartCoroutine(DelayedResearch(name));
+        }
+    }
+
+    IEnumerator DelayedResearch(string name)
+    {
+        yield return new WaitUntil(() => currentState.CheckResearchQueue(name) == 0);
+        currentState.UnlockUpgrade(name);
+        UpdateUIElements();
+    }
+
+    void Close(GameObject toRemove)
+    {
+        Destroy(toRemove);
     }
 }

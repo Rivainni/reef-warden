@@ -56,6 +56,11 @@ public class Spawner : MonoBehaviour
         return structureTypes;
     }
 
+    public string[] GetUpgradeTypes()
+    {
+        return upgradeTypes;
+    }
+
     HexCell GetCellUnderCursor()
     {
         return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
