@@ -66,6 +66,7 @@ public class StoryManager : MonoBehaviour
                 GameObject confirm = Instantiate(buttonPrefab, panel.transform.position, Quaternion.identity, panel.transform);
 
                 Button confirmButton = confirm.GetComponent<Button>();
+                confirmButton.GetComponentInChildren<Text>().text = "CONFIRM";
 
                 confirmButton.onClick.AddListener(() => SetName(input.GetComponent<InputField>(), panel));
             }
@@ -214,6 +215,7 @@ public class StoryManager : MonoBehaviour
     {
         initState.SetName(input.text);
         Destroy(toRemove);
+        PrintDialogue();
     }
 
     void SwitchSprites(string character, int counter)
