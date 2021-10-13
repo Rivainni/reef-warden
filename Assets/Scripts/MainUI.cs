@@ -10,6 +10,7 @@ public class MainUI : MonoBehaviour
     public Spawner spawner;
 
     HexCell currentCell;
+    HexCell playerLocation;
     HexUnit selectedUnit;
 
     [SerializeField] PlayerState initState;
@@ -28,7 +29,6 @@ public class MainUI : MonoBehaviour
     {
         currentState = initState;
         currentState.Clean();
-        currentState.UpdateHealth();
         UpdateUIElements();
     }
 
@@ -201,8 +201,9 @@ public class MainUI : MonoBehaviour
     void Patrol(HexCell destination, GameObject remove)
     {
         float factor = destination.Distance * 0.5f;
+        playerLocation = destination;
+        Debug.Log("You are at " + playerLocation.coordinates.ToString());
         currentState.AddSecurity(factor);
-        Debug.Log(currentState.GetSecurity());
         AfterAction(remove);
     }
 
@@ -213,12 +214,16 @@ public class MainUI : MonoBehaviour
         currentState.ResetCD("CH1");
         currentState.ResetCD("CH2");
         currentState.ResetCD("CH3");
+        playerLocation = destination;
+        Debug.Log("You are at " + playerLocation.coordinates.ToString());
         AfterAction(remove);
     }
 
     void InspectTourist(HexCell destination, GameObject remove, HexUnit target)
     {
         InspectTouristGame(target);
+        playerLocation = destination;
+        Debug.Log("You are at " + playerLocation.coordinates.ToString());
         AfterAction(remove);
     }
 
@@ -231,7 +236,7 @@ public class MainUI : MonoBehaviour
         {
             GameObject toShow = Instantiate(textPrefab, gamePanel.transform.GetChild(i).position, Quaternion.identity, gamePanel.transform.GetChild(i));
             Text matchText = toShow.GetComponent<Text>();
-            matchText.text = minigameData.GenerateSet(0, 0);
+            matchText.text = minigameData.GenerateSet(0, i);
         }
 
         // determine if value should be true or not
@@ -253,6 +258,7 @@ public class MainUI : MonoBehaviour
     void InspectTouristGameApprove(bool correctValue, GameObject toRemove)
     {
         Destroy(toRemove);
+        currentState.AddTouristScore();
     }
 
     void InspectTouristGameDisapprove(bool correctValue, HexUnit target, GameObject toRemove)
@@ -264,6 +270,8 @@ public class MainUI : MonoBehaviour
             UpdateUIElements();
         }
         Destroy(toRemove);
+        currentState.AddTouristScore();
+        currentState.AddTourists(-1);
     }
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
@@ -271,6 +279,7 @@ public class MainUI : MonoBehaviour
         spawner.DestroyUnit(target);
         currentState.AddSecurity(2);
         AfterAction(remove);
+        currentState.AddCatchScore();
     }
 
     void DoUpgrade()
@@ -330,6 +339,7 @@ public class MainUI : MonoBehaviour
         {
             radarButton.interactable = true;
         }
+        currentState.AddUpgrade(upgrade);
         UpdateUIElements();
     }
 
@@ -379,7 +389,7 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    void UpdateUIElements()
+    public void UpdateUIElements()
     {
         UpdateText[] toUpdate = GetComponentsInChildren<UpdateText>();
         foreach (UpdateText item in toUpdate)
@@ -478,5 +488,15 @@ public class MainUI : MonoBehaviour
     {
         yield return new WaitUntil(() => currentState.FetchCD("RADAR") == 0);
         radarButton.interactable = true;
+    }
+
+    public Spawner GetSpawner()
+    {
+        return spawner;
+    }
+
+    public HexCell GetPlayerLocation()
+    {
+        return playerLocation;
     }
 }

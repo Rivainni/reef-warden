@@ -5,19 +5,17 @@ using UnityEngine;
 public class StoryElement : MonoBehaviour
 {
     [SerializeField] TextAsset TextFileAsset; // your imported text file for your NPC
-    [SerializeField] bool cutscene;
-    [SerializeField] GameObject indicator;
     Queue<string> dialogue = new Queue<string>(); // stores the dialogue (Great Performance!)
-    float waitTime = 0.5f; // lag time for advancing dialogue so you can actually read it
-    float nextTime = 0f; // used with waitTime to create a timer system
-    bool dialogueTiggered;
 
     void Start()
     {
-        if (cutscene)
-        {
-            TriggerDialogue();
-        }
+        StartCoroutine(DelayedStart());
+    }
+
+    IEnumerator DelayedStart()
+    {
+        yield return new WaitForSeconds(1.0f);
+        TriggerDialogue();
     }
 
     /* Called when you want to start dialogue */

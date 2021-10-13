@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class StoryManager : MonoBehaviour
 {
-    [SerializeField] GameObject mainUI;
+    [SerializeField] GameObject storyUI;
+    [SerializeField] MainUI mainUI;
     [SerializeField] Text storyText;
     [SerializeField] Text characterName;
     [SerializeField] GameObject characterSprites;
@@ -15,7 +16,6 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject inputPrefab;
     [SerializeField] GameObject panelPrefab;
     [SerializeField] GameObject buttonPrefab;
-    [SerializeField] bool storyTime = true;
     [SerializeField] bool cutscene = true;
     [SerializeField] PlayerState initState;
     Queue<string> inputStream = new Queue<string>();
@@ -25,14 +25,14 @@ public class StoryManager : MonoBehaviour
     {
         if (!cutscene)
         {
-            mainUI.SetActive(false);
+            storyUI.SetActive(false);
         }
         secondarySprite.enabled = false;
     }
 
     public void StartDialogue(Queue<string> dialogue)
     {
-        mainUI.SetActive(true); // open the dialogue box
+        storyUI.SetActive(true); // open the dialogue box
         // isOpen = true;
         inputStream = dialogue; // store the dialogue from dialogue trigger
         PrintDialogue(); // Prints out the first line of dialogue
@@ -65,7 +65,7 @@ public class StoryManager : MonoBehaviour
             if (action == "EnterName")
             {
                 Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
-                GameObject panel = Instantiate(panelPrefab, spawnAt, Quaternion.identity, mainUI.transform);
+                GameObject panel = Instantiate(panelPrefab, spawnAt, Quaternion.identity, storyUI.transform);
                 GameObject input = Instantiate(inputPrefab, panel.transform.position, Quaternion.identity, panel.transform);
                 GameObject confirm = Instantiate(buttonPrefab, panel.transform.position, Quaternion.identity, panel.transform);
 
@@ -82,6 +82,104 @@ public class StoryManager : MonoBehaviour
             else if (action == "ExitCharacter")
             {
                 secondarySprite.enabled = false;
+            }
+
+            // TUTORIAL STUFF
+            else if (action == "Patrol")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetSecurity() > 50);
+                    Debug.Log("Hi!");
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "CheckReefHealth")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "InspectTourist1")
+            {
+                storyUI.SetActive(false);
+                mainUI.GetSpawner().RandomSpawn("Tourist Boat");
+                mainUI.GetPlayerState().AddTourists(1);
+                mainUI.UpdateUIElements();
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitForSeconds(15.0f);
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "InspectTourist2")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "MoveBack")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "Research")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => mainUI.GetPlayerState().CheckResearched("RADAR"));
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "Build")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "UseRADAR")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetRadarState());
+                    storyUI.SetActive(true);
+                }
+            }
+            else if (action == "CatchFisherman")
+            {
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                mainUI.GetSpawner().RandomSpawn("Fishing Boat");
+                mainUI.GetPlayerState().AddFisherman(1);
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
+                    storyUI.SetActive(true);
+                }
             }
             PrintDialogue();
         }
@@ -112,7 +210,7 @@ public class StoryManager : MonoBehaviour
         storyText.text = "";
         characterName.text = "";
         inputStream.Clear();
-        mainUI.SetActive(false);
+        storyUI.SetActive(false);
         // isOpen = false;
         if (cutscene)
         {

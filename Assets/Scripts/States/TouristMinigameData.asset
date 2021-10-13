@@ -16,5 +16,7 @@ MonoBehaviour:
   - M/V Pearl of the Orient
   shipID:
   - NCC-1701
+  - NCC-1701-A
   crew:
   - 24
+  - 20

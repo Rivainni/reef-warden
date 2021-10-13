@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ff1478f94882c498ecb045ff8c18a0, type: 3}
   m_Name: initPlayer
   m_EditorClassIdentifier: 
-  money: 10000
+  username: 
+  money: 60000
   research: 250
   manpower: 6
-  manpowerCap: 6
   tourists: 0
-  morale: 50
-  security: 50
+  fishermen: 0
+  morale: 40.93654
+  security: 56.32907
   trueReefHealth: 100
-  turn: 1
+  turn: 6
   checkHealthCD1: 0
   checkHealthCD2: 0
   checkHealthCD3: 0
@@ -28,9 +29,12 @@ MonoBehaviour:
   clamCD: 0
   turtleCD: 0
   researchCD: 0
+  radarCD: 0
   income: 10000
   possibleActions: []
   unlockedUpgrades:
-  - Basketball Court
-  - Radio
-  - Service Boat
+  - Basketball Court, Radio, Service Boat
+  - RADAR
+  builtUpgrades: []
+  touristsInspected: 1
+  fishermenCaught: 0

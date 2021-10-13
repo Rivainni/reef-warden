@@ -10,6 +10,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int research;
     [SerializeField] int manpower;
     [SerializeField] int tourists;
+    [SerializeField] int fishermen;
     [SerializeField] float morale;
     [SerializeField] float security;
     [SerializeField] float trueReefHealth;
@@ -31,6 +32,8 @@ public class PlayerState : ScriptableObject
     [SerializeField] List<string> builtUpgrades;
     [SerializeField] Queue<UpgradeItem> upgradeQueue = new Queue<UpgradeItem>();
     [SerializeField] Queue<UpgradeItem> researchQueue = new Queue<UpgradeItem>();
+    [SerializeField] int touristsInspected;
+    [SerializeField] int fishermenCaught;
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
     bool day = true;
@@ -160,6 +163,11 @@ public class PlayerState : ScriptableObject
         seenReefHealth = trueReefHealth;
     }
 
+    public bool CheckHealthNeeded()
+    {
+        return !(seenReefHealth == trueReefHealth);
+    }
+
 
     public int FetchCD(string type)
     {
@@ -255,10 +263,11 @@ public class PlayerState : ScriptableObject
         research = 250;
         manpower = 6;
         tourists = 0;
+        fishermen = 0;
         morale = 50;
         security = 50;
         trueReefHealth = 100;
-        seenReefHealth = 100;
+        seenReefHealth = 50;
         turn = 1;
         checkHealthCD1 = 0;
         checkHealthCD2 = 0;
@@ -269,6 +278,10 @@ public class PlayerState : ScriptableObject
         researchCD = 0;
         day = true;
         unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };
+        builtUpgrades.Clear();
+        touristsInspected = 0;
+        fishermenCaught = 0;
+        radarActive = false;
     }
 
     public void NextTurn()
@@ -294,7 +307,10 @@ public class PlayerState : ScriptableObject
         {
             UpdateResearchQueue();
         }
-
+        if (fishermen > 0)
+        {
+            trueReefHealth -= fishermen * 2;
+        }
         ReduceCD();
     }
 
@@ -411,5 +427,30 @@ public class PlayerState : ScriptableObject
     public void DeactivateRadar()
     {
         radarActive = false;
+    }
+
+    public void AddTouristScore()
+    {
+        touristsInspected++;
+    }
+
+    public void AddCatchScore()
+    {
+        fishermenCaught++;
+    }
+
+    public void AddFisherman(int count)
+    {
+        fishermen += count;
+    }
+
+    public int GetTouristScore()
+    {
+        return touristsInspected;
+    }
+
+    public int GetCatchScore()
+    {
+        return fishermenCaught;
     }
 }
