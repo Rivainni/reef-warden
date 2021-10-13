@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a731442f29d4d1e4983747b1c0700532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  storyUI: {fileID: 905662058}
   mainUI: {fileID: 905662058}
   storyText: {fileID: 2144244050}
   characterName: {fileID: 1992736815}
@@ -176,7 +177,6 @@ MonoBehaviour:
   inputPrefab: {fileID: 7207665134829598282, guid: 7d3adb112c59b4d4e95a85dea77a2f61, type: 3}
   panelPrefab: {fileID: 3570511537018259731, guid: afcb14234acda204193094e07159e97b, type: 3}
   buttonPrefab: {fileID: 938404568772974516, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
-  storyTime: 1
   cutscene: 1
   initState: {fileID: 11400000, guid: a429a786ca9053e4ebebb97060993ff9, type: 2}
 --- !u!114 &79575446
@@ -192,8 +192,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: ff55d7a26c3ae4a448929ed8d1dce461, type: 3}
-  cutscene: 1
-  indicator: {fileID: 0}
 --- !u!1 &115944446
 GameObject:
   m_ObjectHideFlags: 0

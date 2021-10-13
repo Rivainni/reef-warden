@@ -9,12 +9,6 @@ public class StoryElement : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(DelayedStart());
-    }
-
-    IEnumerator DelayedStart()
-    {
-        yield return new WaitForSeconds(1.0f);
         TriggerDialogue();
     }
 
@@ -50,10 +44,5 @@ public class StoryElement : MonoBehaviour
             }
         }
         dialogue.Enqueue("EndQueue");
-    }
-
-    public void ButtonTrigger()
-    {
-
     }
 }

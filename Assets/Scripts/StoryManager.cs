@@ -23,10 +23,6 @@ public class StoryManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (!cutscene)
-        {
-            storyUI.SetActive(false);
-        }
         secondarySprite.enabled = false;
     }
 
@@ -76,7 +72,6 @@ public class StoryManager : MonoBehaviour
             else if (action.Contains("EnterCharacter"))
             {
                 string newCharacter = action.Substring(14);
-                Debug.Log(newCharacter);
                 AddSprite(newCharacter);
             }
             else if (action == "ExitCharacter")
@@ -92,7 +87,6 @@ public class StoryManager : MonoBehaviour
                 IEnumerator WaitForPlayer()
                 {
                     yield return new WaitUntil(() => mainUI.GetPlayerState().GetSecurity() > 50);
-                    Debug.Log("Hi!");
                     storyUI.SetActive(true);
                 }
             }
@@ -187,7 +181,6 @@ public class StoryManager : MonoBehaviour
         {
             string current = inputStream.Dequeue();
             int newSprite = int.Parse(current[0].ToString());
-            Debug.Log(newSprite);
             storyText.text = string.Format(current.Substring(2), initState.GetName());
             SwitchSprites(characterName.text, newSprite);
         }
@@ -195,7 +188,6 @@ public class StoryManager : MonoBehaviour
         {
             string current = inputStream.Dequeue();
             int newSprite = int.Parse(current[0].ToString());
-            Debug.Log(newSprite);
             storyText.text = current.Substring(3);
             SwitchSprites(characterName.text, newSprite);
         }
