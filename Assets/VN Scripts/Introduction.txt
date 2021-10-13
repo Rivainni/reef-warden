@@ -3,7 +3,6 @@
 3: Name’s Diana Lopez, what’s yours?
 
 [ACTION=EnterName]
-
 3: Well, hello there {0}, nice to meet you!
 3: I’m the communications specialist here, so most of the time you’ll be hearing from me.
 3: Any announcement, warning or just general information and you’ll bet it comes from me.
