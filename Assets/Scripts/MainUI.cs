@@ -85,6 +85,8 @@ public class MainUI : MonoBehaviour
     {
         grid.ClearPath();
         UpdateCurrentCell();
+        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
 
         if (selectedUnit == currentCell.Unit || !currentCell.Unit)
         {
@@ -326,20 +328,21 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    void BuildUpgrade(string upgrade, int constructionTime, int researchCost, int buildCost, GameObject remove)
+    void BuildUpgrade(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep, GameObject remove)
     {
         currentState.QueueUpgrade(upgrade, constructionTime);
         Destroy(remove);
         currentState.AdjustMoney(-buildCost);
         currentState.AddManpower(-1);
         UpdateUIElements();
-        StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost));
+        StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost, upkeep));
     }
 
-    IEnumerator DelayedBuild(string upgrade, int constructionTime, int researchCost, int buildCost)
+    IEnumerator DelayedBuild(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
         yield return new WaitUntil(() => currentState.CheckUpgrade(upgrade) == 0);
         spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost);
+        currentState.AdjustIncome(-upkeep);
         currentState.AddManpower(1);
         if (upgrade == "RADAR")
         {
@@ -355,6 +358,7 @@ public class MainUI : MonoBehaviour
         int constructionTime = 0;
         int researchCost = 0;
         int buildCost = 0;
+        int upkeep = 0;
 
         if (upgrade == "RADAR")
         {
@@ -365,6 +369,7 @@ public class MainUI : MonoBehaviour
             constructionTime = 1;
             researchCost = 250;
             buildCost = 2000;
+            upkeep = 200;
         }
         else if (upgrade == "AIS")
         {
@@ -374,6 +379,7 @@ public class MainUI : MonoBehaviour
             constructionTime = 1;
             researchCost = 250;
             buildCost = 2500;
+            upkeep = 250;
         }
 
         GameObject generic = Instantiate(buttonPrefab, toReplace.transform.parent.position, Quaternion.identity, toReplace.transform.parent);
@@ -391,7 +397,7 @@ public class MainUI : MonoBehaviour
         else
         {
             currentButton.GetComponentInChildren<Text>().text = "BUILD";
-            currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, toRemove));
+            currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, upkeep, toRemove));
         }
     }
 
