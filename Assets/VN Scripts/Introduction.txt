@@ -1,0 +1,33 @@
+[NAME=???]It’s 9 in the morning, I’m on a boat to an isolated Ranger Station in the middle of the ocean, fresh from the ranger training course.
+[NAME=Diana]3: Hello! You must be the new guy right?
+3: Name’s Diana Lopez, what’s yours?
+
+[ACTION=EnterName]
+3: Well, hello there {0}, nice to meet you!
+3: I’m the communications specialist here, so most of the time you’ll be hearing from me.
+3: Any announcement, warning or just general information and you’ll bet it comes from me.
+3: Now enough about yours truly.
+5: Let’s introduce you to the rest of the team.
+3: Hey! Paulo, come here!
+
+[ACTION=EnterCharacterPaulo]3: This is Paulo, he’s our supervisor, leader guy. He has the most experience out of all of us so if you ever need to depend on someone, he’s the guy to do the job.
+5: Guaranteed it will be done and finished. ehhh, quality of work may vary, but hey, he’s the one who’s most willing to do the hard jobs cause no one else is going to, haha!
+4: He’s also gonna be the one who would tell you and the Management Office if you’re not doing a good job, so watch out for that.
+3: Ok now move over Paulo and make way for our little baby bird.
+
+[ACTION=EnterCharacterCarla]3: The quiet one is Carla.
+3: She’s a bit of an introvert and doesn’t really do the heavy lifting, but she makes up for it with her smarts. She handles the stuff that makes our heads hurt like resource management and species tracking. She’s also our little emotional support teddy bear.
+
+[ACTION=EnterCharacterManuel]3: Next is that tinker over there. He’s Manuel, mostly doing all things related to the wonderful magic of mechanical engineering.
+3: He’s responsible for maintaining and fixing our government-issued stuff, so if you break something, you better hide cause he’s gonna be crabby at you while he fixes it.
+
+[ACTION=EnterCharacterJulia]3: The energetic and rowdy one over there is Julia, she’s the most daring and cheerful of our group, so if you ever need someone to help you be brave about things or to cheer you up, her giddy and quirky personality can help you overcome the …… 
+4: …..constant ……. existential dread …… 
+4: that the unbearable isolation and loneliness ….. from the nature of our work can give.
+4: ……. yaaay…….
+4: ….ehem
+
+[ACTION=EnterCharacterJulio]5: Moving on to our last guy! Which is Julio, the enforcer of rules!
+3: He’s the strict, stick to the rules kind of guy, so it’s safe to assume you won’t forget protocol when he’s around. Honestly though, he’s just misunderstood and he just wants to do things properly, so don’t give him a lot of flak for reminding you of strict protocol whenever.
+3: Ohh he’s also in charge of any interrelational stuff we need to do, so if ever we meet with other foundations or institutions, go to him for any briefing
+EndQueue

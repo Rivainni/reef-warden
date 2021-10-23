@@ -13,7 +13,7 @@ public class HexGrid : MonoBehaviour
     public Color touchedColor = Color.magenta;
     public HexCell water;
     public HexCell land;
-    public UnitSpawner unitSpawner;
+    public Spawner spawner;
     public Text cellLabelPrefab;
     public State initState;
 
@@ -31,6 +31,8 @@ public class HexGrid : MonoBehaviour
     HexCell[] cells;
     List<HexUnit> units = new List<HexUnit>();
     List<HexStructure> structures = new List<HexStructure>();
+    List<HexCell> upgradeCells = new List<HexCell>();
+    HexCell rangerStation;
 
     void Awake()
     {
@@ -38,6 +40,7 @@ public class HexGrid : MonoBehaviour
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
         CreateChunks();
         CreateCells();
+        PopulateUpgradeCells();
     }
 
     void CreateChunks()
@@ -136,11 +139,11 @@ public class HexGrid : MonoBehaviour
         switch (initState.HasInitialUnit(check))
         {
             case 0:
-                unitSpawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
+                spawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
                 Debug.Log("P1 spawned.");
                 break;
             case 1:
-                unitSpawner.SpawnUnit(cell, "Service Boat");
+                spawner.SpawnUnit(cell, "Service Boat");
                 Debug.Log("S spawned.");
                 break;
         }
@@ -148,11 +151,12 @@ public class HexGrid : MonoBehaviour
         switch (initState.HasStructure(check))
         {
             case 0:
-                unitSpawner.SpawnStructure(cell, "Ranger Station");
+                spawner.SpawnStructure(cell, "Ranger Station");
                 Debug.Log("RS spawned.");
+                rangerStation = cell;
                 break;
             case 1:
-                unitSpawner.SpawnStructure(cell, "Buoy");
+                spawner.SpawnStructure(cell, "Buoy");
                 Debug.Log("B spawned.");
                 break;
         }
@@ -355,11 +359,45 @@ public class HexGrid : MonoBehaviour
         structure.StructureType = structureType;
     }
 
+    public void AddUpgrade(Upgrade upgrade, HexCell location, float orientation, string upgradeType, int constructionTime, int researchCost, int constructionCost)
+    {
+        structures.Add(upgrade);
+        upgrade.transform.SetParent(transform, false);
+        upgrade.Location = location;
+        upgrade.Orientation = orientation;
+        upgrade.UpgradeType = upgradeType;
+
+        upgrade.SetBuildTime(constructionTime);
+        upgrade.SetResearchCost(researchCost);
+        upgrade.SetBuildCost(constructionCost);
+    }
+
     public void ResetPoints()
     {
         for (int i = 0; i < units.Count; i++)
         {
             units[i].ResetMovement();
+        }
+    }
+
+    void PopulateUpgradeCells()
+    {
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
+            HexCell eligible = rangerStation.GetNeighbor(d);
+            upgradeCells.Add(eligible);
+        }
+    }
+
+    public bool CheckUpgradeCell(HexCell upgrade)
+    {
+        if (upgradeCells.Contains(upgrade))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -399,5 +437,10 @@ public class HexGrid : MonoBehaviour
             return GetCell(hit.point);
         }
         return null;
+    }
+
+    public HexCell[] GetCells()
+    {
+        return cells;
     }
 }
