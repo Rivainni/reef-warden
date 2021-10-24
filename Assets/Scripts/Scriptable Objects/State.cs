@@ -57,4 +57,9 @@ public class State : ScriptableObject
     {
         return structureLocations[0];
     }
+
+    public List<Vector2> GetBuoyLocations()
+    {
+        return structureLocations;
+    }
 }

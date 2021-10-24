@@ -488,6 +488,7 @@ MonoBehaviour:
   water: {fileID: -6283204732262520918, guid: cd4f2cbde7d033f45a5d96afb77a69e1, type: 3}
   land: {fileID: -4583013346327355518, guid: 8bf655974e76bee4686e26a1a0d0e773, type: 3}
   spawner: {fileID: 356808183}
+  mainUI: {fileID: 2078076715}
   cellLabelPrefab: {fileID: 8365395652673976220, guid: f078f3abc320eb24787e6080890efdca, type: 3}
   initState: {fileID: 11400000, guid: 665d78d65c16d664fa588a54ab13b76d, type: 2}
 --- !u!4 &306096921

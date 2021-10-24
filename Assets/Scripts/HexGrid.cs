@@ -14,6 +14,7 @@ public class HexGrid : MonoBehaviour
     public HexCell water;
     public HexCell land;
     public Spawner spawner;
+    public MainUI mainUI;
     public Text cellLabelPrefab;
     public State initState;
 
@@ -32,6 +33,7 @@ public class HexGrid : MonoBehaviour
     List<HexUnit> units = new List<HexUnit>();
     List<HexStructure> structures = new List<HexStructure>();
     List<HexCell> upgradeCells = new List<HexCell>();
+    List<HexCell> buoyCells = new List<HexCell>();
     HexCell rangerStation;
 
     void Awake()
@@ -41,6 +43,8 @@ public class HexGrid : MonoBehaviour
         CreateChunks();
         CreateCells();
         PopulateUpgradeCells();
+        spawner.RandomSpawn("Tourist Boat");
+        spawner.RandomSpawn("Fishing Boat");
     }
 
     void CreateChunks()
@@ -158,6 +162,7 @@ public class HexGrid : MonoBehaviour
             case 1:
                 spawner.SpawnStructure(cell, "Buoy");
                 Debug.Log("B spawned.");
+                buoyCells.Add(cell);
                 break;
         }
 
@@ -342,6 +347,14 @@ public class HexGrid : MonoBehaviour
         unit.Orientation = orientation;
         unit.UnitType = unitType;
         unit.ActionPoints = actionPoints;
+
+        if (unitType == "Fishing Boat" || unitType == "Tourist Boat")
+        {
+            UnitBehaviour currentBehaviour = unit.gameObject.GetComponent<UnitBehaviour>();
+            currentBehaviour.grid = this;
+            currentBehaviour.mainUI = mainUI;
+            currentBehaviour.spawner = spawner;
+        }
     }
 
     public void RemoveUnit(HexUnit unit)
@@ -442,5 +455,10 @@ public class HexGrid : MonoBehaviour
     public HexCell[] GetCells()
     {
         return cells;
+    }
+
+    public List<HexCell> GetBuoyCells()
+    {
+        return buoyCells;
     }
 }
