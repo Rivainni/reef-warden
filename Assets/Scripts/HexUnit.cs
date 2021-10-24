@@ -99,7 +99,7 @@ public class HexUnit : MonoBehaviour
     {
         Location = path[path.Count - 1];
         pathToTravel = path;
-        StopAllCoroutines();
+        // StopAllCoroutines();
         StartCoroutine(TravelPath());
     }
 
