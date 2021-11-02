@@ -16,13 +16,13 @@ public class UnitBehaviour : MonoBehaviour
 
     bool safe;
     List<HexCell> fullPath;
-    HexCell[] dummy;
-
+    int[] distances;
 
     void Start()
     {
         safe = true;
         chaseState = false;
+        distances = new int[grid.GetCells().Length];
         currentUnit = this.gameObject.GetComponent<HexUnit>();
         ChooseTarget();
     }
@@ -32,7 +32,6 @@ public class UnitBehaviour : MonoBehaviour
         if (safe)
         {
             StartCoroutine(PerTurnMovement());
-            safe = false;
         }
     }
 
@@ -53,8 +52,9 @@ public class UnitBehaviour : MonoBehaviour
         int currentTurn = mainUI.GetPlayerState().GetTurn();
         yield return new WaitUntil(() => mainUI.GetPlayerState().GetTurn() > currentTurn);
         DoMove();
-        yield return new WaitUntil(() => currentUnit.Location == currentDestination);
+        yield return new WaitUntil(() => currentUnit.Location.Position == currentDestination.Position);
         SetMovementTarget(finalDestination);
+
         if (currentUnit.Location == finalDestination)
         {
             safe = false;
@@ -79,7 +79,10 @@ public class UnitBehaviour : MonoBehaviour
         if (currentUnit.IsValidDestination(target))
         {
             currentDestination = target;
-            DoPathfinding();
+            if (!currentPathExists)
+            {
+                DoPathfinding();
+            }
             fullPath = GetPath();
             for (int i = fullPath.Count - 1; i > 0; i--)
             {
@@ -127,23 +130,28 @@ public class UnitBehaviour : MonoBehaviour
         currentPathFrom = fromCell;
         currentPathTo = toCell;
         currentPathExists = Search(fromCell, toCell, speed);
-        ShowPath(speed);
+        if (currentUnit.UnitType == "Tourist Boat")
+        {
+            ShowPath(speed);
+        }
     }
 
+    // Possible optimization: pass indexes instead of the objects so we don't have to run a linear search every time
+    // polynomial time is fine ig but ughh
     bool Search(HexCell fromCell, HexCell toCell, int speed)
     {
-        dummy = (HexCell[])grid.GetCells().Clone();
-        for (int i = 0; i < dummy.Length; i++)
+        for (int i = 0; i < distances.Length; i++)
         {
-            dummy[i].Distance = int.MaxValue;
+            distances[i] = int.MaxValue;
         }
 
         List<HexCell> frontier = new List<HexCell>();
-        fromCell.Distance = 0;
+        distances[GetCellIndex(fromCell)] = 0;
         frontier.Add(fromCell);
         while (frontier.Count > 0)
         {
             HexCell current = frontier[0];
+            int currentIndex = GetCellIndex(current);
             frontier.RemoveAt(0);
 
             if (current == toCell)
@@ -151,14 +159,16 @@ public class UnitBehaviour : MonoBehaviour
                 return true;
             }
 
-            int currentTurn = (current.Distance - 1) / speed;
+            int currentTurn = (distances[currentIndex] - 1) / speed;
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
+                int neighborIndex = GetCellIndex(neighbor);
+
                 // We didn't plan to have variable move costs (e.g. certain parts of the map have you move faster), but we do have variable "speeds"
                 int moveCost = 1;
-                if (neighbor == null || neighbor.Distance != int.MaxValue)
+                if (neighbor == null || distances[neighborIndex] != int.MaxValue)
                 {
                     continue;
                 }
@@ -167,10 +177,10 @@ public class UnitBehaviour : MonoBehaviour
                     continue;
                 }
 
-                int distance = current.Distance + moveCost;
-                neighbor.Distance = distance;
-                neighbor.PathFrom = current;
-                neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
+                int distance = distances[currentIndex] + moveCost;
+                distances[neighborIndex] = distance;
+                neighbor.PathFrom = current; // fine as long as paths don't overlap
+                neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates); // not used, remove?
                 frontier.Add(neighbor);
                 frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
             }
@@ -183,9 +193,11 @@ public class UnitBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
+            int currentIndex = GetCellIndex(current);
             while (current != currentPathFrom)
             {
-                int turn = (current.Distance - 1) / speed;
+                currentIndex = GetCellIndex(current);
+                int turn = (distances[currentIndex] - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
                 current.EnableHighlight(Color.white);
                 current = current.PathFrom;
@@ -200,9 +212,10 @@ public class UnitBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
-            if (current.Distance <= speed)
+            int currentIndex = GetCellIndex(current);
+            if (distances[currentIndex] <= speed)
             {
-                return speed - current.Distance;
+                return speed - distances[currentIndex];
             }
             else
             {
@@ -249,6 +262,11 @@ public class UnitBehaviour : MonoBehaviour
         return path;
     }
 
+    int GetCellIndex(HexCell cell)
+    {
+        int ret = System.Array.IndexOf(grid.GetCells(), cell);
+        return ret;
+    }
 
 
 
