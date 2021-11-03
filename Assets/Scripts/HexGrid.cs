@@ -461,4 +461,9 @@ public class HexGrid : MonoBehaviour
     {
         return buoyCells;
     }
+
+    public List<HexUnit> GetUnits()
+    {
+        return units;
+    }
 }

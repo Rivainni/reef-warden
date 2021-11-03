@@ -13,26 +13,34 @@ public class UnitBehaviour : MonoBehaviour
     HexCell currentPathFrom, currentPathTo;
     bool currentPathExists;
     bool chaseState;
-
-    bool safe;
     List<HexCell> fullPath;
     int[] distances;
+    int[] heuristics;
 
     void Start()
     {
-        safe = true;
         chaseState = false;
         distances = new int[grid.GetCells().Length];
+        heuristics = new int[grid.GetCells().Length];
         currentUnit = this.gameObject.GetComponent<HexUnit>();
         ChooseTarget();
     }
 
-    void LateUpdate()
+    public void Execute()
     {
-        if (safe)
+        StartCoroutine(TurnMove());
+    }
+
+    IEnumerator TurnMove()
+    {
+        DoMove();
+        yield return new WaitUntil(() => currentUnit.Location == currentDestination);
+        if (currentDestination == finalDestination)
         {
-            StartCoroutine(PerTurnMovement());
+            ChooseTarget();
         }
+
+        SetMovementTarget(finalDestination);
     }
 
     // we want the ability to set a target destination
@@ -44,24 +52,6 @@ public class UnitBehaviour : MonoBehaviour
         if (currentUnit.ActionPoints > 0)
         {
             FindPath(currentUnit.Location, currentDestination, currentUnit.ActionPoints);
-        }
-    }
-
-    IEnumerator PerTurnMovement()
-    {
-        int currentTurn = mainUI.GetPlayerState().GetTurn();
-        yield return new WaitUntil(() => mainUI.GetPlayerState().GetTurn() > currentTurn);
-        DoMove();
-        yield return new WaitUntil(() => currentUnit.Location.Position == currentDestination.Position);
-        SetMovementTarget(finalDestination);
-
-        if (currentUnit.Location == finalDestination)
-        {
-            safe = false;
-        }
-        else
-        {
-            safe = true;
         }
     }
 
@@ -79,10 +69,8 @@ public class UnitBehaviour : MonoBehaviour
         if (currentUnit.IsValidDestination(target))
         {
             currentDestination = target;
-            if (!currentPathExists)
-            {
-                DoPathfinding();
-            }
+            DoPathfinding();
+
             fullPath = GetPath();
             for (int i = fullPath.Count - 1; i > 0; i--)
             {
@@ -180,12 +168,17 @@ public class UnitBehaviour : MonoBehaviour
                 int distance = distances[currentIndex] + moveCost;
                 distances[neighborIndex] = distance;
                 neighbor.PathFrom = current; // fine as long as paths don't overlap
-                neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates); // not used, remove?
+                heuristics[neighborIndex] = neighbor.coordinates.DistanceTo(toCell.coordinates);
                 frontier.Add(neighbor);
-                frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
+                frontier.Sort((x, y) => GetPriority(GetCellIndex(x)).CompareTo(GetPriority(GetCellIndex(y))));
             }
         }
         return false;
+    }
+
+    int GetPriority(int index)
+    {
+        return distances[index] + heuristics[index];
     }
 
     void ShowPath(int speed)

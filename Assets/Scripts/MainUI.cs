@@ -422,6 +422,15 @@ public class MainUI : MonoBehaviour
         grid.ResetPoints();
         selectedUnit = null;
         grid.ClearPath();
+
+        foreach (HexUnit unit in grid.GetUnits())
+        {
+            if (unit.UnitType == "Tourist Boat" || unit.UnitType == "Fishing Boat")
+            {
+                UnitBehaviour currentBehaviour = unit.gameObject.GetComponent<UnitBehaviour>();
+                currentBehaviour.Execute();
+            }
+        }
         UpdateUIElements();
     }
 
