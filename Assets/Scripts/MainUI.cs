@@ -432,6 +432,27 @@ public class MainUI : MonoBehaviour
             }
         }
         UpdateUIElements();
+        StartCoroutine(WaitMovement(clicked));
+    }
+
+    IEnumerator WaitMovement(Button clicked)
+    {
+        clicked.interactable = false;
+        yield return new WaitUntil(() => CheckMovement() == false);
+        clicked.interactable = true;
+    }
+
+    bool CheckMovement()
+    {
+        foreach (HexUnit unit in grid.GetUnits())
+        {
+            if (unit.movement)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void Research(Button clicked)

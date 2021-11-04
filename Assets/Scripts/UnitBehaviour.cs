@@ -34,13 +34,15 @@ public class UnitBehaviour : MonoBehaviour
     IEnumerator TurnMove()
     {
         DoMove();
-        yield return new WaitUntil(() => currentUnit.Location == currentDestination);
+        yield return new WaitUntil(() => currentUnit.Location.Position == currentDestination.Position);
         if (currentDestination == finalDestination)
         {
             ChooseTarget();
         }
 
+        currentUnit.movement = false;
         SetMovementTarget(finalDestination);
+        currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
     }
 
     // we want the ability to set a target destination
@@ -59,8 +61,6 @@ public class UnitBehaviour : MonoBehaviour
     {
         currentUnit.movement = true;
         currentUnit.Travel(GetPath());
-        currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
-        grid.ClearPath();
         grid.ShowUI(false);
     }
 
@@ -98,8 +98,7 @@ public class UnitBehaviour : MonoBehaviour
             int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
             finalDestination = grid.GetCells()[randomIndex];
 
-            while (finalDestination.IsImpassable || (464 >= randomIndex && 311 <= randomIndex)
-            || randomIndex == 105 || randomIndex == 106 || randomIndex == 130 || randomIndex == 155
+            while (finalDestination.IsImpassable || randomIndex == 105 || randomIndex == 106 || randomIndex == 130 || randomIndex == 155
             || randomIndex == 156 || randomIndex == 528 || finalDestination == currentUnit.Location)
             {
                 randomIndex = Random.Range(0, grid.GetCells().Length - 1);
@@ -192,7 +191,7 @@ public class UnitBehaviour : MonoBehaviour
                 currentIndex = GetCellIndex(current);
                 int turn = (distances[currentIndex] - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
-                current.EnableHighlight(Color.white);
+                current.EnableHighlight(Color.green);
                 current = current.PathFrom;
             }
         }

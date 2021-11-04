@@ -35,7 +35,7 @@ public class HexUnit : MonoBehaviour
     public int hp;
 
     public bool takenTurn;
-    public bool movement;
+    public bool movement = false;
     public HexCell Location
     {
         get
@@ -99,7 +99,7 @@ public class HexUnit : MonoBehaviour
     {
         Location = path[path.Count - 1];
         pathToTravel = path;
-        // StopAllCoroutines();
+        StopAllCoroutines();
         StartCoroutine(TravelPath());
     }
 
