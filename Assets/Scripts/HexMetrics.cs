@@ -35,15 +35,4 @@ public static class HexMetrics
     {
         return corners[(int)direction + 1];
     }
-
-
-    // flat top
-    // public static Vector3[] corners = {
-    //     new Vector3(-0.5f * outerRadius, 0f, innerRadius),
-    //     new Vector3(0.5f * outerRadius, 0f, innerRadius),
-    //     new Vector3(outerRadius, 0f, 0f),
-    //     new Vector3(0.5f * outerRadius, 0f, -innerRadius),
-    //     new Vector3(-0.5f * outerRadius, 0f, -innerRadius),
-    //     new Vector3(-outerRadius, 0f, 0f),
-    // };
 }

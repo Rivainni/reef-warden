@@ -461,6 +461,7 @@ GameObject:
   m_Component:
   - component: {fileID: 306096921}
   - component: {fileID: 306096920}
+  - component: {fileID: 306096922}
   m_Layer: 0
   m_Name: Hex Grid
   m_TagString: Untagged
@@ -488,8 +489,10 @@ MonoBehaviour:
   water: {fileID: -6283204732262520918, guid: cd4f2cbde7d033f45a5d96afb77a69e1, type: 3}
   land: {fileID: -4583013346327355518, guid: 8bf655974e76bee4686e26a1a0d0e773, type: 3}
   spawner: {fileID: 356808183}
+  mainUI: {fileID: 2078076715}
   cellLabelPrefab: {fileID: 8365395652673976220, guid: f078f3abc320eb24787e6080890efdca, type: 3}
-  initState: {fileID: 11400000, guid: 665d78d65c16d664fa588a54ab13b76d, type: 2}
+  mapCreation: {fileID: 11400000, guid: 665d78d65c16d664fa588a54ab13b76d, type: 2}
+  unsafeCells: {fileID: 4900000, guid: 54554f94cd6905f49abf0895676c9868, type: 3}
 --- !u!4 &306096921
 Transform:
   m_ObjectHideFlags: 0
@@ -506,6 +509,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &306096922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306096919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ca5245620d70374fa2d6bef1375e5ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 306096920}
 --- !u!1 &316599002
 GameObject:
   m_ObjectHideFlags: 0

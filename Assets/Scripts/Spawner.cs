@@ -64,12 +64,10 @@ public class Spawner : MonoBehaviour
     // actually spawning other types
     public void RandomSpawn(string unitType)
     {
-        // no 311 to 464
-        // 105, 106, 130, 155, 156, 528
         int random = Random.Range(0, 624);
         HexCell cell = hexGrid.GetCells()[random];
 
-        while (cell.IsImpassable || (464 >= random && 311 <= random) || random == 105 || random == 106 || random == 130 || random == 155 || random == 156 || random == 528)
+        while (GlobalCellCheck.IsImpassable(cell) || GlobalCellCheck.IsNotReachable(random))
         {
             random = Random.Range(0, 624);
             cell = hexGrid.GetCells()[random];
@@ -80,10 +78,5 @@ public class Spawner : MonoBehaviour
         {
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
         }
-    }
-
-    HexCell GetCellUnderCursor()
-    {
-        return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 }

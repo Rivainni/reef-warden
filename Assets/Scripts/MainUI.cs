@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 public class MainUI : MonoBehaviour
 {
-    public HexGrid grid;
-    public Spawner spawner;
+    [SerializeField] HexGrid grid;
+    [SerializeField] Spawner spawner;
 
     HexCell currentCell;
     HexCell playerLocation;
@@ -45,7 +45,7 @@ public class MainUI : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(1))
                 {
-                    if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
+                    if (grid.HasPath && grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
                     {
                         HexAction();
                     }
@@ -83,16 +83,16 @@ public class MainUI : MonoBehaviour
 
     void DoSelection()
     {
-        grid.ClearPath();
+        grid.GetPlayerBehaviour().ClearPath();
         UpdateCurrentCell();
-        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
+        // int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+        // Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
 
         if (selectedUnit == currentCell.Unit || !currentCell.Unit)
         {
             selectedUnit = null;
         }
-        else if (currentCell.Unit)
+        else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
         {
             selectedUnit = currentCell.Unit;
             Debug.Log("Selected " + selectedUnit.UnitType);
@@ -107,11 +107,11 @@ public class MainUI : MonoBehaviour
         {
             if (currentCell && selectedUnit.IsValidDestination(currentCell) && selectedUnit.ActionPoints > 0)
             {
-                grid.FindPath(selectedUnit.Location, currentCell, selectedUnit.ActionPoints);
+                grid.GetPlayerBehaviour().FindPath(selectedUnit.Location, currentCell, selectedUnit.ActionPoints);
             }
             else
             {
-                grid.ClearPath();
+                grid.GetPlayerBehaviour().ClearPath();
             }
         }
     }
@@ -119,9 +119,9 @@ public class MainUI : MonoBehaviour
     void DoMove()
     {
         selectedUnit.movement = true;
-        selectedUnit.Travel(grid.GetPath());
-        selectedUnit.ActionPoints = grid.WithinTurnPath(selectedUnit.ActionPoints);
-        grid.ClearPath();
+        selectedUnit.Travel(grid.GetPlayerBehaviour().GetPath());
+        selectedUnit.ActionPoints = grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints);
+        grid.GetPlayerBehaviour().ClearPath();
         grid.ShowUI(false);
     }
 
@@ -138,7 +138,7 @@ public class MainUI : MonoBehaviour
 
         if (selectedUnit.UnitType.Contains("Patrol Boat"))
         {
-            if (grid.HasPath && grid.WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
+            if (grid.HasPath && grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
             {
                 contextMenuContent.Add("Patrol");
 
@@ -403,10 +403,10 @@ public class MainUI : MonoBehaviour
 
     public void UpdateUIElements()
     {
-        UpdateText[] toUpdate = GetComponentsInChildren<UpdateText>();
-        foreach (UpdateText item in toUpdate)
+        UITextUpdate[] toUpdate = GetComponentsInChildren<UITextUpdate>();
+        foreach (UITextUpdate item in toUpdate)
         {
-            item.UpdateUIElement();
+            item.UpdateText();
         }
     }
 
@@ -417,12 +417,42 @@ public class MainUI : MonoBehaviour
 
     public void EndTurn(Button clicked)
     {
-        currentState.NextTurn();
+        currentState.EndTurn();
         clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
         grid.ResetPoints();
         selectedUnit = null;
-        grid.ClearPath();
+        grid.GetPlayerBehaviour().ClearPath();
+
+        foreach (HexUnit unit in grid.GetUnits())
+        {
+            if (unit.UnitType == "Tourist Boat" || unit.UnitType == "Fishing Boat")
+            {
+                AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
+                currentBehaviour.Execute();
+            }
+        }
         UpdateUIElements();
+        StartCoroutine(AIMovement(clicked));
+    }
+
+    IEnumerator AIMovement(Button clicked)
+    {
+        clicked.interactable = false;
+        yield return new WaitUntil(() => CheckMovement() == false);
+        clicked.interactable = true;
+    }
+
+    bool CheckMovement()
+    {
+        foreach (HexUnit unit in grid.GetUnits())
+        {
+            if (unit.movement)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void Research(Button clicked)

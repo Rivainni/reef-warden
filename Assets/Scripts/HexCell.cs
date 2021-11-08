@@ -1,6 +1,8 @@
 using UnityEngine.UI;
 using UnityEngine;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 
 public class HexCell : MonoBehaviour
 {
@@ -24,23 +26,33 @@ public class HexCell : MonoBehaviour
         }
     }
     public HexCell PathFrom { get; set; }
-    public bool IsImpassable
+    public bool HasOverlap
     {
         get
         {
-            return isImpassable;
+            return hasOverlap;
         }
         set
         {
-            if (isImpassable == value)
-            {
-                return;
-            }
-            isImpassable = true;
+            hasOverlap = value;
         }
     }
 
-    bool isImpassable;
+    bool hasOverlap;
+
+    public string Type
+    {
+        get
+        {
+            return type;
+        }
+        set
+        {
+            type = value;
+        }
+    }
+
+    string type;
 
     public int Distance
     {

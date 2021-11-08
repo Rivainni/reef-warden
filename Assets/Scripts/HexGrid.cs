@@ -14,8 +14,10 @@ public class HexGrid : MonoBehaviour
     public HexCell water;
     public HexCell land;
     public Spawner spawner;
+    public MainUI mainUI;
     public Text cellLabelPrefab;
-    public State initState;
+    public MapCreation mapCreation;
+    [SerializeField] TextAsset unsafeCells;
 
     public bool HasPath
     {
@@ -23,24 +25,34 @@ public class HexGrid : MonoBehaviour
         {
             return currentPathExists;
         }
+        set
+        {
+            currentPathExists = value;
+        }
     }
-
-    HexCell currentPathFrom, currentPathTo;
     bool currentPathExists;
     HexGridChunk[] chunks;
     HexCell[] cells;
     List<HexUnit> units = new List<HexUnit>();
     List<HexStructure> structures = new List<HexStructure>();
     List<HexCell> upgradeCells = new List<HexCell>();
+    List<HexCell> buoyCells = new List<HexCell>();
     HexCell rangerStation;
+    PlayerBehaviour playerBehaviour;
 
     void Awake()
     {
+        playerBehaviour = this.gameObject.GetComponent<PlayerBehaviour>();
+        GlobalCellCheck.SetUnsafeCells(unsafeCells);
+
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
         CreateChunks();
         CreateCells();
         PopulateUpgradeCells();
+
+        spawner.RandomSpawn("Tourist Boat");
+        spawner.RandomSpawn("Fishing Boat");
     }
 
     void CreateChunks()
@@ -77,30 +89,26 @@ public class HexGrid : MonoBehaviour
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f);
 
-        // commented out since this was for flat top (I decided to go for point top instead because it's more intuitive)
-        // position.x = x * (HexMetrics.outerRadius * 1.5f);
-        // position.y = 0f;
-        // position.z = (z + x * 0.5f - x / 2) * (HexMetrics.innerRadius * 2f);
-
         HexCell cell;
         HexCoordinates computed = HexCoordinates.FromOffsetCoordinates(x, z);
         Vector2 check = new Vector2(computed.X, computed.Z);
 
-        if (initState.IsLand(check))
+        if (mapCreation.IsLand(check))
         {
             cell = cells[i] = Instantiate<HexCell>(land);
-            cell.IsImpassable = true;
+            cell.Type = "Land";
         }
         else
         {
             cell = cells[i] = Instantiate<HexCell>(water);
-            cell.IsImpassable = false;
+            cell.Type = "Water";
         }
 
         cell.transform.localPosition = position;
         cell.transform.localScale = new Vector3(17.2f, 1.0f, 17.2f);
+        // cell.transform.localScale = new Vector3(17.2f, 17.2f, 17.2f);
         cell.coordinates = computed;
-        // cell.Color = defaultColor;
+        cell.HasOverlap = false;
 
         // Set neighbours
         // x = 0 has no neighbours west. We start with west neighbours.
@@ -136,7 +144,7 @@ public class HexGrid : MonoBehaviour
         cell.uiRect = label.rectTransform;
 
         // add units *after* the cell has spawned
-        switch (initState.HasInitialUnit(check))
+        switch (mapCreation.HasInitialUnit(check))
         {
             case 0:
                 spawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
@@ -148,7 +156,7 @@ public class HexGrid : MonoBehaviour
                 break;
         }
 
-        switch (initState.HasStructure(check))
+        switch (mapCreation.HasStructure(check))
         {
             case 0:
                 spawner.SpawnStructure(cell, "Ranger Station");
@@ -158,6 +166,7 @@ public class HexGrid : MonoBehaviour
             case 1:
                 spawner.SpawnStructure(cell, "Buoy");
                 Debug.Log("B spawned.");
+                buoyCells.Add(cell);
                 break;
         }
 
@@ -198,133 +207,6 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    public void FindPath(HexCell fromCell, HexCell toCell, int speed)
-    {
-        ClearPath();
-        currentPathFrom = fromCell;
-        currentPathTo = toCell;
-        currentPathExists = Search(fromCell, toCell, speed);
-        ShowPath(speed);
-    }
-
-    bool Search(HexCell fromCell, HexCell toCell, int speed)
-    {
-        for (int i = 0; i < cells.Length; i++)
-        {
-            cells[i].Distance = int.MaxValue;
-        }
-
-        List<HexCell> frontier = new List<HexCell>();
-        fromCell.Distance = 0;
-        frontier.Add(fromCell);
-        while (frontier.Count > 0)
-        {
-            HexCell current = frontier[0];
-            frontier.RemoveAt(0);
-
-            if (current == toCell)
-            {
-                return true;
-            }
-
-            int currentTurn = (current.Distance - 1) / speed;
-
-            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-            {
-                HexCell neighbor = current.GetNeighbor(d);
-                // We didn't plan to have variable move costs (e.g. certain parts of the map have you move faster), but we do have variable "speeds"
-                int moveCost = 1;
-                if (neighbor == null || neighbor.Distance != int.MaxValue)
-                {
-                    continue;
-                }
-                if (neighbor.IsImpassable || neighbor.Unit)
-                {
-                    continue;
-                }
-
-                int distance = current.Distance + moveCost;
-                neighbor.Distance = distance;
-                neighbor.PathFrom = current;
-                neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
-                frontier.Add(neighbor);
-                frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
-            }
-        }
-        return false;
-    }
-
-    void ShowPath(int speed)
-    {
-        if (currentPathExists)
-        {
-            HexCell current = currentPathTo;
-            while (current != currentPathFrom)
-            {
-                int turn = (current.Distance - 1) / speed;
-                current.SetLabel((turn + 1).ToString());
-                current.EnableHighlight(Color.white);
-                current = current.PathFrom;
-            }
-        }
-        currentPathFrom.EnableHighlight(Color.blue);
-        currentPathTo.EnableHighlight(Color.red);
-    }
-
-    public int WithinTurnPath(int speed)
-    {
-        if (currentPathExists)
-        {
-            HexCell current = currentPathTo;
-            if (current.Distance <= speed)
-            {
-                return speed - current.Distance;
-            }
-            else
-            {
-                return int.MaxValue;
-            }
-        }
-        return int.MaxValue;
-    }
-
-    public void ClearPath()
-    {
-        if (currentPathExists)
-        {
-            HexCell current = currentPathTo;
-            while (current != currentPathFrom)
-            {
-                current.SetLabel(null);
-                current.DisableHighlight();
-                current = current.PathFrom;
-            }
-            current.DisableHighlight();
-            currentPathExists = false;
-        }
-        else if (currentPathFrom)
-        {
-            currentPathFrom.DisableHighlight();
-            currentPathTo.DisableHighlight();
-        }
-        currentPathFrom = currentPathTo = null;
-    }
-    public List<HexCell> GetPath()
-    {
-        if (!currentPathExists)
-        {
-            return null;
-        }
-        List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
-        for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
-        {
-            path.Add(c);
-        }
-        path.Add(currentPathFrom);
-        path.Reverse();
-        return path;
-    }
-
     void ClearUnits()
     {
         for (int i = 0; i < units.Count; i++)
@@ -338,10 +220,24 @@ public class HexGrid : MonoBehaviour
     {
         units.Add(unit);
         unit.transform.SetParent(transform, false);
+
+        if (unitType != "Fishing Boat")
+        {
+            unit.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
+        }
+
         unit.Location = location;
         unit.Orientation = orientation;
         unit.UnitType = unitType;
         unit.ActionPoints = actionPoints;
+
+        if (unitType == "Fishing Boat" || unitType == "Tourist Boat")
+        {
+            AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
+            currentBehaviour.grid = this;
+            currentBehaviour.mainUI = mainUI;
+            currentBehaviour.spawner = spawner;
+        }
     }
 
     public void RemoveUnit(HexUnit unit)
@@ -442,5 +338,20 @@ public class HexGrid : MonoBehaviour
     public HexCell[] GetCells()
     {
         return cells;
+    }
+
+    public List<HexCell> GetBuoyCells()
+    {
+        return buoyCells;
+    }
+
+    public List<HexUnit> GetUnits()
+    {
+        return units;
+    }
+
+    public PlayerBehaviour GetPlayerBehaviour()
+    {
+        return playerBehaviour;
     }
 }

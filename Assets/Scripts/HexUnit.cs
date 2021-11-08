@@ -35,7 +35,7 @@ public class HexUnit : MonoBehaviour
     public int hp;
 
     public bool takenTurn;
-    public bool movement;
+    public bool movement = false;
     public HexCell Location
     {
         get
@@ -92,7 +92,7 @@ public class HexUnit : MonoBehaviour
 
     public bool IsValidDestination(HexCell cell)
     {
-        return !cell.IsImpassable && !cell.Unit;
+        return !GlobalCellCheck.IsImpassable(cell) && !cell.Unit;
     }
 
     public void Travel(List<HexCell> path)
@@ -142,6 +142,7 @@ public class HexUnit : MonoBehaviour
         orientation = transform.localRotation.eulerAngles.y;
         transform.localPosition = location.Position;
         pathToTravel = null;
+        movement = false;
     }
 
     IEnumerator LookAt(Vector3 point)
