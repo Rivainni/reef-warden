@@ -43,12 +43,12 @@ public class PlayerState : ScriptableObject
     {
         public UpgradeItem(string name, int turns)
         {
-            this.name = name;
-            this.turns = turns;
+            Name = name;
+            Turns = turns;
         }
 
-        public string name { get; set; }
-        public int turns { get; set; }
+        public string Name { get; set; }
+        public int Turns { get; set; }
     }
 
     public string GetName()
@@ -257,63 +257,6 @@ public class PlayerState : ScriptableObject
         }
     }
 
-    public void Clean()
-    {
-        money = 10000;
-        research = 250;
-        manpower = 6;
-        tourists = 0;
-        fishermen = 0;
-        morale = 50;
-        security = 50;
-        trueReefHealth = 100;
-        seenReefHealth = 50;
-        turn = 1;
-        checkHealthCD1 = 0;
-        checkHealthCD2 = 0;
-        checkHealthCD3 = 0;
-        birdCD = 0;
-        clamCD = 0;
-        turtleCD = 0;
-        researchCD = 0;
-        day = true;
-        unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };
-        builtUpgrades.Clear();
-        touristsInspected = 0;
-        fishermenCaught = 0;
-        radarActive = false;
-    }
-
-    public void NextTurn()
-    {
-        turn++;
-        money += income;
-        morale *= Mathf.Exp(-moraleLambda * 1);
-        security *= Mathf.Exp(-securityLambda * 1);
-        if (turn % 4 == 0)
-        {
-            day = false;
-        }
-        else
-        {
-            day = true;
-        }
-
-        if (upgradeQueue.Count > 0)
-        {
-            UpdateUpgradeQueue();
-        }
-        if (researchQueue.Count > 0)
-        {
-            UpdateResearchQueue();
-        }
-        if (fishermen > 0)
-        {
-            trueReefHealth -= fishermen * 2;
-        }
-        ReduceCD();
-    }
-
     public void QueueUpgrade(string upgradeType, int constructionTime)
     {
         upgradeQueue.Enqueue(new UpgradeItem(upgradeType, constructionTime));
@@ -323,8 +266,8 @@ public class PlayerState : ScriptableObject
     {
         UpgradeItem current = upgradeQueue.Peek();
 
-        current.turns -= 1;
-        if (current.turns <= 0)
+        current.Turns -= 1;
+        if (current.Turns <= 0)
         {
             upgradeQueue.Dequeue();
         }
@@ -336,9 +279,9 @@ public class PlayerState : ScriptableObject
         {
             foreach (UpgradeItem item in upgradeQueue)
             {
-                if (item.name.Contains(upgradeType))
+                if (item.Name.Contains(upgradeType))
                 {
-                    return item.turns;
+                    return item.Turns;
                 }
             }
         }
@@ -372,8 +315,8 @@ public class PlayerState : ScriptableObject
     {
         UpgradeItem current = researchQueue.Peek();
 
-        current.turns -= 1;
-        if (current.turns <= 0)
+        current.Turns -= 1;
+        if (current.Turns <= 0)
         {
             researchQueue.Dequeue();
         }
@@ -385,9 +328,9 @@ public class PlayerState : ScriptableObject
         {
             foreach (UpgradeItem item in researchQueue)
             {
-                if (item.name.Contains(name))
+                if (item.Name.Contains(name))
                 {
-                    return item.turns;
+                    return item.Turns;
                 }
             }
         }
@@ -452,5 +395,62 @@ public class PlayerState : ScriptableObject
     public int GetCatchScore()
     {
         return fishermenCaught;
+    }
+
+    public void Clean()
+    {
+        money = 10000;
+        research = 250;
+        manpower = 6;
+        tourists = 0;
+        fishermen = 0;
+        morale = 50;
+        security = 50;
+        trueReefHealth = 100;
+        seenReefHealth = 50;
+        turn = 1;
+        checkHealthCD1 = 0;
+        checkHealthCD2 = 0;
+        checkHealthCD3 = 0;
+        birdCD = 0;
+        clamCD = 0;
+        turtleCD = 0;
+        researchCD = 0;
+        day = true;
+        unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };
+        builtUpgrades.Clear();
+        touristsInspected = 0;
+        fishermenCaught = 0;
+        radarActive = false;
+    }
+
+    public void EndTurn()
+    {
+        turn++;
+        money += income;
+        morale *= Mathf.Exp(-moraleLambda * 1);
+        security *= Mathf.Exp(-securityLambda * 1);
+        if (turn % 4 == 0)
+        {
+            day = false;
+        }
+        else
+        {
+            day = true;
+        }
+
+        if (upgradeQueue.Count > 0)
+        {
+            UpdateUpgradeQueue();
+        }
+        if (researchQueue.Count > 0)
+        {
+            UpdateResearchQueue();
+        }
+        if (fishermen > 0)
+        {
+            trueReefHealth -= fishermen * 2;
+        }
+        ReduceCD();
     }
 }

@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "State")]
-public class State : ScriptableObject
+[CreateAssetMenu(menuName = "Map Creation")]
+public class MapCreation : ScriptableObject
 {
     [SerializeField] List<Vector2> landBlocks;
     [SerializeField] List<Vector2> structureLocations;

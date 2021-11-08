@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UpdateText : MonoBehaviour
+public class UITextUpdate : MonoBehaviour
 {
     MainUI mainUI;
     Text current;
@@ -15,7 +15,7 @@ public class UpdateText : MonoBehaviour
         current = GetComponent<Text>();
     }
 
-    public void UpdateUIElement()
+    public void UpdateText()
     {
         PlayerState currentState = mainUI.GetPlayerState();
 

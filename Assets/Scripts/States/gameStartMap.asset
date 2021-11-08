@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fcea3485f9f56d94c8e6902d2c361cf3, type: 3}
-  m_Name: initState
+  m_Name: gameStartMap
   m_EditorClassIdentifier: 
   landBlocks:
   - {x: 6, y: 11}
