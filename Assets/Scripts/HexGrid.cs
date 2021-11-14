@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.IO;
 
 public class HexGrid : MonoBehaviour
@@ -51,8 +52,11 @@ public class HexGrid : MonoBehaviour
         CreateCells();
         PopulateUpgradeCells();
 
-        spawner.RandomSpawn("Tourist Boat");
-        spawner.RandomSpawn("Fishing Boat");
+        if (SceneManager.GetActiveScene().name == "Map")
+        {
+            spawner.RandomSpawn("Tourist Boat");
+            spawner.RandomSpawn("Fishing Boat");
+        }
     }
 
     void CreateChunks()

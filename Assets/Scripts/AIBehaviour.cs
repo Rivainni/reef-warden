@@ -30,30 +30,40 @@ public class AIBehaviour : MonoBehaviour
     {
         if (currentUnit.Location != finalDestination)
         {
-            SetMovementTarget(finalDestination);
             StartCoroutine(TurnMove());
+            SetMovementTarget(finalDestination);
         }
         else
         {
             ClearPath();
+            if (chaseState)
+            {
+                ChooseTarget();
+                StartCoroutine(TurnMove());
+                SetMovementTarget(finalDestination);
+            }
         }
 
         if (currentUnit.UnitType == "Fishing Boat")
         {
             CheckForPatrolBoat();
         }
-
-        if (chaseState)
-        {
-            ChooseTarget();
-        }
     }
 
     IEnumerator TurnMove()
     {
         DoMove();
+        grid.ShowUI(false);
         yield return new WaitUntil(() => currentUnit.Location.Position == currentDestination.Position);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
+        yield return new WaitUntil(() => Mathf.Abs(currentUnit.transform.position.x - currentUnit.Location.transform.position.x) < 1.0f
+        && Mathf.Abs(currentUnit.transform.position.z - currentUnit.Location.transform.position.z) < 1.0f);
+        grid.ShowUI(true);
+
+        if (currentUnit.Location == finalDestination)
+        {
+            ClearPath();
+        }
     }
 
     // we want the ability to set a target destination
@@ -72,7 +82,6 @@ public class AIBehaviour : MonoBehaviour
     {
         currentUnit.movement = true;
         currentUnit.Travel(GetPath());
-        grid.ShowUI(false);
     }
 
     void SetMovementTarget(HexCell target)
@@ -90,7 +99,6 @@ public class AIBehaviour : MonoBehaviour
 
                 if (WithinTurnPath(currentUnit.ActionPoints) < int.MaxValue)
                 {
-                    grid.ShowUI(true);
                     break;
                 }
             }

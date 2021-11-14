@@ -48,4 +48,9 @@ public class UITextUpdate : MonoBehaviour
             current.text = "HP: " + Mathf.Round(currentState.GetHealth());
         }
     }
+
+    public void UpdateObjective(string objective)
+    {
+        current.text = objective;
+    }
 }

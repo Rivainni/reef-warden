@@ -18,6 +18,7 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] bool cutscene = true;
     [SerializeField] PlayerState initState;
+    [SerializeField] Text objectives;
     Queue<string> inputStream = new Queue<string>();
 
     // Start is called before the first frame update
@@ -84,6 +85,7 @@ public class StoryManager : MonoBehaviour
             else if (action == "Patrol")
             {
                 storyUI.SetActive(false);
+                objectives.text = "Patrol to any location.";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -94,6 +96,7 @@ public class StoryManager : MonoBehaviour
             else if (action == "CheckReefHealth")
             {
                 storyUI.SetActive(false);
+                objectives.text = "Check the reef health.";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -107,6 +110,7 @@ public class StoryManager : MonoBehaviour
                 mainUI.GetSpawner().RandomSpawn("Tourist Boat");
                 mainUI.GetPlayerState().AddTourists(1);
                 mainUI.UpdateUIElements();
+                objectives.text = "Look for the tourist.";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -117,6 +121,7 @@ public class StoryManager : MonoBehaviour
             else if (action == "InspectTourist2")
             {
                 storyUI.SetActive(false);
+                objectives.text = "Do a random inspection on the tourist.";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -127,6 +132,7 @@ public class StoryManager : MonoBehaviour
             else if (action == "MoveBack")
             {
                 storyUI.SetActive(false);
+                objectives.text = "Return to the ranger station (next to the boat).";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -137,6 +143,7 @@ public class StoryManager : MonoBehaviour
             else if (action == "Research")
             {
                 storyUI.SetActive(false);
+                objectives.text = "Research the RADAR.";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -147,6 +154,7 @@ public class StoryManager : MonoBehaviour
             else if (action == "Build")
             {
                 storyUI.SetActive(false);
+                objectives.text = "Build a RADAR.";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -157,6 +165,7 @@ public class StoryManager : MonoBehaviour
             else if (action == "UseRADAR")
             {
                 storyUI.SetActive(false);
+                objectives.text = "Use the RADAR.";
                 StartCoroutine(WaitForPlayer());
                 IEnumerator WaitForPlayer()
                 {
@@ -170,6 +179,7 @@ public class StoryManager : MonoBehaviour
                 StartCoroutine(WaitForPlayer());
                 mainUI.GetSpawner().RandomSpawn("Fishing Boat");
                 mainUI.GetPlayerState().AddFisherman(1);
+                objectives.text = "Catch the Fishing Boat.";
                 IEnumerator WaitForPlayer()
                 {
                     yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
