@@ -13,17 +13,21 @@ public class AIBehaviour : MonoBehaviour
     HexCell currentPathFrom, currentPathTo;
     bool currentPathExists;
     bool chaseState;
+    bool stateChanged;
     List<HexCell> fullPath;
     int[] distances;
     int[] heuristics;
 
     void Start()
     {
+        currentPathExists = false;
         chaseState = false;
+        stateChanged = false;
         distances = new int[grid.GetCells().Length];
         heuristics = new int[grid.GetCells().Length];
         currentUnit = this.gameObject.GetComponent<HexUnit>();
         ChooseTarget();
+        Debug.Log("First target of " + currentUnit.UnitType + " is " + finalDestination.Index);
     }
 
     public void Execute()
@@ -33,20 +37,24 @@ public class AIBehaviour : MonoBehaviour
             StartCoroutine(TurnMove());
             SetMovementTarget(finalDestination);
         }
-        else
+        else if (!stateChanged)
         {
-            ClearPath();
+            if (currentUnit.UnitType == "Fishing Boat")
+            {
+                CheckForPatrolBoat();
+            }
+
             if (chaseState)
             {
-                ChooseTarget();
+                ClearPath();
+                ChooseEscape();
                 StartCoroutine(TurnMove());
                 SetMovementTarget(finalDestination);
             }
         }
-
-        if (currentUnit.UnitType == "Fishing Boat")
+        else if (stateChanged && currentUnit.Location == finalDestination)
         {
-            CheckForPatrolBoat();
+            spawner.DestroyUnit(currentUnit);
         }
     }
 
@@ -54,7 +62,7 @@ public class AIBehaviour : MonoBehaviour
     {
         DoMove();
         grid.ShowUI(false);
-        yield return new WaitUntil(() => currentUnit.Location.Position == currentDestination.Position);
+        yield return new WaitUntil(() => currentUnit.Location == currentDestination);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
         yield return new WaitUntil(() => Mathf.Abs(currentUnit.transform.position.x - currentUnit.Location.transform.position.x) < 1.0f
         && Mathf.Abs(currentUnit.transform.position.z - currentUnit.Location.transform.position.z) < 1.0f);
@@ -102,6 +110,7 @@ public class AIBehaviour : MonoBehaviour
                     break;
                 }
             }
+            fullPath = null;
         }
     }
 
@@ -117,13 +126,39 @@ public class AIBehaviour : MonoBehaviour
             int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
             finalDestination = grid.GetCells()[randomIndex];
 
-            while (GlobalCellCheck.IsImpassable(finalDestination) || GlobalCellCheck.IsNotReachable(randomIndex) || finalDestination == currentUnit.Location)
+            while (GlobalCellCheck.IsImpassable(finalDestination) || GlobalCellCheck.IsNotReachable(randomIndex)
+            || finalDestination == currentUnit.Location || grid.GetBuoyCells().Contains(grid.GetCells()[randomIndex]))
             {
                 randomIndex = Random.Range(0, grid.GetCells().Length - 1);
                 finalDestination = grid.GetCells()[randomIndex];
             }
         }
 
+        SetMovementTarget(finalDestination);
+    }
+
+    void ChooseEscape()
+    {
+        int maxDistance = 0;
+        int currentIndex = 0;
+        for (int i = 0; i < GlobalCellCheck.GetEscapeCellCount(); i++)
+        {
+            finalDestination = grid.GetCells()[GlobalCellCheck.GetEscapeCell(i)];
+            FindPath(currentUnit.Location, finalDestination, currentUnit.ActionPoints);
+            if (i == 0)
+            {
+                maxDistance = distances[GlobalCellCheck.GetEscapeCell(i)];
+            }
+
+            int currDistance = distances[GlobalCellCheck.GetEscapeCell(i)];
+            if (currDistance < maxDistance)
+            {
+                currentIndex = GlobalCellCheck.GetEscapeCell(i);
+            }
+            ClearPath();
+        }
+
+        finalDestination = grid.GetCells()[currentIndex];
         SetMovementTarget(finalDestination);
     }
 
@@ -151,12 +186,12 @@ public class AIBehaviour : MonoBehaviour
         }
 
         List<HexCell> frontier = new List<HexCell>();
-        distances[GetCellIndex(fromCell)] = 0;
+        distances[fromCell.Index] = 0;
         frontier.Add(fromCell);
         while (frontier.Count > 0)
         {
             HexCell current = frontier[0];
-            int currentIndex = GetCellIndex(current);
+            int currentIndex = current.Index;
             frontier.RemoveAt(0);
 
             if (current == toCell)
@@ -169,15 +204,20 @@ public class AIBehaviour : MonoBehaviour
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
-                int neighborIndex = GetCellIndex(neighbor);
+                if (neighbor == null)
+                {
+                    continue;
+                }
 
-                // We didn't plan to have variable move costs (e.g. certain parts of the map have you move faster), but we do have variable "speeds"
+                // we can remove this?
+                int neighborIndex = neighbor.Index;
+
                 int moveCost = 1;
                 if (neighbor == null || distances[neighborIndex] != int.MaxValue)
                 {
                     continue;
                 }
-                if (GlobalCellCheck.IsImpassable(neighbor) || neighbor.Unit)
+                if (GlobalCellCheck.IsImpassable(neighbor) || neighbor.Unit || GlobalCellCheck.IsNotReachable(neighborIndex))
                 {
                     continue;
                 }
@@ -191,7 +231,7 @@ public class AIBehaviour : MonoBehaviour
                 neighbor.PathFrom = current;
                 heuristics[neighborIndex] = neighbor.coordinates.DistanceTo(toCell.coordinates);
                 frontier.Add(neighbor);
-                frontier.Sort((x, y) => GetPriority(GetCellIndex(x)).CompareTo(GetPriority(GetCellIndex(y))));
+                frontier.Sort((x, y) => GetPriority(x.Index).CompareTo(GetPriority(y.Index)));
             }
         }
         return false;
@@ -207,10 +247,10 @@ public class AIBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
-            int currentIndex = GetCellIndex(current);
+            int currentIndex = current.Index;
             while (current != currentPathFrom)
             {
-                currentIndex = GetCellIndex(current);
+                currentIndex = current.Index;
                 int turn = (distances[currentIndex] - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
                 current.EnableHighlight(Color.green);
@@ -226,7 +266,7 @@ public class AIBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
-            int currentIndex = GetCellIndex(current);
+            int currentIndex = current.Index;
             if (distances[currentIndex] <= speed)
             {
                 return speed - distances[currentIndex];
@@ -279,12 +319,6 @@ public class AIBehaviour : MonoBehaviour
         return path;
     }
 
-    int GetCellIndex(HexCell cell)
-    {
-        int ret = System.Array.IndexOf(grid.GetCells(), cell);
-        return ret;
-    }
-
     // we want the fisherman to run if it spots a patrol boat in range (2 tiles for now)
     // the tourist boat should begin moving towards a buoy once it spawns.
 
@@ -305,6 +339,7 @@ public class AIBehaviour : MonoBehaviour
                             if (currentB.Unit.UnitType.Contains("Patrol Boat"))
                             {
                                 chaseState = true;
+                                stateChanged = true;
                                 break;
                             }
                         }

@@ -85,8 +85,8 @@ public class MainUI : MonoBehaviour
     {
         grid.GetPlayerBehaviour().ClearPath();
         UpdateCurrentCell();
-        // int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-        // Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
+        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
 
         if (selectedUnit == currentCell.Unit || !currentCell.Unit)
         {

@@ -67,6 +67,19 @@ public class HexCell : MonoBehaviour
     }
     int distance;
 
+    public int Index
+    {
+        get
+        {
+            return index;
+        }
+        set
+        {
+            index = value;
+        }
+    }
+    int index;
+
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
 

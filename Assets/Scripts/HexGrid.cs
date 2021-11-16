@@ -19,6 +19,7 @@ public class HexGrid : MonoBehaviour
     public Text cellLabelPrefab;
     public MapCreation mapCreation;
     [SerializeField] TextAsset unsafeCells;
+    [SerializeField] TextAsset escapeCells;
 
     public bool HasPath
     {
@@ -45,6 +46,7 @@ public class HexGrid : MonoBehaviour
     {
         playerBehaviour = this.gameObject.GetComponent<PlayerBehaviour>();
         GlobalCellCheck.SetUnsafeCells(unsafeCells);
+        GlobalCellCheck.SetEscapeCells(escapeCells);
 
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -113,6 +115,7 @@ public class HexGrid : MonoBehaviour
         // cell.transform.localScale = new Vector3(17.2f, 17.2f, 17.2f);
         cell.coordinates = computed;
         cell.HasOverlap = false;
+        cell.Index = i;
 
         // Set neighbours
         // x = 0 has no neighbours west. We start with west neighbours.
