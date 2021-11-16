@@ -993,7 +993,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 576616951}
-  normalSpeed: 0.5
+  normalSpeed: 0.75
   fastSpeed: 3
   movementSpeed: 1
   movementTime: 5

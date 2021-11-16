@@ -579,6 +579,7 @@ MonoBehaviour:
   cellLabelPrefab: {fileID: 8365395652673976220, guid: f078f3abc320eb24787e6080890efdca, type: 3}
   mapCreation: {fileID: 11400000, guid: 665d78d65c16d664fa588a54ab13b76d, type: 2}
   unsafeCells: {fileID: 4900000, guid: 54554f94cd6905f49abf0895676c9868, type: 3}
+  escapeCells: {fileID: 4900000, guid: 66789a558c028004793bd2c5a21de3e4, type: 3}
 --- !u!4 &306096921
 Transform:
   m_ObjectHideFlags: 0
@@ -1096,7 +1097,7 @@ MonoBehaviour:
   cameraTransform: {fileID: 576616951}
   normalSpeed: 0.5
   fastSpeed: 3
-  movementSpeed: 1
+  movementSpeed: 0.75
   movementTime: 5
   rotationAmount: 1
   zoomAmount: {x: 0, y: -1, z: 1}

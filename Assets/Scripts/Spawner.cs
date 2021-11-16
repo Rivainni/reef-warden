@@ -48,6 +48,8 @@ public class Spawner : MonoBehaviour
 
     public void DestroyUnit(HexUnit unit)
     {
+        AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
+        currentBehaviour.Clean();
         hexGrid.RemoveUnit(unit);
     }
 

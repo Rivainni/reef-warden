@@ -110,7 +110,6 @@ public class AIBehaviour : MonoBehaviour
                     break;
                 }
             }
-            fullPath = null;
         }
     }
 
@@ -247,6 +246,7 @@ public class AIBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
+            current.HasOverlap = true;
             int currentIndex = current.Index;
             while (current != currentPathFrom)
             {
@@ -255,6 +255,7 @@ public class AIBehaviour : MonoBehaviour
                 current.SetLabel((turn + 1).ToString());
                 current.EnableHighlight(Color.green);
                 current = current.PathFrom;
+                current.HasOverlap = true;
             }
         }
         currentPathFrom.EnableHighlight(Color.blue);
@@ -308,6 +309,7 @@ public class AIBehaviour : MonoBehaviour
         {
             return null;
         }
+
         List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
@@ -352,5 +354,10 @@ public class AIBehaviour : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void Clean()
+    {
+        ClearPath();
     }
 }

@@ -111,7 +111,7 @@ public class HexGrid : MonoBehaviour
         }
 
         cell.transform.localPosition = position;
-        cell.transform.localScale = new Vector3(17.2f, 1.0f, 17.2f);
+        cell.transform.localScale = new Vector3(17.2f, 5.0f, 17.2f);
         // cell.transform.localScale = new Vector3(17.2f, 17.2f, 17.2f);
         cell.coordinates = computed;
         cell.HasOverlap = false;
@@ -237,6 +237,7 @@ public class HexGrid : MonoBehaviour
         unit.Orientation = orientation;
         unit.UnitType = unitType;
         unit.ActionPoints = actionPoints;
+        unit.transform.Translate(Vector3.up * 0.8f);
 
         if (unitType == "Fishing Boat" || unitType == "Tourist Boat")
         {
@@ -260,6 +261,8 @@ public class HexGrid : MonoBehaviour
         structure.Location = location;
         structure.Orientation = orientation;
         structure.StructureType = structureType;
+        structure.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
+        structure.transform.Translate(Vector3.up * 0.8f);
     }
 
     public void AddUpgrade(Upgrade upgrade, HexCell location, float orientation, string upgradeType, int constructionTime, int researchCost, int constructionCost)

@@ -71,7 +71,7 @@ public class MainUI : MonoBehaviour
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         if (cell)
         {
-            if (cell != currentCell)
+            if (cell != currentCell && !cell.HasOverlap)
             {
                 Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
                 currentCell = cell;
