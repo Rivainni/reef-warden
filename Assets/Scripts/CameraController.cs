@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float movementSpeed;
     [SerializeField] float movementTime;
     [SerializeField] float rotationAmount;
+    [SerializeField] float edgeSize;
     [SerializeField] Vector3 zoomAmount;
 
     Vector3 newPosition;
@@ -71,6 +72,24 @@ public class CameraController : MonoBehaviour
         //     }
         // }
 
+        // edge movement
+        if (Input.mousePosition.y > Screen.height - edgeSize)
+        {
+            newPosition += transform.forward * movementSpeed;
+        }
+        if (Input.mousePosition.y < edgeSize)
+        {
+            newPosition += transform.forward * -movementSpeed;
+        }
+        if (Input.mousePosition.x < edgeSize)
+        {
+            newPosition += transform.right * -movementSpeed;
+        }
+        if (Input.mousePosition.x > Screen.width - edgeSize)
+        {
+            newPosition += transform.right * movementSpeed;
+        }
+
         if (Input.GetMouseButtonDown(2))
         {
             rotateStartPosition = Input.mousePosition;
@@ -99,19 +118,19 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            newPosition += (transform.forward * movementSpeed);
+            newPosition += transform.forward * movementSpeed;
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            newPosition += (transform.forward * -movementSpeed);
+            newPosition += transform.forward * -movementSpeed;
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            newPosition += (transform.right * -movementSpeed);
+            newPosition += transform.right * -movementSpeed;
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            newPosition += (transform.right * movementSpeed);
+            newPosition += transform.right * movementSpeed;
         }
 
         if (Input.GetKey(KeyCode.Q))
