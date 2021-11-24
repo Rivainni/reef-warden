@@ -24,10 +24,12 @@ public class CameraController : MonoBehaviour
     Vector3 rotateCurrentPosition;
 
     float minX;
-    float minY;
+    float minZoomY;
+    float minZoomZ;
     float minZ;
     float maxX;
-    float maxY;
+    float maxZoomY;
+    float maxZoomZ;
     float maxZ;
 
     void Start()
@@ -164,8 +166,9 @@ public class CameraController : MonoBehaviour
         }
 
         // Debug.Log("X: " + newPosition.x + " Y: " + newZoom.y + " Z: " + newPosition.z + "\n");
+        Debug.Log("Y: " + newZoom.y + " Z: " + newZoom.z + "\n");
         newPosition = new Vector3(Mathf.Clamp(newPosition.x, minX, maxX), newPosition.y, Mathf.Clamp(newPosition.z, minZ, maxZ));
-        newZoom = new Vector3(newZoom.x, Mathf.Clamp(newZoom.y, minY, maxY), newZoom.z);
+        newZoom = new Vector3(newZoom.x, Mathf.Clamp(newZoom.y, minZoomY, maxZoomY), Mathf.Clamp(newZoom.z, minZoomZ, maxZoomZ));
 
         // smooth movement, have to linear interpolate
         transform.position = Vector3.Lerp(transform.position, newPosition, 0.5f);
@@ -177,10 +180,12 @@ public class CameraController : MonoBehaviour
     {
         // hardcode for now
         minX = -230.0f;
-        minY = 0.0f;
+        minZoomY = -20.0f;
+        minZoomZ = 25.0f;
         minZ = -230.0f;
         maxX = 1004f;
-        maxY = 200.0f;
+        maxZoomY = 35.0f;
+        maxZoomZ = 80.0f;
         maxZ = 836f;
     }
 }
