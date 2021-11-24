@@ -36,8 +36,8 @@ public class PlayerState : ScriptableObject
     [SerializeField] int fishermenCaught;
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
-    bool day = true;
     bool radarActive = false;
+    bool inTutorial;
 
     struct UpgradeItem
     {
@@ -416,7 +416,6 @@ public class PlayerState : ScriptableObject
         clamCD = 0;
         turtleCD = 0;
         researchCD = 0;
-        day = true;
         unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };
         builtUpgrades.Clear();
         touristsInspected = 0;
@@ -430,14 +429,6 @@ public class PlayerState : ScriptableObject
         money += income;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
-        if (turn % 4 == 0)
-        {
-            day = false;
-        }
-        else
-        {
-            day = true;
-        }
 
         if (upgradeQueue.Count > 0)
         {
@@ -452,5 +443,15 @@ public class PlayerState : ScriptableObject
             trueReefHealth -= fishermen * 2;
         }
         ReduceCD();
+    }
+
+    public void EndTutorial()
+    {
+        inTutorial = false;
+    }
+
+    public bool CheckTutorial()
+    {
+        return inTutorial;
     }
 }

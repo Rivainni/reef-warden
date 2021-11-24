@@ -166,7 +166,7 @@ public class CameraController : MonoBehaviour
         }
 
         // Debug.Log("X: " + newPosition.x + " Y: " + newZoom.y + " Z: " + newPosition.z + "\n");
-        Debug.Log("Y: " + newZoom.y + " Z: " + newZoom.z + "\n");
+        // Debug.Log("Y: " + newZoom.y + " Z: " + newZoom.z + "\n");
         newPosition = new Vector3(Mathf.Clamp(newPosition.x, minX, maxX), newPosition.y, Mathf.Clamp(newPosition.z, minZ, maxZ));
         newZoom = new Vector3(newZoom.x, Mathf.Clamp(newZoom.y, minZoomY, maxZoomY), Mathf.Clamp(newZoom.z, minZoomZ, maxZoomZ));
 
