@@ -24,6 +24,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject textPrefab;
     [SerializeField] GameObject researchPrefab;
     [SerializeField] GameObject valuesContainer;
+    [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
 
     void Start()
@@ -433,6 +434,7 @@ public class MainUI : MonoBehaviour
         }
         UpdateUIElements();
         StartCoroutine(AIMovement(clicked));
+        timeController.UpdateTimeOfDay();
     }
 
     IEnumerator AIMovement(Button clicked)

@@ -33,7 +33,7 @@ public class Spawner : MonoBehaviour
         int structureIndex = System.Array.IndexOf(structureTypes, structureType);
         if (cell && !cell.Structure)
         {
-            hexGrid.AddStructure(Instantiate(structurePrefabs[structureIndex]), cell, Random.Range(0f, 360f), structureType);
+            hexGrid.AddStructure(Instantiate(structurePrefabs[structureIndex]), cell, 315f, structureType);
         }
     }
 

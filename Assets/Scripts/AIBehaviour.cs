@@ -313,7 +313,6 @@ public class AIBehaviour : MonoBehaviour
         List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
-            c.HasOverlap = true;
             path.Add(c);
         }
         path.Add(currentPathFrom);

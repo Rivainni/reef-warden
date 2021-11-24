@@ -993,7 +993,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 576616951}
-  normalSpeed: 0.75
+  normalSpeed: 2
   fastSpeed: 3
   movementSpeed: 1
   movementTime: 5
@@ -1120,7 +1120,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -2385,6 +2385,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703363273}
   m_CullTransparentMesh: 1
+--- !u!1 &1907426806
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1907426808}
+  - component: {fileID: 1907426807}
+  m_Layer: 0
+  m_Name: TimeController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1907426807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907426806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aae1173c5b189e4a9e301dbbcb4297f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeMultiplier: 0
+  startHour: 12
+  sunLight: {fileID: 705507994}
+  sunriseHour: 6
+  sunsetHour: 18
+--- !u!4 &1907426808
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907426806}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2078076710
 GameObject:
   m_ObjectHideFlags: 0
@@ -2512,4 +2560,5 @@ MonoBehaviour:
   textPrefab: {fileID: 6520570075929674871, guid: 28ccfa1843a66e34d8240e47d2e607fd, type: 3}
   researchPrefab: {fileID: 3570511537018259731, guid: aba1c7afa2aef234e89c588d24ee4473, type: 3}
   valuesContainer: {fileID: 184876450}
+  timeController: {fileID: 1907426807}
   radarButton: {fileID: 89648778}

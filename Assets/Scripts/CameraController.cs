@@ -163,8 +163,8 @@ public class CameraController : MonoBehaviour
             newZoom -= zoomAmount;
         }
 
-        newPosition = new Vector3(Mathf.Clamp(newPosition.x, minX, maxX), newPosition.y, Mathf.Clamp(newPosition.z, minZ, maxZ));
-        newZoom = new Vector3(newZoom.x, Mathf.Clamp(newZoom.y, minY, maxY), newZoom.z);
+        // newPosition = new Vector3(Mathf.Clamp(newPosition.x, minX, maxX), newPosition.y, Mathf.Clamp(newPosition.z, minZ, maxZ));
+        // newZoom = new Vector3(newZoom.x, Mathf.Clamp(newZoom.y, minY, maxY), newZoom.z);
 
         // smooth movement, have to linear interpolate
         transform.position = Vector3.Lerp(transform.position, newPosition, 0.5f);
