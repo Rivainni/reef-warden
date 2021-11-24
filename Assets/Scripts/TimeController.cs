@@ -7,12 +7,19 @@ public class TimeController : MonoBehaviour
 {
     [SerializeField] float timeMultiplier;
     [SerializeField] float startHour;
-    [SerializeField] Light sunLight;
     [SerializeField] float sunriseHour;
     [SerializeField] float sunsetHour;
+    [SerializeField] Color dayAmbientLight;
+    [SerializeField] Color nightAmbientLight;
+    [SerializeField] AnimationCurve lightChangeCurve;
+    [SerializeField] Light sunLight;
+    [SerializeField] float maxSunLightIntensity;
+    [SerializeField] Light moonLight;
+    [SerializeField] float maxMoonLightIntensity;
     DateTime currentTime;
     TimeSpan sunriseTime;
     TimeSpan sunsetTime;
+    bool day;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,8 +36,9 @@ public class TimeController : MonoBehaviour
 
     public void UpdateTimeOfDay()
     {
-        currentTime = currentTime.AddHours(6);
+        currentTime = currentTime.AddHours(3);
         RotateSun();
+        UpdateLightSettings();
     }
 
     void RotateSun()
@@ -45,6 +53,7 @@ public class TimeController : MonoBehaviour
             double percentage = timeSinceSunrise.TotalMinutes / sunriseToSunsetDuration.TotalMinutes;
 
             sunLightRotation = Mathf.Lerp(0, 180, (float)percentage);
+            day = true;
         }
         else
         {
@@ -54,10 +63,19 @@ public class TimeController : MonoBehaviour
             double percentage = timeSinceSunset.TotalMinutes / sunsetToSunriseDuration.TotalMinutes;
 
             sunLightRotation = Mathf.Lerp(180, 360, (float)percentage);
+            day = false;
         }
 
         // sunLight.transform.rotation = Quaternion.Euler(0, sunLightRotation, 0);
         sunLight.transform.rotation = Quaternion.AngleAxis(sunLightRotation, Vector3.right);
+    }
+
+    void UpdateLightSettings()
+    {
+        float intensity = Vector3.Dot(sunLight.transform.forward, Vector3.down);
+        sunLight.intensity = Mathf.Lerp(0, maxSunLightIntensity, lightChangeCurve.Evaluate(intensity));
+        moonLight.intensity = Mathf.Lerp(maxMoonLightIntensity, 0, lightChangeCurve.Evaluate(intensity));
+        RenderSettings.ambientLight = Color.Lerp(nightAmbientLight, dayAmbientLight, lightChangeCurve.Evaluate(intensity));
     }
 
     TimeSpan CalculateTimeDifference(TimeSpan fromTime, TimeSpan toTime)
@@ -70,5 +88,10 @@ public class TimeController : MonoBehaviour
         }
 
         return difference;
+    }
+
+    public bool IsDay()
+    {
+        return day;
     }
 }
