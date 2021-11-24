@@ -81,7 +81,11 @@ public class StoryManager : MonoBehaviour
                 secondarySprite.enabled = false;
             }
 
-            Tutorial(action);
+            if (mainUI.GetPlayerState().CheckTutorial())
+            {
+                Tutorial(action);
+            }
+
             PrintDialogue();
         }
         else if (inputStream.Peek().Contains("{0}"))

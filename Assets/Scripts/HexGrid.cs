@@ -54,11 +54,11 @@ public class HexGrid : MonoBehaviour
         CreateCells();
         PopulateUpgradeCells();
 
-        if (SceneManager.GetActiveScene().name == "Map")
-        {
-            spawner.RandomSpawn("Tourist Boat");
-            spawner.RandomSpawn("Fishing Boat");
-        }
+        // if (SceneManager.GetActiveScene().name == "Map")
+        // {
+        //     spawner.RandomSpawn("Tourist Boat");
+        //     spawner.RandomSpawn("Fishing Boat");
+        // }
     }
 
     void CreateChunks()

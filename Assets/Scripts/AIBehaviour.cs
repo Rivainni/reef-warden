@@ -129,8 +129,8 @@ public class AIBehaviour : MonoBehaviour
             || finalDestination == currentUnit.Location || grid.GetBuoyCells().Contains(grid.GetCells()[randomIndex]))
             {
                 randomIndex = Random.Range(0, grid.GetCells().Length - 1);
-                finalDestination = grid.GetCells()[randomIndex];
             }
+            finalDestination = grid.GetCells()[randomIndex];
         }
 
         SetMovementTarget(finalDestination);

@@ -60,6 +60,10 @@ public class MainUI : MonoBehaviour
             {
                 DoUpgrade();
             }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                HexAction();
+            }
         }
 
         if (Input.GetKey(KeyCode.Escape))
@@ -85,21 +89,23 @@ public class MainUI : MonoBehaviour
     void DoSelection()
     {
         grid.GetPlayerBehaviour().ClearPath();
-        UpdateCurrentCell();
-        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
-
-        if (selectedUnit == currentCell.Unit || !currentCell.Unit)
+        if (UpdateCurrentCell())
         {
-            selectedUnit = null;
-        }
-        else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
-        {
-            selectedUnit = currentCell.Unit;
-            Debug.Log("Selected " + selectedUnit.UnitType);
-        }
+            int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+            Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
 
-        grid.ShowUI(true);
+            if (selectedUnit == currentCell.Unit || !currentCell.Unit)
+            {
+                selectedUnit = null;
+            }
+            else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
+            {
+                selectedUnit = currentCell.Unit;
+                Debug.Log("Selected " + selectedUnit.UnitType);
+            }
+
+            grid.ShowUI(true);
+        }
     }
 
     void DoPathfinding()
@@ -137,38 +143,56 @@ public class MainUI : MonoBehaviour
 
         List<string> contextMenuContent = new List<string>();
 
-        if (selectedUnit.UnitType.Contains("Patrol Boat"))
+        if (selectedUnit)
         {
-            if (grid.HasPath && grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
+            if (selectedUnit.UnitType.Contains("Patrol Boat"))
             {
-                contextMenuContent.Add("Patrol");
-
-                // moving this check once we've marked the location of the reefs
-                if (currentState.FetchCD("CH1") == 0 && currentState.FetchCD("CH2") == 0 && currentState.FetchCD("CH3") == 0)
+                if (grid.HasPath && grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
                 {
-                    contextMenuContent.Add("Check Reef Health");
-                }
+                    contextMenuContent.Add("Patrol");
 
-                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-                {
-                    HexCell toCheckCell = cell.GetNeighbor(d);
-                    if (toCheckCell != null && toCheckCell.Unit != null)
+                    // moving this check once we've marked the location of the reefs
+                    if (currentState.FetchCD("CH1") == 0 && currentState.FetchCD("CH2") == 0 && currentState.FetchCD("CH3") == 0)
                     {
-                        if (toCheckCell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
+                        contextMenuContent.Add("Check Reef Health");
+                    }
+
+                    for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+                    {
+                        HexCell toCheckCell = cell.GetNeighbor(d);
+                        if (toCheckCell != null && toCheckCell.Unit != null)
                         {
-                            contextMenuContent.Add("Catch Fisherman");
-                            tempA = toCheckCell;
-                            targetA = toCheckCell.Unit;
-                        }
-                        else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
-                        {
-                            contextMenuContent.Add("Inspect Tourist");
-                            tempB = toCheckCell;
-                            targetB = toCheckCell.Unit;
+                            if (toCheckCell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
+                            {
+                                contextMenuContent.Add("Catch Fisherman");
+                                tempA = toCheckCell;
+                                targetA = toCheckCell.Unit;
+                            }
+                            else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
+                            {
+                                contextMenuContent.Add("Inspect Tourist");
+                                tempB = toCheckCell;
+                                targetB = toCheckCell.Unit;
+                            }
                         }
                     }
                 }
             }
+            else if (selectedUnit.UnitType.Contains("Service Boat"))
+            {
+                contextMenuContent.Add("Move");
+                if (cell.Unit)
+                {
+                    if (cell.Unit.UnitType == "Patrol Boat")
+                    {
+                        contextMenuContent.Add("Repair");
+                    }
+                }
+            }
+        }
+        else
+        {
+            contextMenuContent.Add("Inspect");
         }
 
         if (contextMenuContent.Count > 0)
@@ -196,6 +220,18 @@ public class MainUI : MonoBehaviour
                 {
                     currentButton.onClick.AddListener(() => InspectTourist(tempB, contextMenu, targetB));
                 }
+                else if (item == "Inspect")
+                {
+                    currentButton.onClick.AddListener(() => Inspect(cell, contextMenu));
+                }
+                else if (item == "Repair")
+                {
+                    currentButton.onClick.AddListener(() => Repair(cell, contextMenu));
+                }
+                else if (item == "Move")
+                {
+                    currentButton.onClick.AddListener(() => AfterAction(contextMenu));
+                }
             }
         }
     }
@@ -203,7 +239,38 @@ public class MainUI : MonoBehaviour
     void AfterAction(GameObject remove)
     {
         DoMove();
+        // NEED HP BAR
+        if (selectedUnit.UnitType == "Patrol Boat")
+        {
+            selectedUnit.DecreaseHP();
+        }
         UpdateUIElements();
+        Destroy(remove);
+    }
+
+    void Inspect(HexCell target, GameObject remove)
+    {
+        string message = "";
+        if (target.Unit)
+        {
+            message += "That is a " + target.Unit.UnitType + ".\n";
+        }
+        if (target.Type == "Land")
+        {
+            message += "A pristine plot of sand.\n";
+        }
+        else if (target.Type == "Water")
+        {
+            message += "Nothing but water. It's clean enough that you can see fish swimming under it.\n";
+        }
+
+        Debug.Log(message);
+        Destroy(remove);
+    }
+
+    void Repair(HexCell target, GameObject remove)
+    {
+        target.Unit.RestoreHP();
         Destroy(remove);
     }
 
@@ -432,9 +499,26 @@ public class MainUI : MonoBehaviour
                 currentBehaviour.Execute();
             }
         }
-        UpdateUIElements();
         StartCoroutine(AIMovement(clicked));
         timeController.UpdateTimeOfDay();
+
+        // spawn only every 4 turns
+        if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0 || currentState.GetTurn() == 2))
+        {
+            int count = currentState.GetTourists();
+            currentState.AddTourists(1);
+
+            for (int i = 0; i < count; i++)
+            {
+                spawner.RandomSpawn("Tourist Boat");
+            }
+        }
+        else if (currentState.GetTurn() % 4 == 0)
+        {
+            spawner.RandomSpawn("Fishing Boat");
+        }
+
+        UpdateUIElements();
     }
 
     IEnumerator AIMovement(Button clicked)

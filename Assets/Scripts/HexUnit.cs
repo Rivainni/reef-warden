@@ -31,8 +31,9 @@ public class HexUnit : MonoBehaviour
 
     int actionPoints;
     int maxActionPoints;
+    int reducedActionPoints;
 
-    public int hp;
+    public float hp;
 
     public bool takenTurn;
     public bool movement = false;
@@ -77,6 +78,8 @@ public class HexUnit : MonoBehaviour
     void Start()
     {
         maxActionPoints = actionPoints;
+        reducedActionPoints = maxActionPoints;
+        hp = 100;
     }
 
     public void ValidateLocation()
@@ -169,12 +172,19 @@ public class HexUnit : MonoBehaviour
 
     public void DecreaseHP()
     {
-        hp -= (maxActionPoints - actionPoints);
+        hp -= (reducedActionPoints - actionPoints);
+
+        reducedActionPoints = Mathf.RoundToInt(hp * reducedActionPoints);
+    }
+
+    public void RestoreHP()
+    {
+        hp = 1f;
     }
 
     public void ResetMovement()
     {
-        ActionPoints = maxActionPoints;
+        ActionPoints = reducedActionPoints;
     }
 
 
