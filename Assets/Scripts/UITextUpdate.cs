@@ -47,10 +47,19 @@ public class UITextUpdate : MonoBehaviour
         {
             current.text = "HP: " + Mathf.Round(currentState.GetHealth());
         }
+        else if (current.text.Contains(":"))
+        {
+            current.text = ": " + currentState.GetMessage();
+        }
     }
 
     public void UpdateObjective(string objective)
     {
         current.text = objective;
+    }
+
+    public void UpdateLog(string message)
+    {
+        current.text = message;
     }
 }

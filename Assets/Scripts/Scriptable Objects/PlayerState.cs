@@ -34,6 +34,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] Queue<UpgradeItem> researchQueue = new Queue<UpgradeItem>();
     [SerializeField] int touristsInspected;
     [SerializeField] int fishermenCaught;
+    string message;
     const float moraleLambda = 0.04f;
     const float securityLambda = 0.04f;
     bool radarActive = false;
@@ -104,6 +105,16 @@ public class PlayerState : ScriptableObject
     public string[] GetPossibleActions()
     {
         return possibleActions;
+    }
+
+    public string GetMessage()
+    {
+        return message;
+    }
+
+    public void SetMessage(string message)
+    {
+        this.message = message;
     }
 
     public int GetIncome()
@@ -421,6 +432,7 @@ public class PlayerState : ScriptableObject
         touristsInspected = 0;
         fishermenCaught = 0;
         radarActive = false;
+        message = "";
     }
 
     public void EndTurn()

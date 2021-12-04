@@ -255,7 +255,11 @@ public class MainUI : MonoBehaviour
         {
             message += "That is a " + target.Unit.UnitType + ".\n";
         }
-        if (target.Type == "Land")
+        else if (target.Structure)
+        {
+            message += "That is a " + target.Structure.StructureType + ".\n";
+        }
+        else if (target.Type == "Land")
         {
             message += "A pristine plot of sand.\n";
         }
@@ -264,7 +268,8 @@ public class MainUI : MonoBehaviour
             message += "Nothing but water. It's clean enough that you can see fish swimming under it.\n";
         }
 
-        Debug.Log(message);
+        currentState.SetMessage(message);
+        UpdateUIElements();
         Destroy(remove);
     }
 
