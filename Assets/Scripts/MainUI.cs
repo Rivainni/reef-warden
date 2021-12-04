@@ -499,8 +499,8 @@ public class MainUI : MonoBehaviour
                 currentBehaviour.Execute();
             }
         }
+        timeController.ForwardTime();
         StartCoroutine(AIMovement(clicked));
-        timeController.UpdateTimeOfDay();
 
         // spawn only every 4 turns
         if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0 || currentState.GetTurn() == 2))
@@ -525,6 +525,8 @@ public class MainUI : MonoBehaviour
     {
         clicked.interactable = false;
         yield return new WaitUntil(() => CheckMovement() == false);
+        Debug.Log("Stuck.");
+        yield return new WaitUntil(() => timeController.CheckPause());
         clicked.interactable = true;
     }
 

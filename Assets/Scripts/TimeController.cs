@@ -19,30 +19,43 @@ public class TimeController : MonoBehaviour
     [SerializeField] float maxMoonLightIntensity;
     [SerializeField] Text timeIndicator;
     DateTime currentTime;
+    DateTime targetTime;
     TimeSpan sunriseTime;
     TimeSpan sunsetTime;
     bool day;
+    bool pause;
     // Start is called before the first frame update
     void Start()
     {
         currentTime = DateTime.Now.Date + TimeSpan.FromHours(startHour);
+        targetTime = currentTime;
         sunriseTime = TimeSpan.FromHours(sunriseHour);
         sunsetTime = TimeSpan.FromHours(sunsetHour);
         timeIndicator.text = currentTime.ToString("HH:mm");
+        pause = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if ((targetTime - currentTime).TotalSeconds > 0 && !pause)
+        {
+            UpdateTimeOfDay();
+            RotateSun();
+            UpdateLightSettings();
+        }
+        else if (!pause)
+        {
+            targetTime = currentTime;
+            pause = true;
+        }
     }
 
-    public void UpdateTimeOfDay()
+    void UpdateTimeOfDay()
     {
-        currentTime = currentTime.AddHours(3);
+        // currentTime = currentTime.AddHours(3);
+        currentTime = currentTime.AddSeconds(Time.deltaTime * timeMultiplier);
         timeIndicator.text = currentTime.ToString("HH:mm");
-        RotateSun();
-        UpdateLightSettings();
     }
 
     void RotateSun()
@@ -97,5 +110,23 @@ public class TimeController : MonoBehaviour
     public bool IsDay()
     {
         return day;
+    }
+
+    public void ForwardTime()
+    {
+        if (pause)
+        {
+            pause = false;
+        }
+        else
+        {
+            pause = true;
+        }
+        targetTime = currentTime.AddHours(3);
+    }
+
+    public bool CheckPause()
+    {
+        return pause;
     }
 }

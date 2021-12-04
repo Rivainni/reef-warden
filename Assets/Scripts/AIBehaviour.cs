@@ -46,7 +46,6 @@ public class AIBehaviour : MonoBehaviour
 
             if (chaseState)
             {
-                ClearPath();
                 ChooseEscape();
                 StartCoroutine(TurnMove());
                 SetMovementTarget(finalDestination);
@@ -154,7 +153,7 @@ public class AIBehaviour : MonoBehaviour
             {
                 currentIndex = GlobalCellCheck.GetEscapeCell(i);
             }
-            ClearPath();
+            // ClearPath();
         }
 
         finalDestination = grid.GetCells()[currentIndex];
@@ -247,7 +246,7 @@ public class AIBehaviour : MonoBehaviour
         {
             HexCell current = currentPathTo;
             current.HasOverlap = true;
-            int currentIndex = current.Index;
+            int currentIndex;
             while (current != currentPathFrom)
             {
                 currentIndex = current.Index;
