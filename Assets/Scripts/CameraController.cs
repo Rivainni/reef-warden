@@ -31,6 +31,7 @@ public class CameraController : MonoBehaviour
     float maxZoomY;
     float maxZoomZ;
     float maxZ;
+    bool edgeToggle;
 
     void Start()
     {
@@ -39,6 +40,7 @@ public class CameraController : MonoBehaviour
         newRotation = transform.rotation;
         // newZoom = new Vector3(cameraTransform.localPosition.x, cameraTransform.localPosition.y + 20.0f, cameraTransform.localPosition.z);
         newZoom = cameraTransform.localPosition;
+        edgeToggle = true;
     }
 
     void Update()
@@ -128,22 +130,38 @@ public class CameraController : MonoBehaviour
             newPosition += transform.right * movementSpeed;
         }
 
-        // edge movement
-        if (Input.mousePosition.y > Screen.height - edgeSize)
+        // edge movement. if you hold spacebar it temporarily suspends the thingo.
+
+        if (Input.GetKey(KeyCode.Space))
         {
-            newPosition += transform.forward * movementSpeed;
+            if (edgeToggle)
+            {
+                edgeToggle = false;
+            }
+            else
+            {
+                edgeToggle = true;
+            }
         }
-        if (Input.mousePosition.y < edgeSize)
+
+        if (edgeToggle)
         {
-            newPosition += transform.forward * -movementSpeed;
-        }
-        if (Input.mousePosition.x < edgeSize)
-        {
-            newPosition += transform.right * -movementSpeed;
-        }
-        if (Input.mousePosition.x > Screen.width - edgeSize)
-        {
-            newPosition += transform.right * movementSpeed;
+            if (Input.mousePosition.y > Screen.height - edgeSize)
+            {
+                newPosition += transform.forward * movementSpeed;
+            }
+            if (Input.mousePosition.y < edgeSize)
+            {
+                newPosition += transform.forward * -movementSpeed;
+            }
+            if (Input.mousePosition.x < edgeSize)
+            {
+                newPosition += transform.right * -movementSpeed;
+            }
+            if (Input.mousePosition.x > Screen.width - edgeSize)
+            {
+                newPosition += transform.right * movementSpeed;
+            }
         }
 
         if (Input.GetKey(KeyCode.Q))

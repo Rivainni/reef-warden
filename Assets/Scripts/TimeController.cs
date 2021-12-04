@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TimeController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class TimeController : MonoBehaviour
     [SerializeField] float maxSunLightIntensity;
     [SerializeField] Light moonLight;
     [SerializeField] float maxMoonLightIntensity;
+    [SerializeField] Text timeIndicator;
     DateTime currentTime;
     TimeSpan sunriseTime;
     TimeSpan sunsetTime;
@@ -26,6 +28,7 @@ public class TimeController : MonoBehaviour
         currentTime = DateTime.Now.Date + TimeSpan.FromHours(startHour);
         sunriseTime = TimeSpan.FromHours(sunriseHour);
         sunsetTime = TimeSpan.FromHours(sunsetHour);
+        timeIndicator.text = currentTime.ToString("HH:mm");
     }
 
     // Update is called once per frame
@@ -37,6 +40,7 @@ public class TimeController : MonoBehaviour
     public void UpdateTimeOfDay()
     {
         currentTime = currentTime.AddHours(3);
+        timeIndicator.text = currentTime.ToString("HH:mm");
         RotateSun();
         UpdateLightSettings();
     }
