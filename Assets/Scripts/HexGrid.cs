@@ -18,6 +18,7 @@ public class HexGrid : MonoBehaviour
     public MainUI mainUI;
     public Text cellLabelPrefab;
     public MapCreation mapCreation;
+    public TimeController timeController;
     [SerializeField] TextAsset unsafeCells;
     [SerializeField] TextAsset escapeCells;
 
@@ -41,6 +42,7 @@ public class HexGrid : MonoBehaviour
     List<HexCell> buoyCells = new List<HexCell>();
     HexCell rangerStation;
     PlayerBehaviour playerBehaviour;
+    int patrolBoatSpawn, serviceBoatSpawn;
 
     void Awake()
     {
@@ -59,6 +61,9 @@ public class HexGrid : MonoBehaviour
         //     spawner.RandomSpawn("Tourist Boat");
         //     spawner.RandomSpawn("Fishing Boat");
         // }
+
+        spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
+        spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
     }
 
     void CreateChunks()
@@ -108,6 +113,10 @@ public class HexGrid : MonoBehaviour
         {
             cell = cells[i] = Instantiate<HexCell>(water);
             cell.Type = "Water";
+
+            // Randomise waves
+            Animator waves = cell.gameObject.GetComponent<Animator>();
+            waves.SetFloat("Offset", Random.Range(0, 0.25f));
         }
 
         cell.transform.localPosition = position;
@@ -116,6 +125,7 @@ public class HexGrid : MonoBehaviour
         cell.coordinates = computed;
         cell.HasOverlap = false;
         cell.Index = i;
+
 
         // Set neighbours
         // x = 0 has no neighbours west. We start with west neighbours.
@@ -150,16 +160,14 @@ public class HexGrid : MonoBehaviour
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
         cell.uiRect = label.rectTransform;
 
-        // add units *after* the cell has spawned
+        // add units *after* the cells have spawned
         switch (mapCreation.HasInitialUnit(check))
         {
             case 0:
-                spawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
-                Debug.Log("P1 spawned.");
+                patrolBoatSpawn = i;
                 break;
             case 1:
-                spawner.SpawnUnit(cell, "Service Boat");
-                Debug.Log("S spawned.");
+                serviceBoatSpawn = i;
                 break;
         }
 
@@ -167,12 +175,10 @@ public class HexGrid : MonoBehaviour
         {
             case 0:
                 spawner.SpawnStructure(cell, "Ranger Station");
-                Debug.Log("RS spawned.");
                 rangerStation = cell;
                 break;
             case 1:
                 spawner.SpawnStructure(cell, "Buoy");
-                Debug.Log("B spawned.");
                 buoyCells.Add(cell);
                 break;
         }
@@ -233,9 +239,13 @@ public class HexGrid : MonoBehaviour
             unit.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
         }
 
+        // Should only matter for players
+        unit.Grid = this;
+        unit.VisionRange = 5; // This is just default vision range; it's only for players
+
+        unit.UnitType = unitType;
         unit.Location = location;
         unit.Orientation = orientation;
-        unit.UnitType = unitType;
         unit.ActionPoints = actionPoints;
         unit.transform.Translate(Vector3.up * 0.8f);
 
@@ -334,6 +344,81 @@ public class HexGrid : MonoBehaviour
     //         HexUnit.Load(reader, this);
     //     }
     // }
+
+
+    List<HexCell> GetVisibleCells(HexCell fromCell, int range)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Distance = int.MaxValue;
+        }
+
+        List<HexCell> frontier = new List<HexCell>();
+        List<HexCell> visibleCells = new List<HexCell>();
+        fromCell.Distance = 0;
+        frontier.Add(fromCell);
+        while (frontier.Count > 0)
+        {
+            HexCell current = frontier[0];
+            frontier.RemoveAt(0);
+            visibleCells.Add(current);
+
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = current.GetNeighbor(d);
+
+                if (neighbor == null)
+                {
+                    continue;
+                }
+
+                int distance = current.Distance + 1;
+                if (distance > range)
+                {
+                    continue;
+                }
+
+                neighbor.Distance = distance;
+                neighbor.SearchHeuristic = 0;
+                frontier.Add(neighbor);
+                frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
+            }
+        }
+        return visibleCells;
+    }
+
+    public void IncreaseVisibility(HexCell fromCell, int range)
+    {
+        List<HexCell> curr = GetVisibleCells(fromCell, range);
+        for (int i = 0; i < curr.Count; i++)
+        {
+            cells[i].IncreaseVisibility();
+            if (cells[i].Unit)
+            {
+                if (!cells[i].Unit.IsVisible)
+                {
+                    cells[i].Unit.ToggleVisibility();
+                }
+            }
+        }
+    }
+
+    public void DecreaseVisibility(HexCell fromCell, int range)
+    {
+        List<HexCell> curr = GetVisibleCells(fromCell, range);
+        for (int i = 0; i < curr.Count; i++)
+        {
+            cells[i].DecreaseVisibility();
+
+            if (cells[i].Unit)
+            {
+                if (cells[i].Unit.IsVisible)
+                {
+                    cells[i].Unit.ToggleVisibility();
+                }
+            }
+        }
+    }
 
     public HexCell GetCell(Ray ray)
     {

@@ -66,19 +66,15 @@ public class Spawner : MonoBehaviour
     // actually spawning other types
     public void RandomSpawn(string unitType)
     {
-        int random = Random.Range(0, 624);
+        int random = Random.Range(0, GlobalCellCheck.GetEscapeCellCount() - 1);
         HexCell cell = hexGrid.GetCells()[random];
-
-        while (GlobalCellCheck.IsImpassable(cell) || GlobalCellCheck.IsNotReachable(random))
-        {
-            random = Random.Range(0, 624);
-            cell = hexGrid.GetCells()[random];
-        }
 
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
         if (cell && !cell.Unit)
         {
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
         }
+
+        Debug.Log("Spawned " + unitType);
     }
 }

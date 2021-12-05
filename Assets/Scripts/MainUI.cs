@@ -76,7 +76,7 @@ public class MainUI : MonoBehaviour
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         if (cell)
         {
-            if (cell != currentCell && !cell.HasOverlap)
+            if (cell != currentCell)
             {
                 Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
                 currentCell = cell;
@@ -89,23 +89,21 @@ public class MainUI : MonoBehaviour
     void DoSelection()
     {
         grid.GetPlayerBehaviour().ClearPath();
-        if (UpdateCurrentCell())
+        UpdateCurrentCell();
+        // int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+        // Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
+
+        if (selectedUnit == currentCell.Unit || !currentCell.Unit)
         {
-            int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-            Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
-
-            if (selectedUnit == currentCell.Unit || !currentCell.Unit)
-            {
-                selectedUnit = null;
-            }
-            else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
-            {
-                selectedUnit = currentCell.Unit;
-                Debug.Log("Selected " + selectedUnit.UnitType);
-            }
-
-            grid.ShowUI(true);
+            selectedUnit = null;
         }
+        else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
+        {
+            selectedUnit = currentCell.Unit;
+            Debug.Log("Selected " + selectedUnit.UnitType);
+        }
+
+        grid.ShowUI(true);
     }
 
     void DoPathfinding()
@@ -129,7 +127,6 @@ public class MainUI : MonoBehaviour
         selectedUnit.Travel(grid.GetPlayerBehaviour().GetPath());
         selectedUnit.ActionPoints = grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints);
         grid.GetPlayerBehaviour().ClearPath();
-        grid.ShowUI(false);
     }
 
     void HexAction()
@@ -507,20 +504,39 @@ public class MainUI : MonoBehaviour
         timeController.ForwardTime();
         StartCoroutine(AIMovement(clicked));
 
-        // spawn only every 4 turns
-        if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0 || currentState.GetTurn() == 2))
+        // makes everything visible again
+        if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0))
         {
-            int count = currentState.GetTourists();
-            currentState.AddTourists(1);
-
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < grid.GetUnits().Count; i++)
             {
-                spawner.RandomSpawn("Tourist Boat");
+                HexUnit currentUnit = grid.GetUnits()[i];
+
+                if (!currentUnit.IsVisible)
+                {
+                    grid.GetUnits()[i].ToggleVisibility();
+                }
             }
         }
-        else if (currentState.GetTurn() % 4 == 0)
+
+        // spawn only every 4 turns
+        if (!currentState.CheckTutorial())
         {
-            spawner.RandomSpawn("Fishing Boat");
+            if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0 || currentState.GetTurn() == 2))
+            {
+                Debug.Log("wtf");
+                int count = currentState.GetTourists();
+                currentState.AddTourists(1);
+
+                for (int i = 0; i < count; i++)
+                {
+                    spawner.RandomSpawn("Tourist Boat");
+                }
+            }
+            else if (!timeController.IsDay() && currentState.GetTurn() % 4 == 0)
+            {
+                currentState.AddFisherman(1);
+                spawner.RandomSpawn("Fishing Boat");
+            }
         }
 
         UpdateUIElements();
@@ -530,7 +546,6 @@ public class MainUI : MonoBehaviour
     {
         clicked.interactable = false;
         yield return new WaitUntil(() => CheckMovement() == false);
-        Debug.Log("Stuck.");
         yield return new WaitUntil(() => timeController.CheckPause());
         clicked.interactable = true;
     }
@@ -615,7 +630,26 @@ public class MainUI : MonoBehaviour
 
     IEnumerator OffRadar(int startTurn)
     {
+        Stack<HexUnit> affectedUnits = new Stack<HexUnit>();
+
+        for (int i = 0; i < grid.GetUnits().Count; i++)
+        {
+            HexUnit currentUnit = grid.GetUnits()[i];
+
+            if (!currentUnit.IsVisible)
+            {
+                affectedUnits.Push(currentUnit);
+                grid.GetUnits()[i].ToggleVisibility();
+            }
+        }
+
         yield return new WaitUntil(() => currentState.GetTurn() > startTurn);
+
+        while (affectedUnits.Count > 0)
+        {
+            affectedUnits.Pop().ToggleVisibility();
+        }
+
         currentState.DeactivateRadar();
         StartCoroutine(UnlockRadar());
     }

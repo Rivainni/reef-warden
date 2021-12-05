@@ -80,6 +80,15 @@ public class HexCell : MonoBehaviour
     }
     int index;
 
+    public bool IsVisible
+    {
+        get
+        {
+            return visibility > 0;
+        }
+    }
+    int visibility;
+
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
 
@@ -110,6 +119,16 @@ public class HexCell : MonoBehaviour
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();
         highlight.color = color;
         highlight.enabled = true;
+    }
+
+    public void IncreaseVisibility()
+    {
+        visibility++;
+    }
+
+    public void DecreaseVisibility()
+    {
+        visibility--;
     }
 
     // public void Save(BinaryWriter writer)

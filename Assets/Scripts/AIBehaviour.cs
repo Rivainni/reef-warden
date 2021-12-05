@@ -174,8 +174,6 @@ public class AIBehaviour : MonoBehaviour
         }
     }
 
-    // Possible optimization: pass indexes instead of the objects so we don't have to run a linear search every time
-    // polynomial time is fine ig but ughh
     bool Search(HexCell fromCell, HexCell toCell, int speed)
     {
         for (int i = 0; i < distances.Length; i++)

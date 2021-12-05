@@ -33,6 +33,7 @@ public class TimeController : MonoBehaviour
         sunsetTime = TimeSpan.FromHours(sunsetHour);
         timeIndicator.text = currentTime.ToString("HH:mm");
         pause = true;
+        day = true;
     }
 
     // Update is called once per frame
@@ -62,7 +63,7 @@ public class TimeController : MonoBehaviour
     {
         float sunLightRotation;
 
-        if (currentTime.TimeOfDay > sunriseTime && currentTime.TimeOfDay < sunsetTime)
+        if (currentTime.TimeOfDay >= sunriseTime && currentTime.TimeOfDay < sunsetTime)
         {
             TimeSpan sunriseToSunsetDuration = CalculateTimeDifference(sunriseTime, sunsetTime);
             TimeSpan timeSinceSunrise = CalculateTimeDifference(sunriseTime, currentTime.TimeOfDay);
