@@ -24,6 +24,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject textPrefab;
     [SerializeField] GameObject researchPrefab;
     [SerializeField] GameObject valuesContainer;
+    [SerializeField] GameObject queueDisplay;
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
 
@@ -76,7 +77,7 @@ public class MainUI : MonoBehaviour
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         if (cell)
         {
-            if (cell != currentCell)
+            if (cell != currentCell && !cell.HasOverlap)
             {
                 Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
                 currentCell = cell;
@@ -90,8 +91,8 @@ public class MainUI : MonoBehaviour
     {
         grid.GetPlayerBehaviour().ClearPath();
         UpdateCurrentCell();
-        // int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-        // Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
+        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
 
         if (selectedUnit == currentCell.Unit || !currentCell.Unit)
         {
@@ -280,7 +281,7 @@ public class MainUI : MonoBehaviour
     {
         float factor = destination.Distance * 0.5f;
         playerLocation = destination;
-        Debug.Log("You are at " + playerLocation.coordinates.ToString());
+        // Debug.Log("You are at " + playerLocation.coordinates.ToString());
         currentState.AddSecurity(factor);
         AfterAction(remove);
     }
@@ -292,21 +293,23 @@ public class MainUI : MonoBehaviour
         currentState.ResetCD("CH1");
         currentState.ResetCD("CH2");
         currentState.ResetCD("CH3");
-        playerLocation = destination;
-        Debug.Log("You are at " + playerLocation.coordinates.ToString());
+        // playerLocation = destination;
+        // Debug.Log("You are at " + playerLocation.coordinates.ToString());
         AfterAction(remove);
     }
 
     void InspectTourist(HexCell destination, GameObject remove, HexUnit target)
     {
-        InspectTouristGame(target);
-        playerLocation = destination;
-        Debug.Log("You are at " + playerLocation.coordinates.ToString());
+        StartCoroutine(InspectTouristGame(target));
+        // playerLocation = destination;
+        // Debug.Log("You are at " + playerLocation.coordinates.ToString());
         AfterAction(remove);
     }
 
-    void InspectTouristGame(HexUnit target)
+    IEnumerator InspectTouristGame(HexUnit target)
     {
+        yield return new WaitForSeconds(0.5f);
+        yield return new WaitUntil(() => selectedUnit.movement == false);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject gamePanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
 
@@ -405,12 +408,14 @@ public class MainUI : MonoBehaviour
         currentState.AdjustMoney(-buildCost);
         currentState.AddManpower(-1);
         UpdateUIElements();
+        UpdateUIQueue(name, 1, constructionTime);
         StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost, upkeep));
     }
 
     IEnumerator DelayedBuild(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
         yield return new WaitUntil(() => currentState.CheckUpgrade(upgrade) == 0);
+        UpdateUIQueue(name, 1, 0);
         spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost);
         currentState.AdjustIncome(-upkeep);
         currentState.AddManpower(1);
@@ -521,18 +526,18 @@ public class MainUI : MonoBehaviour
         // spawn only every 4 turns
         if (!currentState.CheckTutorial())
         {
-            if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0 || currentState.GetTurn() == 2))
+            if (timeController.IsDay() && (currentState.GetTurn() % 6 == 0 || currentState.GetTurn() == 2))
             {
                 Debug.Log("wtf");
-                int count = currentState.GetTourists();
                 currentState.AddTourists(1);
+                int count = currentState.GetTourists();
 
                 for (int i = 0; i < count; i++)
                 {
                     spawner.RandomSpawn("Tourist Boat");
                 }
             }
-            else if (!timeController.IsDay() && currentState.GetTurn() % 4 == 0)
+            else if (!timeController.IsDay() && currentState.GetTurn() % 6 == 0)
             {
                 currentState.AddFisherman(1);
                 spawner.RandomSpawn("Fishing Boat");
@@ -604,6 +609,7 @@ public class MainUI : MonoBehaviour
             Destroy(window);
             currentState.AddResearch(-researchCost);
             UpdateUIElements();
+            UpdateUIQueue(name, 0, researchTime);
             StartCoroutine(DelayedResearch(name));
         }
     }
@@ -611,6 +617,7 @@ public class MainUI : MonoBehaviour
     IEnumerator DelayedResearch(string name)
     {
         yield return new WaitUntil(() => currentState.CheckResearchQueue(name) == 0);
+        UpdateUIQueue(name, 0, 0);
         currentState.UnlockUpgrade(name);
         UpdateUIElements();
     }
@@ -618,6 +625,61 @@ public class MainUI : MonoBehaviour
     void Close(GameObject toRemove)
     {
         Destroy(toRemove);
+    }
+
+    void UpdateUIQueue(string name, int choice, int time)
+    {
+        Text[] check = queueDisplay.GetComponentsInChildren<Text>();
+        bool inQueue = false;
+        Text toUpdate = null;
+        for (int i = 0; i < check.Length; i++)
+        {
+            if (check[i].text.Contains(name))
+            {
+                inQueue = true;
+                toUpdate = check[i];
+                break;
+            }
+        }
+
+        if (inQueue)
+        {
+            if (time == 0)
+            {
+                Destroy(toUpdate.transform.gameObject);
+            }
+            else
+            {
+                if (choice == 0)
+                {
+                    toUpdate.text = "B: ";
+                }
+                else
+                {
+                    toUpdate.text = "R: ";
+                }
+
+                toUpdate.text += name + " - ";
+                toUpdate.text += time;
+            }
+        }
+        else
+        {
+            GameObject update = Instantiate(textPrefab, queueDisplay.transform.position, Quaternion.identity, queueDisplay.transform);
+            toUpdate = update.GetComponent<Text>();
+
+            if (choice == 0)
+            {
+                toUpdate.text = "B: ";
+            }
+            else
+            {
+                toUpdate.text = "R: ";
+            }
+
+            toUpdate.text += name + " - ";
+            toUpdate.text += time;
+        }
     }
 
     public void UseRadar()

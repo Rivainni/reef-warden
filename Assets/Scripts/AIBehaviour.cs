@@ -14,6 +14,7 @@ public class AIBehaviour : MonoBehaviour
     bool currentPathExists;
     bool chaseState;
     bool stateChanged;
+    int turnStopped;
     List<HexCell> fullPath;
     int[] distances;
     int[] heuristics;
@@ -28,6 +29,7 @@ public class AIBehaviour : MonoBehaviour
         currentUnit = this.gameObject.GetComponent<HexUnit>();
         ChooseTarget();
         Debug.Log("First target of " + currentUnit.UnitType + " is " + finalDestination.Index);
+        turnStopped = 0;
     }
 
     public void Execute()
@@ -39,9 +41,20 @@ public class AIBehaviour : MonoBehaviour
         }
         else if (!stateChanged)
         {
+            if (turnStopped == 0)
+            {
+                turnStopped = mainUI.GetPlayerState().GetTurn();
+            }
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
+            }
+            else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 2)
+            {
+                ChooseEscape();
+                StartCoroutine(TurnMove());
+                SetMovementTarget(finalDestination);
+                stateChanged = true;
             }
 
             if (chaseState)
@@ -116,8 +129,7 @@ public class AIBehaviour : MonoBehaviour
     {
         if (currentUnit.UnitType == "Tourist Boat")
         {
-            int randomIndex = Random.Range(0, grid.GetBuoyCells().Count - 1);
-            finalDestination = grid.GetBuoyCells()[randomIndex];
+            ChooseBuoy();
         }
         else if (currentUnit.UnitType == "Fishing Boat")
         {
@@ -125,7 +137,7 @@ public class AIBehaviour : MonoBehaviour
             finalDestination = grid.GetCells()[randomIndex];
 
             while (GlobalCellCheck.IsImpassable(finalDestination) || GlobalCellCheck.IsNotReachable(randomIndex)
-            || finalDestination == currentUnit.Location || grid.GetBuoyCells().Contains(grid.GetCells()[randomIndex]))
+            || finalDestination == currentUnit.Location)
             {
                 randomIndex = Random.Range(0, grid.GetCells().Length - 1);
             }
@@ -133,6 +145,30 @@ public class AIBehaviour : MonoBehaviour
         }
 
         SetMovementTarget(finalDestination);
+    }
+
+    void ChooseBuoy()
+    {
+        int maxDistance = 0;
+        int currentIndex = 0;
+        for (int i = 0; i < grid.GetBuoyCells().Count; i++)
+        {
+            finalDestination = grid.GetBuoyCells()[i];
+            FindPath(currentUnit.Location, finalDestination, currentUnit.ActionPoints);
+            if (i == 0)
+            {
+                maxDistance = distances[finalDestination.Index];
+            }
+
+            int currDistance = distances[finalDestination.Index];
+            if (currDistance < maxDistance)
+            {
+                currentIndex = finalDestination.Index;
+            }
+            // ClearPath();
+        }
+
+        finalDestination = grid.GetCells()[currentIndex];
     }
 
     void ChooseEscape()

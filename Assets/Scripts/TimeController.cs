@@ -39,7 +39,7 @@ public class TimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((targetTime - currentTime).TotalSeconds > 0 && !pause)
+        if ((targetTime - currentTime).TotalSeconds >= 0 && !pause)
         {
             UpdateTimeOfDay();
             RotateSun();
@@ -123,7 +123,7 @@ public class TimeController : MonoBehaviour
         {
             pause = true;
         }
-        targetTime = currentTime.AddHours(3);
+        targetTime = currentTime.AddHours(2);
     }
 
     public bool CheckPause()
