@@ -498,14 +498,7 @@ public class MainUI : MonoBehaviour
         selectedUnit = null;
         grid.GetPlayerBehaviour().ClearPath();
 
-        foreach (HexUnit unit in grid.GetUnits())
-        {
-            if (unit.UnitType == "Tourist Boat" || unit.UnitType == "Fishing Boat")
-            {
-                AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
-                currentBehaviour.Execute();
-            }
-        }
+
         timeController.ForwardTime();
         StartCoroutine(AIMovement(clicked));
 
@@ -523,10 +516,19 @@ public class MainUI : MonoBehaviour
             }
         }
 
+        foreach (HexUnit unit in grid.GetUnits())
+        {
+            if (unit.UnitType == "Tourist Boat" || unit.UnitType == "Fishing Boat")
+            {
+                AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
+                currentBehaviour.Execute();
+            }
+        }
+
         // spawn only every 4 turns
         if (!currentState.CheckTutorial())
         {
-            if (timeController.IsDay() && (currentState.GetTurn() % 6 == 0 || currentState.GetTurn() == 2))
+            if (currentState.GetTurn() == 2)
             {
                 Debug.Log("wtf");
                 currentState.AddTourists(1);
@@ -537,7 +539,12 @@ public class MainUI : MonoBehaviour
                     spawner.RandomSpawn("Tourist Boat");
                 }
             }
-            else if (!timeController.IsDay() && currentState.GetTurn() % 6 == 0)
+            // else if (!timeController.IsDay() && currentState.GetTurn() % 6 == 0)
+            // {
+            //     currentState.AddFisherman(1);
+            //     spawner.RandomSpawn("Fishing Boat");
+            // }
+            else if (!timeController.IsDay() && currentState.GetTurn() == 8)
             {
                 currentState.AddFisherman(1);
                 spawner.RandomSpawn("Fishing Boat");
@@ -650,7 +657,7 @@ public class MainUI : MonoBehaviour
             }
             else
             {
-                if (choice == 0)
+                if (choice == 1)
                 {
                     toUpdate.text = "B: ";
                 }
@@ -668,7 +675,7 @@ public class MainUI : MonoBehaviour
             GameObject update = Instantiate(textPrefab, queueDisplay.transform.position, Quaternion.identity, queueDisplay.transform);
             toUpdate = update.GetComponent<Text>();
 
-            if (choice == 0)
+            if (choice == 1)
             {
                 toUpdate.text = "B: ";
             }

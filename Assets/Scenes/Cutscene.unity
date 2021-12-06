@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storyUI: {fileID: 905662058}
-  mainUI: {fileID: 905662058}
+  mainUI: {fileID: 0}
   storyText: {fileID: 2144244050}
   characterName: {fileID: 1992736815}
   characterSprites: {fileID: 377451037}

@@ -80,11 +80,21 @@ public class StoryManager : MonoBehaviour
             {
                 secondarySprite.enabled = false;
             }
-
-            if (mainUI.GetPlayerState().CheckTutorial())
+            else
             {
+                mainUI.GetPlayerState().StartTutorial();
                 Tutorial(action);
             }
+
+            // if (SceneManager.GetActiveScene().name == "Main Game")
+            // {
+            //     mainUI.GetPlayerState().StartTutorial();
+            //     if (mainUI.GetPlayerState().CheckTutorial())
+            //     {
+            //         Debug.Log("WTF");
+            //         Tutorial(action);
+            //     }
+            // }
 
             PrintDialogue();
         }
@@ -182,7 +192,43 @@ public class StoryManager : MonoBehaviour
     void Tutorial(string action)
     {
         // TUTORIAL STUFF
-        if (action == "Patrol")
+        if (action == "WASD")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Move the camera with WASD.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S));
+                yield return new WaitForSeconds(6.0f);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "QE")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Rotate the camera with Q or E.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E));
+                yield return new WaitForSeconds(6.0f);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "RF")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Zoom in using the Mousewheel, R, or F.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => Input.GetKey(KeyCode.R) || Input.GetKey(KeyCode.F) || Input.mouseScrollDelta.y != 0);
+                yield return new WaitForSeconds(6.0f);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "Patrol")
         {
             storyUI.SetActive(false);
             objectives.text = "Patrol to any location.";

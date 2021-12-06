@@ -689,7 +689,7 @@ MonoBehaviour:
   mainUI: {fileID: 2078076715}
   cellLabelPrefab: {fileID: 8365395652673976220, guid: f078f3abc320eb24787e6080890efdca, type: 3}
   mapCreation: {fileID: 11400000, guid: 665d78d65c16d664fa588a54ab13b76d, type: 2}
-  timeController: {fileID: 0}
+  timeController: {fileID: 1907426807}
   unsafeCells: {fileID: 4900000, guid: 54554f94cd6905f49abf0895676c9868, type: 3}
   escapeCells: {fileID: 4900000, guid: 66789a558c028004793bd2c5a21de3e4, type: 3}
 --- !u!4 &306096921
@@ -774,7 +774,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 20
+    m_Left: 40
     m_Right: 20
     m_Top: 20
     m_Bottom: 20

@@ -53,7 +53,6 @@ public class AIBehaviour : MonoBehaviour
             {
                 ChooseEscape();
                 StartCoroutine(TurnMove());
-                SetMovementTarget(finalDestination);
                 stateChanged = true;
             }
 
@@ -61,7 +60,6 @@ public class AIBehaviour : MonoBehaviour
             {
                 ChooseEscape();
                 StartCoroutine(TurnMove());
-                SetMovementTarget(finalDestination);
             }
         }
         else if (stateChanged && currentUnit.Location == finalDestination)
@@ -133,15 +131,20 @@ public class AIBehaviour : MonoBehaviour
         }
         else if (currentUnit.UnitType == "Fishing Boat")
         {
-            int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
-            finalDestination = grid.GetCells()[randomIndex];
+            // int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
+            // finalDestination = grid.GetCells()[randomIndex];
 
-            while (GlobalCellCheck.IsImpassable(finalDestination) || GlobalCellCheck.IsNotReachable(randomIndex)
-            || finalDestination == currentUnit.Location)
-            {
-                randomIndex = Random.Range(0, grid.GetCells().Length - 1);
-            }
-            finalDestination = grid.GetCells()[randomIndex];
+            // while (GlobalCellCheck.IsImpassable(finalDestination) || GlobalCellCheck.IsNotReachable(randomIndex)
+            // || finalDestination == currentUnit.Location)
+            // {
+            //     randomIndex = Random.Range(0, grid.GetCells().Length - 1);
+            // }
+            // finalDestination = grid.GetCells()[randomIndex];
+
+            // int randomIndex = Random.Range(0, grid.GetBuoyCells().Count - 1);
+            // finalDestination = grid.GetBuoyCells()[randomIndex];
+
+            ChooseBuoy();
         }
 
         SetMovementTarget(finalDestination);
@@ -165,7 +168,7 @@ public class AIBehaviour : MonoBehaviour
             {
                 currentIndex = finalDestination.Index;
             }
-            // ClearPath();
+            ClearPath();
         }
 
         finalDestination = grid.GetCells()[currentIndex];
@@ -189,7 +192,7 @@ public class AIBehaviour : MonoBehaviour
             {
                 currentIndex = GlobalCellCheck.GetEscapeCell(i);
             }
-            // ClearPath();
+            ClearPath();
         }
 
         finalDestination = grid.GetCells()[currentIndex];
@@ -323,7 +326,13 @@ public class AIBehaviour : MonoBehaviour
                 current.HasOverlap = false;
                 current.SetLabel(null);
                 current.DisableHighlight();
-                current = current.PathFrom;
+
+                if (current.PathFrom)
+                {
+                    HexCell next = current.PathFrom;
+                    current.PathFrom = null;
+                    current = next;
+                }
             }
             current.DisableHighlight();
             currentPathExists = false;
@@ -346,6 +355,11 @@ public class AIBehaviour : MonoBehaviour
         List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
+            if (c == c.PathFrom)
+            {
+                Debug.Log("Thank you.");
+                break;
+            }
             path.Add(c);
         }
         path.Add(currentPathFrom);

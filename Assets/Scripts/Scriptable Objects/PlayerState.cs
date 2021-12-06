@@ -457,6 +457,11 @@ public class PlayerState : ScriptableObject
         ReduceCD();
     }
 
+    public void StartTutorial()
+    {
+        inTutorial = true;
+    }
+
     public void EndTutorial()
     {
         inTutorial = false;
