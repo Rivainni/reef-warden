@@ -252,6 +252,14 @@ public class MainUI : MonoBehaviour
         if (target.Unit)
         {
             message += "That is a " + target.Unit.UnitType + ".\n";
+            if (target.Unit.UnitType == "Fishing Boat")
+            {
+                message += "It's not supposed to be here. Get em!";
+            }
+            else if (target.Unit.UnitType == "Tourist Boat")
+            {
+                message += "It has a permit - make sure to check if its manifests match!";
+            }
         }
         else if (target.Structure)
         {
@@ -408,14 +416,14 @@ public class MainUI : MonoBehaviour
         currentState.AdjustMoney(-buildCost);
         currentState.AddManpower(-1);
         UpdateUIElements();
-        UpdateUIQueue(name, 1, constructionTime);
+        UpdateUIQueue(upgrade, 1, constructionTime);
         StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost, upkeep));
     }
 
     IEnumerator DelayedBuild(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
         yield return new WaitUntil(() => currentState.CheckUpgrade(upgrade) == 0);
-        UpdateUIQueue(name, 1, 0);
+        UpdateUIQueue(upgrade, 1, 0);
         spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost);
         currentState.AdjustIncome(-upkeep);
         currentState.AddManpower(1);
