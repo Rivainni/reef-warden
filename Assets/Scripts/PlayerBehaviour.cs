@@ -108,7 +108,7 @@ public class PlayerBehaviour : MonoBehaviour
             HexCell current = currentPathTo;
             while (current != currentPathFrom)
             {
-                // current.HasOverlap = false;
+                current.HasOverlap = false;
                 current.SetLabel(null);
                 current.DisableHighlight();
                 current = current.PathFrom;
@@ -132,8 +132,8 @@ public class PlayerBehaviour : MonoBehaviour
         List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
+            c.HasOverlap = true;
             path.Add(c);
-            // c.HasOverlap = true;
         }
         path.Add(currentPathFrom);
         path.Reverse();

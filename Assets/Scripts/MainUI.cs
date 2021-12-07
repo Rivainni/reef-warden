@@ -530,7 +530,6 @@ public class MainUI : MonoBehaviour
         {
             if (currentState.GetTurn() == 2)
             {
-                Debug.Log("wtf");
                 currentState.AddTourists(1);
                 int count = currentState.GetTourists();
 
@@ -551,6 +550,7 @@ public class MainUI : MonoBehaviour
             }
         }
 
+        spawner.DestroyUnits();
         UpdateUIElements();
     }
 

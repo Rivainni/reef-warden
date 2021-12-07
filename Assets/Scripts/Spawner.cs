@@ -19,6 +19,13 @@ public class Spawner : MonoBehaviour
     [SerializeField] HexStructure[] structurePrefabs;
     [SerializeField] Upgrade[] upgradePrefabs;
 
+    Queue<HexUnit> destructionQueue;
+
+    void Start()
+    {
+        destructionQueue = new Queue<HexUnit>();
+    }
+
     public void SpawnUnit(HexCell cell, string unitType)
     {
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
@@ -48,9 +55,18 @@ public class Spawner : MonoBehaviour
 
     public void DestroyUnit(HexUnit unit)
     {
-        AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
-        currentBehaviour.Clean();
-        hexGrid.RemoveUnit(unit);
+        destructionQueue.Enqueue(unit);
+    }
+
+    public void DestroyUnits()
+    {
+        while (destructionQueue.Count > 0)
+        {
+            HexUnit unit = destructionQueue.Dequeue();
+            AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
+            currentBehaviour.Clean();
+            hexGrid.RemoveUnit(unit);
+        }
     }
 
     public string[] GetStructureTypes()

@@ -41,10 +41,8 @@ public class AIBehaviour : MonoBehaviour
         }
         else if (!stateChanged)
         {
-            if (turnStopped == 0)
-            {
-                turnStopped = mainUI.GetPlayerState().GetTurn();
-            }
+            turnStopped = mainUI.GetPlayerState().GetTurn();
+
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
@@ -109,17 +107,20 @@ public class AIBehaviour : MonoBehaviour
             currentDestination = target;
             DoPathfinding();
 
-            fullPath = GetPath();
-            for (int i = fullPath.Count - 1; i > 0; i--)
+            if (WithinTurnPath(currentUnit.ActionPoints) == int.MaxValue)
             {
-                currentDestination = fullPath[i];
-                DoPathfinding();
-
-                if (WithinTurnPath(currentUnit.ActionPoints) < int.MaxValue)
+                for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
                 {
-                    break;
+                    if (distances[c.Index] <= currentUnit.ActionPoints)
+                    {
+                        currentDestination = c;
+                        break;
+                    }
                 }
             }
+
+            ClearPath();
+            DoPathfinding();
         }
     }
 
@@ -131,20 +132,15 @@ public class AIBehaviour : MonoBehaviour
         }
         else if (currentUnit.UnitType == "Fishing Boat")
         {
-            // int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
-            // finalDestination = grid.GetCells()[randomIndex];
+            int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
+            finalDestination = grid.GetCells()[randomIndex];
 
-            // while (GlobalCellCheck.IsImpassable(finalDestination) || GlobalCellCheck.IsNotReachable(randomIndex)
-            // || finalDestination == currentUnit.Location)
-            // {
-            //     randomIndex = Random.Range(0, grid.GetCells().Length - 1);
-            // }
-            // finalDestination = grid.GetCells()[randomIndex];
-
-            // int randomIndex = Random.Range(0, grid.GetBuoyCells().Count - 1);
-            // finalDestination = grid.GetBuoyCells()[randomIndex];
-
-            ChooseBuoy();
+            while (GlobalCellCheck.IsImpassable(finalDestination) && GlobalCellCheck.IsNotReachable(randomIndex)
+            && finalDestination == currentUnit.Location)
+            {
+                randomIndex = Random.Range(0, grid.GetCells().Length - 1);
+            }
+            finalDestination = grid.GetCells()[randomIndex];
         }
 
         SetMovementTarget(finalDestination);
@@ -282,7 +278,6 @@ public class AIBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
-            current.HasOverlap = true;
             int currentIndex;
             while (current != currentPathFrom)
             {
@@ -291,7 +286,6 @@ public class AIBehaviour : MonoBehaviour
                 current.SetLabel((turn + 1).ToString());
                 current.EnableHighlight(Color.green);
                 current = current.PathFrom;
-                current.HasOverlap = true;
             }
         }
         currentPathFrom.EnableHighlight(Color.blue);
@@ -326,13 +320,7 @@ public class AIBehaviour : MonoBehaviour
                 current.HasOverlap = false;
                 current.SetLabel(null);
                 current.DisableHighlight();
-
-                if (current.PathFrom)
-                {
-                    HexCell next = current.PathFrom;
-                    current.PathFrom = null;
-                    current = next;
-                }
+                current = current.PathFrom;
             }
             current.DisableHighlight();
             currentPathExists = false;
@@ -355,11 +343,7 @@ public class AIBehaviour : MonoBehaviour
         List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
-            if (c == c.PathFrom)
-            {
-                Debug.Log("Thank you.");
-                break;
-            }
+            c.HasOverlap = true;
             path.Add(c);
         }
         path.Add(currentPathFrom);
