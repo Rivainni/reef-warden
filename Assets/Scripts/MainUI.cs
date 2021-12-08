@@ -52,9 +52,14 @@ public class MainUI : MonoBehaviour
                         HexAction();
                     }
                 }
-                else
+                else if (!selectedUnit.movement)
                 {
                     DoPathfinding();
+                }
+                // automatically deselects a unit if they're moving
+                else
+                {
+                    selectedUnit = null;
                 }
             }
             else if (Input.GetMouseButtonDown(1) && grid.CheckUpgradeCell(currentCell))
@@ -91,8 +96,8 @@ public class MainUI : MonoBehaviour
     {
         grid.GetPlayerBehaviour().ClearPath();
         UpdateCurrentCell();
-        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
+        // int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+        // Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
 
         if (selectedUnit == currentCell.Unit || !currentCell.Unit)
         {
@@ -138,6 +143,7 @@ public class MainUI : MonoBehaviour
         HexCell tempB = null;
         HexUnit targetA = null;
         HexUnit targetB = null;
+        HexUnit targetC = null;
 
         List<string> contextMenuContent = new List<string>();
 
@@ -179,11 +185,18 @@ public class MainUI : MonoBehaviour
             else if (selectedUnit.UnitType.Contains("Service Boat"))
             {
                 contextMenuContent.Add("Move");
-                if (cell.Unit)
+
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
                 {
-                    if (cell.Unit.UnitType == "Patrol Boat")
+                    HexCell toCheckCell = cell.GetNeighbor(d);
+                    if (toCheckCell != null && toCheckCell.Unit != null)
                     {
-                        contextMenuContent.Add("Repair");
+                        if (toCheckCell.Unit.IsPatrolBoat())
+                        {
+                            contextMenuContent.Add("Repair");
+                            targetC = toCheckCell.Unit;
+                            break;
+                        }
                     }
                 }
             }
@@ -224,7 +237,7 @@ public class MainUI : MonoBehaviour
                 }
                 else if (item == "Repair")
                 {
-                    currentButton.onClick.AddListener(() => Repair(cell, contextMenu));
+                    currentButton.onClick.AddListener(() => Repair(contextMenu, targetC));
                 }
                 else if (item == "Move")
                 {
@@ -237,8 +250,7 @@ public class MainUI : MonoBehaviour
     void AfterAction(GameObject remove)
     {
         DoMove();
-        // NEED HP BAR
-        if (selectedUnit.UnitType == "Patrol Boat")
+        if (selectedUnit.IsPatrolBoat())
         {
             selectedUnit.DecreaseHP();
         }
@@ -279,10 +291,10 @@ public class MainUI : MonoBehaviour
         Destroy(remove);
     }
 
-    void Repair(HexCell target, GameObject remove)
+    void Repair(GameObject remove, HexUnit target)
     {
-        target.Unit.RestoreHP();
-        Destroy(remove);
+        AfterAction(remove);
+        target.RestoreHP();
     }
 
     void Patrol(HexCell destination, GameObject remove)

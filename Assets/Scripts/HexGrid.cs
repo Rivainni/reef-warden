@@ -56,12 +56,6 @@ public class HexGrid : MonoBehaviour
         CreateCells();
         PopulateUpgradeCells();
 
-        // if (SceneManager.GetActiveScene().name == "Map")
-        // {
-        //     spawner.RandomSpawn("Tourist Boat");
-        //     spawner.RandomSpawn("Fishing Boat");
-        // }
-
         spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
         spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
     }
@@ -180,6 +174,7 @@ public class HexGrid : MonoBehaviour
             case 1:
                 spawner.SpawnStructure(cell, "Buoy");
                 buoyCells.Add(cell);
+                cell.EnableHighlight(Color.green);
                 break;
         }
 

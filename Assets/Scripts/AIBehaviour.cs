@@ -72,8 +72,7 @@ public class AIBehaviour : MonoBehaviour
         grid.ShowUI(false);
         yield return new WaitUntil(() => currentUnit.Location == currentDestination);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
-        yield return new WaitUntil(() => Mathf.Abs(currentUnit.transform.position.x - currentUnit.Location.transform.position.x) < 1.0f
-        && Mathf.Abs(currentUnit.transform.position.z - currentUnit.Location.transform.position.z) < 1.0f);
+        yield return new WaitUntil(() => currentUnit.movement == false);
         grid.ShowUI(true);
 
         if (currentUnit.Location == finalDestination)
@@ -133,10 +132,9 @@ public class AIBehaviour : MonoBehaviour
         else if (currentUnit.UnitType == "Fishing Boat")
         {
             int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
-            finalDestination = grid.GetCells()[randomIndex];
 
-            while (GlobalCellCheck.IsImpassable(finalDestination) && GlobalCellCheck.IsNotReachable(randomIndex)
-            && finalDestination == currentUnit.Location)
+            while (GlobalCellCheck.IsImpassable(grid.GetCells()[randomIndex]) && GlobalCellCheck.IsNotReachable(randomIndex)
+            && grid.GetCells()[randomIndex] == currentUnit.Location)
             {
                 randomIndex = Random.Range(0, grid.GetCells().Length - 1);
             }
@@ -289,7 +287,10 @@ public class AIBehaviour : MonoBehaviour
             }
         }
         currentPathFrom.EnableHighlight(Color.blue);
-        currentPathTo.EnableHighlight(Color.red);
+        if (!grid.GetBuoyCells().Contains(currentPathTo))
+        {
+            currentPathTo.EnableHighlight(Color.red);
+        }
     }
 
     int WithinTurnPath(int speed)
@@ -319,16 +320,22 @@ public class AIBehaviour : MonoBehaviour
             {
                 current.HasOverlap = false;
                 current.SetLabel(null);
-                current.DisableHighlight();
+                if (!current.Structure)
+                {
+                    current.DisableHighlight();
+                }
                 current = current.PathFrom;
             }
             current.DisableHighlight();
             currentPathExists = false;
         }
-        else if (currentPathFrom)
+        else if (currentPathFrom && !currentPathFrom.Structure)
         {
             currentPathFrom.DisableHighlight();
-            currentPathTo.DisableHighlight();
+            if (!currentPathTo.Structure)
+            {
+                currentPathTo.DisableHighlight();
+            }
         }
         currentPathFrom = currentPathTo = null;
     }

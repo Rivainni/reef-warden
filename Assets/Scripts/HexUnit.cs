@@ -42,11 +42,22 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    int actionPoints;
-    int maxActionPoints;
-    int reducedActionPoints;
+    int actionPoints, maxActionPoints, reducedActionPoints;
 
-    public float hp;
+    public float HP
+    {
+        get
+        {
+            return hp;
+        }
+        set
+        {
+            hp = value;
+            healthBar.SetHealth(value);
+        }
+    }
+    float hp;
+    public HealthBar healthBar;
 
     public bool takenTurn;
     public bool movement = false;
@@ -66,7 +77,7 @@ public class HexUnit : MonoBehaviour
             location = value;
             value.Unit = this;
 
-            if (IsPlayerControlled())
+            if (IsPatrolBoat())
             {
                 Grid.IncreaseVisibility(value, visionRange);
             }
@@ -103,7 +114,11 @@ public class HexUnit : MonoBehaviour
     {
         maxActionPoints = actionPoints;
         reducedActionPoints = maxActionPoints;
-        hp = 100;
+        if (IsPatrolBoat())
+        {
+            HP = 100;
+            healthBar.SetMaxHealth(HP);
+        }
         IsVisible = true;
     }
 
@@ -233,14 +248,15 @@ public class HexUnit : MonoBehaviour
 
     public void DecreaseHP()
     {
-        hp -= (reducedActionPoints - actionPoints);
-
-        reducedActionPoints = Mathf.RoundToInt(hp * reducedActionPoints);
+        HP -= reducedActionPoints - ActionPoints;
+        healthBar.SetHealth(HP);
+        reducedActionPoints = Mathf.RoundToInt((HP / 100) * ActionPoints);
     }
 
     public void RestoreHP()
     {
-        hp = 1f;
+        HP = 100;
+        reducedActionPoints = maxActionPoints;
     }
 
     public void ResetMovement()
@@ -263,9 +279,14 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    bool IsPlayerControlled()
+    public bool IsPlayerControlled()
     {
         return UnitType.Contains("Patrol Boat") || UnitType.Contains("Service Boat");
+    }
+
+    public bool IsPatrolBoat()
+    {
+        return UnitType.Contains("Patrol Boat");
     }
 
 

@@ -81,7 +81,10 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
         currentPathFrom.EnableHighlight(Color.blue);
-        currentPathTo.EnableHighlight(Color.red);
+        if (!grid.GetBuoyCells().Contains(currentPathTo))
+        {
+            currentPathTo.EnableHighlight(Color.red);
+        }
     }
 
     public int WithinTurnPath(int speed)
@@ -110,16 +113,22 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 current.HasOverlap = false;
                 current.SetLabel(null);
-                current.DisableHighlight();
+                if (!current.Structure)
+                {
+                    current.DisableHighlight();
+                }
                 current = current.PathFrom;
             }
             current.DisableHighlight();
             grid.HasPath = false;
         }
-        else if (currentPathFrom)
+        else if (currentPathFrom && !currentPathFrom.Structure)
         {
             currentPathFrom.DisableHighlight();
-            currentPathTo.DisableHighlight();
+            if (!currentPathTo.Structure)
+            {
+                currentPathTo.DisableHighlight();
+            }
         }
         currentPathFrom = currentPathTo = null;
     }
