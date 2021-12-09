@@ -14,6 +14,7 @@ public class AIBehaviour : MonoBehaviour
     bool currentPathExists;
     bool chaseState;
     bool stateChanged;
+    bool satisfied;
     int turnStopped;
     List<HexCell> fullPath;
     int[] distances;
@@ -30,6 +31,7 @@ public class AIBehaviour : MonoBehaviour
         ChooseTarget();
         Debug.Log("First target of " + currentUnit.UnitType + " is " + finalDestination.Index);
         turnStopped = 0;
+        satisfied = false;
     }
 
     public void Execute()
@@ -41,14 +43,25 @@ public class AIBehaviour : MonoBehaviour
         }
         else if (!stateChanged)
         {
-            turnStopped = mainUI.GetPlayerState().GetTurn();
+            if (turnStopped == 0)
+            {
+                turnStopped = mainUI.GetPlayerState().GetTurn();
+            }
 
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
             }
-            else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 2)
+            else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 3)
             {
+                if (!satisfied)
+                {
+                    mainUI.GetPlayerState().DecreaseHealth(10);
+                }
+                if (currentPathExists)
+                {
+                    ClearPath();
+                }
                 ChooseEscape();
                 StartCoroutine(TurnMove());
                 stateChanged = true;
@@ -101,26 +114,26 @@ public class AIBehaviour : MonoBehaviour
 
     void SetMovementTarget(HexCell target)
     {
-        if (currentUnit.IsValidDestination(target))
-        {
-            currentDestination = target;
-            DoPathfinding();
+        currentDestination = target;
+        DoPathfinding();
 
-            if (WithinTurnPath(currentUnit.ActionPoints) == int.MaxValue)
+        if (WithinTurnPath(currentUnit.ActionPoints) == int.MaxValue)
+        {
+            for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
             {
-                for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
+                if (distances[c.Index] <= currentUnit.ActionPoints)
                 {
-                    if (distances[c.Index] <= currentUnit.ActionPoints)
-                    {
-                        currentDestination = c;
-                        break;
-                    }
+                    currentDestination = c;
+                    break;
                 }
             }
-
-            ClearPath();
-            DoPathfinding();
         }
+
+        if (currentPathExists)
+        {
+            ClearPath();
+        }
+        DoPathfinding();
     }
 
     void ChooseTarget()
@@ -162,7 +175,10 @@ public class AIBehaviour : MonoBehaviour
             {
                 currentIndex = finalDestination.Index;
             }
-            ClearPath();
+            if (currentPathExists)
+            {
+                ClearPath();
+            }
         }
 
         finalDestination = grid.GetCells()[currentIndex];
@@ -186,7 +202,10 @@ public class AIBehaviour : MonoBehaviour
             {
                 currentIndex = GlobalCellCheck.GetEscapeCell(i);
             }
-            ClearPath();
+            if (currentPathExists)
+            {
+                ClearPath();
+            }
         }
 
         finalDestination = grid.GetCells()[currentIndex];
@@ -197,13 +216,20 @@ public class AIBehaviour : MonoBehaviour
     // duplicate methods for individual movement
     void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
-        ClearPath();
+        if (currentPathExists)
+        {
+            ClearPath();
+        }
         currentPathFrom = fromCell;
         currentPathTo = toCell;
         currentPathExists = Search(fromCell, toCell, speed);
         if (currentUnit.UnitType == "Tourist Boat")
         {
             ShowPath(speed);
+        }
+        else
+        {
+            ShowPathHidden(speed);
         }
     }
 
@@ -283,14 +309,33 @@ public class AIBehaviour : MonoBehaviour
                 int turn = (distances[currentIndex] - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
                 current.EnableHighlight(Color.green);
+                current.HasOverlap = true;
                 current = current.PathFrom;
             }
         }
+        currentPathFrom.HasOverlap = true;
         currentPathFrom.EnableHighlight(Color.blue);
         if (!grid.GetBuoyCells().Contains(currentPathTo))
         {
             currentPathTo.EnableHighlight(Color.red);
         }
+    }
+
+    void ShowPathHidden(int speed)
+    {
+        if (currentPathExists)
+        {
+            HexCell current = currentPathTo;
+            int currentIndex;
+            while (current != currentPathFrom)
+            {
+                currentIndex = current.Index;
+                int turn = (distances[currentIndex] - 1) / speed;
+                current.HasOverlap = true;
+                current = current.PathFrom;
+            }
+        }
+        currentPathFrom.HasOverlap = true;
     }
 
     int WithinTurnPath(int speed)
@@ -326,6 +371,7 @@ public class AIBehaviour : MonoBehaviour
                 }
                 current = current.PathFrom;
             }
+            current.HasOverlap = false;
             current.DisableHighlight();
             currentPathExists = false;
         }
@@ -350,7 +396,6 @@ public class AIBehaviour : MonoBehaviour
         List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
-            c.HasOverlap = true;
             path.Add(c);
         }
         path.Add(currentPathFrom);
@@ -395,6 +440,19 @@ public class AIBehaviour : MonoBehaviour
 
     public void Clean()
     {
-        ClearPath();
+        if (currentPathExists)
+        {
+            ClearPath();
+        }
+    }
+
+    public bool HasStopped()
+    {
+        return turnStopped > 0;
+    }
+
+    public void Moor()
+    {
+        satisfied = true;
     }
 }

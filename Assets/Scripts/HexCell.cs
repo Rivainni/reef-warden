@@ -92,6 +92,13 @@ public class HexCell : MonoBehaviour
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
 
+    Renderer renderer;
+
+    void Start()
+    {
+        renderer = GetComponent<Renderer>();
+    }
+
     public HexCell GetNeighbor(HexDirection direction)
     {
         return neighbors[(int)direction];
@@ -119,6 +126,16 @@ public class HexCell : MonoBehaviour
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();
         highlight.color = color;
         highlight.enabled = true;
+    }
+
+    public void EnableHeavyHighlight()
+    {
+        renderer.material.color = Color.red;
+    }
+
+    public void DisableHeavyHighlight()
+    {
+        renderer.material.color = Color.white;
     }
 
     public void IncreaseVisibility()

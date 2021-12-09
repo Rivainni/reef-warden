@@ -75,10 +75,6 @@ public class AudioManager : MonoBehaviour
     {
         yield return new WaitForSeconds(interval);
         source.Play();
-        if (!source.isPlaying)
-        {
-            StartCoroutine(Repeat(interval, source));
-        }
     }
 
     bool IsPlaying(string soundName)

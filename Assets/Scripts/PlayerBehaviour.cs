@@ -9,7 +9,10 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
-        ClearPath();
+        if (grid.HasPath)
+        {
+            ClearPath();
+        }
         currentPathFrom = fromCell;
         currentPathTo = toCell;
         grid.HasPath = Search(fromCell, toCell, speed);
@@ -77,9 +80,11 @@ public class PlayerBehaviour : MonoBehaviour
                 int turn = (current.Distance - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
                 current.EnableHighlight(Color.white);
+                current.HasOverlap = true;
                 current = current.PathFrom;
             }
         }
+        currentPathFrom.HasOverlap = true;
         currentPathFrom.EnableHighlight(Color.blue);
         if (!grid.GetBuoyCells().Contains(currentPathTo))
         {
@@ -141,7 +146,6 @@ public class PlayerBehaviour : MonoBehaviour
         List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
-            c.HasOverlap = true;
             path.Add(c);
         }
         path.Add(currentPathFrom);

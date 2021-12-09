@@ -60,11 +60,6 @@ public class MainUI : MonoBehaviour
                 {
                     DoPathfinding();
                 }
-                // automatically deselects a unit if they're moving
-                else
-                {
-                    selectedUnit = null;
-                }
             }
             else if (Input.GetMouseButtonDown(1) && grid.CheckUpgradeCell(currentCell))
             {
@@ -86,7 +81,7 @@ public class MainUI : MonoBehaviour
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         if (cell)
         {
-            if (cell != currentCell && !cell.HasOverlap)
+            if (cell != currentCell)
             {
                 Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
                 currentCell = cell;
@@ -120,16 +115,14 @@ public class MainUI : MonoBehaviour
 
     void DoPathfinding()
     {
-        if (UpdateCurrentCell())
+        UpdateCurrentCell();
+        if (currentCell && selectedUnit.IsValidDestination(currentCell) && selectedUnit.ActionPoints > 0)
         {
-            if (currentCell && selectedUnit.IsValidDestination(currentCell) && selectedUnit.ActionPoints > 0)
-            {
-                grid.GetPlayerBehaviour().FindPath(selectedUnit.Location, currentCell, selectedUnit.ActionPoints);
-            }
-            else
-            {
-                grid.GetPlayerBehaviour().ClearPath();
-            }
+            grid.GetPlayerBehaviour().FindPath(selectedUnit.Location, currentCell, selectedUnit.ActionPoints);
+        }
+        else
+        {
+            grid.GetPlayerBehaviour().ClearPath();
         }
     }
 
@@ -177,6 +170,12 @@ public class MainUI : MonoBehaviour
                                 contextMenuContent.Add("Catch Fisherman");
                                 tempA = toCheckCell;
                                 targetA = toCheckCell.Unit;
+                            }
+                            else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Assist Mooring") && toCheckCell.Unit.GetAIBehaviour().HasStopped())
+                            {
+                                contextMenuContent.Add("Assist Mooring");
+                                tempB = toCheckCell;
+                                targetB = toCheckCell.Unit;
                             }
                             else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
                             {
@@ -236,6 +235,10 @@ public class MainUI : MonoBehaviour
                 else if (item == "Inspect Tourist")
                 {
                     currentButton.onClick.AddListener(() => InspectTourist(tempB, contextMenu, targetB));
+                }
+                else if (item == "Assist Mooring")
+                {
+                    currentButton.onClick.AddListener(() => AssistMooring(tempB, contextMenu, targetB));
                 }
                 else if (item == "Inspect")
                 {
@@ -380,6 +383,15 @@ public class MainUI : MonoBehaviour
         Destroy(toRemove);
         currentState.AddTouristScore();
         currentState.AddTourists(-1);
+    }
+
+    void AssistMooring(HexCell destination, GameObject remove, HexUnit target)
+    {
+        // probably a minigame
+        AIBehaviour current = target.GetComponent<AIBehaviour>();
+        current.Moor();
+        target.Location.DisableHeavyHighlight();
+        AfterAction(remove);
     }
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
@@ -528,7 +540,7 @@ public class MainUI : MonoBehaviour
 
 
         timeController.ForwardTime();
-        StartCoroutine(AIMovement(clicked));
+        StartCoroutine(Movement(clicked));
 
         // makes everything visible again
         if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0))
@@ -582,7 +594,7 @@ public class MainUI : MonoBehaviour
         UpdateUIElements();
     }
 
-    IEnumerator AIMovement(Button clicked)
+    IEnumerator Movement(Button clicked)
     {
         clicked.interactable = false;
         yield return new WaitUntil(() => CheckMovement() == false);

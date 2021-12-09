@@ -139,7 +139,7 @@ public class HexUnit : MonoBehaviour
 
     public bool IsValidDestination(HexCell cell)
     {
-        return !GlobalCellCheck.IsImpassable(cell) && !cell.Unit;
+        return !GlobalCellCheck.IsImpassable(cell) && !cell.Unit && !GlobalCellCheck.IsNotReachable(cell.Index);
     }
 
     public void Travel(List<HexCell> path)
@@ -253,7 +253,6 @@ public class HexUnit : MonoBehaviour
         HP -= reducedActionPoints - ActionPoints;
         healthBar.SetHealth(HP);
         reducedActionPoints = Mathf.RoundToInt((HP / 100) * reducedActionPoints);
-        Debug.Log("You have " + reducedActionPoints + " points next turn.");
     }
 
     public void RestoreHP()
@@ -290,6 +289,16 @@ public class HexUnit : MonoBehaviour
     public bool IsPatrolBoat()
     {
         return UnitType.Contains("Patrol Boat");
+    }
+
+    public AIBehaviour GetAIBehaviour()
+    {
+        return GetComponent<AIBehaviour>();
+    }
+
+    public PlayerBehaviour GetPlayerBehaviour()
+    {
+        return GetComponent<PlayerBehaviour>();
     }
 
 

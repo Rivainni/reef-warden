@@ -452,7 +452,7 @@ public class PlayerState : ScriptableObject
         }
         if (fishermen > 0)
         {
-            trueReefHealth -= fishermen * 2;
+            DecreaseHealth(fishermen * 2);
         }
         ReduceCD();
     }
