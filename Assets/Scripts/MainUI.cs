@@ -25,6 +25,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject researchPrefab;
     [SerializeField] GameObject valuesContainer;
     [SerializeField] GameObject queueDisplay;
+    [SerializeField] GameObject arrowPrefab;
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
 
@@ -33,6 +34,7 @@ public class MainUI : MonoBehaviour
         currentState = initState;
         currentState.Clean();
         UpdateUIElements();
+        // PointToObject(grid.GetUnits()[0].gameObject);
     }
 
     void Update()
@@ -41,6 +43,7 @@ public class MainUI : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                grid.GetAudioManager().Play("Selected", 0);
                 DoSelection();
             }
             else if (selectedUnit)
@@ -49,6 +52,7 @@ public class MainUI : MonoBehaviour
                 {
                     if (grid.HasPath && grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
                     {
+                        grid.GetAudioManager().Play("Move", 0);
                         HexAction();
                     }
                 }
@@ -95,21 +99,23 @@ public class MainUI : MonoBehaviour
     void DoSelection()
     {
         grid.GetPlayerBehaviour().ClearPath();
-        UpdateCurrentCell();
-        // int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-        // Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
+        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
+        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
 
-        if (selectedUnit == currentCell.Unit || !currentCell.Unit)
+        if (UpdateCurrentCell())
         {
-            selectedUnit = null;
-        }
-        else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
-        {
-            selectedUnit = currentCell.Unit;
-            Debug.Log("Selected " + selectedUnit.UnitType);
-        }
+            if (selectedUnit == currentCell.Unit || !currentCell.Unit)
+            {
+                selectedUnit = null;
+            }
+            else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
+            {
+                selectedUnit = currentCell.Unit;
+                Debug.Log("Selected " + selectedUnit.UnitType);
+            }
 
-        grid.ShowUI(true);
+            grid.ShowUI(true);
+        }
     }
 
     void DoPathfinding()
@@ -249,6 +255,7 @@ public class MainUI : MonoBehaviour
 
     void AfterAction(GameObject remove)
     {
+        grid.GetAudioManager().Play("Next", 0);
         DoMove();
         if (selectedUnit.IsPatrolBoat())
         {
@@ -512,6 +519,7 @@ public class MainUI : MonoBehaviour
 
     public void EndTurn(Button clicked)
     {
+        grid.GetAudioManager().Play("Next", 0);
         currentState.EndTurn();
         clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
         grid.ResetPoints();
@@ -597,6 +605,7 @@ public class MainUI : MonoBehaviour
 
     public void Research(Button clicked)
     {
+        grid.GetAudioManager().Play("Next", 0);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject researchPanel = Instantiate(researchPrefab, spawnAt, Quaternion.identity, transform);
 
@@ -618,6 +627,7 @@ public class MainUI : MonoBehaviour
 
     void ResearchUpgrade(Button clicked)
     {
+        grid.GetAudioManager().Play("Next", 0);
         string name = clicked.GetComponentInChildren<Text>().text;
         GameObject window = clicked.transform.parent.parent.gameObject;
 
@@ -651,6 +661,7 @@ public class MainUI : MonoBehaviour
 
     void Close(GameObject toRemove)
     {
+        grid.GetAudioManager().Play("Prev", 0);
         Destroy(toRemove);
     }
 
@@ -711,6 +722,7 @@ public class MainUI : MonoBehaviour
 
     public void UseRadar()
     {
+        grid.GetAudioManager().Play("Next", 0);
         currentState.ActivateRadar();
         radarButton.interactable = false;
         int startTurn = currentState.GetTurn();
@@ -756,5 +768,12 @@ public class MainUI : MonoBehaviour
     public HexCell GetPlayerLocation()
     {
         return playerLocation;
+    }
+
+    public void PointToObject(GameObject gameObject)
+    {
+        GameObject temp = Instantiate(arrowPrefab, transform.position, Quaternion.identity, transform);
+        ObjectiveArrow objectiveArrow = temp.GetComponent<ObjectiveArrow>();
+        objectiveArrow.targetTransform = gameObject.transform;
     }
 }

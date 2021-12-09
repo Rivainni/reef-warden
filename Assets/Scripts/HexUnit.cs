@@ -154,6 +154,7 @@ public class HexUnit : MonoBehaviour
 
     IEnumerator TravelPath()
     {
+        Grid.GetAudioManager().Play("Boat", 0);
         Vector3 a, b, c = pathToTravel[0].Position;
         // transform.localPosition = c;
         yield return LookAt(pathToTravel[1].Position);
@@ -222,6 +223,7 @@ public class HexUnit : MonoBehaviour
         transform.localPosition = location.Position;
         pathToTravel = null;
         movement = false;
+        Grid.GetAudioManager().Stop("Boat");
     }
 
     IEnumerator LookAt(Vector3 point)
@@ -250,7 +252,8 @@ public class HexUnit : MonoBehaviour
     {
         HP -= reducedActionPoints - ActionPoints;
         healthBar.SetHealth(HP);
-        reducedActionPoints = Mathf.RoundToInt((HP / 100) * ActionPoints);
+        reducedActionPoints = Mathf.RoundToInt((HP / 100) * reducedActionPoints);
+        Debug.Log("You have " + reducedActionPoints + " points next turn.");
     }
 
     public void RestoreHP()

@@ -692,6 +692,7 @@ MonoBehaviour:
   timeController: {fileID: 1907426807}
   unsafeCells: {fileID: 4900000, guid: 54554f94cd6905f49abf0895676c9868, type: 3}
   escapeCells: {fileID: 4900000, guid: 66789a558c028004793bd2c5a21de3e4, type: 3}
+  audioManager: {fileID: 916974535}
 --- !u!4 &306096921
 Transform:
   m_ObjectHideFlags: 0
@@ -1754,6 +1755,93 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &916974534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 916974536}
+  - component: {fileID: 916974535}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &916974535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916974534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a4672f7970473419a5bf4c981ebc08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Waves
+    clip: {fileID: 8300000, guid: 1cc96a375df69d94687c904ecdc127a0, type: 3}
+    volume: 0.25
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Seagulls
+    clip: {fileID: 8300000, guid: ca6c8f0366211ca498907065740321da, type: 3}
+    volume: 0.25
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Boat
+    clip: {fileID: 8300000, guid: 3417c4c82a1b5c743b3c8b2703cd781e, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Next
+    clip: {fileID: 8300000, guid: 4b15cdd66809d494e8b1a63204c16c6d, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Back
+    clip: {fileID: 8300000, guid: beb2a0c27d5f41549b5f2993c5ab0a29, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move
+    clip: {fileID: 8300000, guid: 1e1692b7b2bf0394cb1e3a65be89319f, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Selected
+    clip: {fileID: 8300000, guid: c2377943db5672d44a248a14a14393e8, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  grid: {fileID: 306096920}
+--- !u!4 &916974536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916974534}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -3276,5 +3364,6 @@ MonoBehaviour:
   researchPrefab: {fileID: 3570511537018259731, guid: aba1c7afa2aef234e89c588d24ee4473, type: 3}
   valuesContainer: {fileID: 184876450}
   queueDisplay: {fileID: 93384561}
+  arrowPrefab: {fileID: 3781951757510695997, guid: 81eeb9e6107c99b49ba5d60a47f77cb5, type: 3}
   timeController: {fileID: 1907426807}
   radarButton: {fileID: 89648778}

@@ -21,6 +21,7 @@ public class HexGrid : MonoBehaviour
     public TimeController timeController;
     [SerializeField] TextAsset unsafeCells;
     [SerializeField] TextAsset escapeCells;
+    [SerializeField] AudioManager audioManager;
 
     public bool HasPath
     {
@@ -443,5 +444,10 @@ public class HexGrid : MonoBehaviour
     public PlayerBehaviour GetPlayerBehaviour()
     {
         return playerBehaviour;
+    }
+
+    public AudioManager GetAudioManager()
+    {
+        return audioManager;
     }
 }
