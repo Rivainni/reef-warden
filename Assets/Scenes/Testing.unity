@@ -684,7 +684,7 @@ MonoBehaviour:
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   touchedColor: {r: 1, g: 0, b: 1, a: 1}
   water: {fileID: -6283204732262520918, guid: cd4f2cbde7d033f45a5d96afb77a69e1, type: 3}
-  land: {fileID: -4583013346327355518, guid: 8bf655974e76bee4686e26a1a0d0e773, type: 3}
+  landA: {fileID: -4583013346327355518, guid: 8bf655974e76bee4686e26a1a0d0e773, type: 3}
   landB: {fileID: -4583013346327355518, guid: deb60cdd7b925504eb37d18de03e39e3, type: 3}
   spawner: {fileID: 356808183}
   mainUI: {fileID: 2078076715}

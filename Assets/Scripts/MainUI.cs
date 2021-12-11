@@ -56,7 +56,7 @@ public class MainUI : MonoBehaviour
                         HexAction();
                     }
                 }
-                else if (!selectedUnit.movement)
+                else if (!selectedUnit.movement && selectedUnit.ActionPoints > 0)
                 {
                     DoPathfinding();
                 }
@@ -94,23 +94,22 @@ public class MainUI : MonoBehaviour
     void DoSelection()
     {
         grid.GetPlayerBehaviour().ClearPath();
-        int bawal = System.Array.IndexOf(grid.GetCells(), currentCell);
-        Debug.Log("DO NOT GO TO CELL NUMBER " + bawal);
+        UpdateCurrentCell();
+        Debug.Log("This is cell index " + currentCell.Index);
 
-        if (UpdateCurrentCell())
+        if (!currentCell.Unit || selectedUnit == currentCell.Unit)
         {
-            if (selectedUnit == currentCell.Unit || !currentCell.Unit)
-            {
-                selectedUnit = null;
-            }
-            else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
-            {
-                selectedUnit = currentCell.Unit;
-                Debug.Log("Selected " + selectedUnit.UnitType);
-            }
-
+            selectedUnit = null;
+            currentState.SetMessage("No unit selected.");
+        }
+        else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
+        {
+            selectedUnit = currentCell.Unit;
+            Debug.Log("Selected " + selectedUnit.UnitType);
+            currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType);
             grid.ShowUI(true);
         }
+        UpdateUIElements();
     }
 
     void DoPathfinding()
@@ -266,6 +265,7 @@ public class MainUI : MonoBehaviour
         }
         UpdateUIElements();
         Destroy(remove);
+        selectedUnit = null;
     }
 
     void Inspect(HexCell target, GameObject remove)
@@ -566,7 +566,7 @@ public class MainUI : MonoBehaviour
             }
         }
 
-        // spawn only every 4 turns
+        // spawn only every 6 turns
         if (!currentState.CheckTutorial())
         {
             if (currentState.GetTurn() == 2)

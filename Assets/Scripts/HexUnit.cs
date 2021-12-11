@@ -252,7 +252,8 @@ public class HexUnit : MonoBehaviour
     {
         HP -= reducedActionPoints - ActionPoints;
         healthBar.SetHealth(HP);
-        reducedActionPoints = Mathf.RoundToInt((HP / 100) * reducedActionPoints);
+        reducedActionPoints = Mathf.RoundToInt((HP / 100) * maxActionPoints);
+        Debug.Log(HP + " HP. Your max points are " + reducedActionPoints + ".");
     }
 
     public void RestoreHP()

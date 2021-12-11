@@ -102,8 +102,8 @@ public class HexGrid : MonoBehaviour
 
         if (mapCreation.IsLand(check))
         {
-            int treeChance = Random.Range(1, 100);
-            if (treeChance >= 95)
+            int treeChance = Random.Range(0, 101);
+            if (treeChance < 85)
             {
                 cell = cells[i] = Instantiate<HexCell>(landA);
             }

@@ -108,7 +108,6 @@ public class AIBehaviour : MonoBehaviour
 
     void DoMove()
     {
-        // Clean();
         currentUnit.movement = true;
         currentUnit.Travel(GetPath());
     }
@@ -145,12 +144,12 @@ public class AIBehaviour : MonoBehaviour
         }
         else if (currentUnit.UnitType == "Fishing Boat")
         {
-            int randomIndex = Random.Range(0, grid.GetCells().Length - 1);
+            int randomIndex = Random.Range(0, grid.GetCells().Length);
 
             while (GlobalCellCheck.IsImpassable(grid.GetCells()[randomIndex]) && GlobalCellCheck.IsNotReachable(randomIndex)
             && grid.GetCells()[randomIndex] == currentUnit.Location)
             {
-                randomIndex = Random.Range(0, grid.GetCells().Length - 1);
+                randomIndex = Random.Range(0, grid.GetCells().Length);
             }
             finalDestination = grid.GetCells()[randomIndex];
         }
@@ -309,7 +308,10 @@ public class AIBehaviour : MonoBehaviour
                 currentIndex = current.Index;
                 int turn = (distances[currentIndex] - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
-                current.EnableHighlight(Color.green);
+                if (!current.Structure)
+                {
+                    current.EnableHighlight(Color.green);
+                }
                 current.HasOverlap = true;
                 current = current.PathFrom;
             }

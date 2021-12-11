@@ -79,7 +79,10 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 int turn = (current.Distance - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
-                current.EnableHighlight(Color.white);
+                if (!current.Structure)
+                {
+                    current.EnableHighlight(Color.white);
+                }
                 current.HasOverlap = true;
                 current = current.PathFrom;
             }
