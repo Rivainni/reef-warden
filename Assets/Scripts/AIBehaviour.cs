@@ -108,6 +108,7 @@ public class AIBehaviour : MonoBehaviour
 
     void DoMove()
     {
+        // Clean();
         currentUnit.movement = true;
         currentUnit.Travel(GetPath());
     }

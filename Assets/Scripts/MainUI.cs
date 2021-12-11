@@ -520,6 +520,7 @@ public class MainUI : MonoBehaviour
         UITextUpdate[] toUpdate = GetComponentsInChildren<UITextUpdate>();
         foreach (UITextUpdate item in toUpdate)
         {
+            // Debug.Log("Error at " + item.gameObject.name);
             item.UpdateText();
         }
     }

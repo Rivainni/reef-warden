@@ -13,7 +13,8 @@ public class HexGrid : MonoBehaviour
     public Color defaultColor = Color.white;
     public Color touchedColor = Color.magenta;
     public HexCell water;
-    public HexCell land;
+    public HexCell landA;
+    public HexCell landB;
     public Spawner spawner;
     public MainUI mainUI;
     public Text cellLabelPrefab;
@@ -101,7 +102,15 @@ public class HexGrid : MonoBehaviour
 
         if (mapCreation.IsLand(check))
         {
-            cell = cells[i] = Instantiate<HexCell>(land);
+            int treeChance = Random.Range(1, 100);
+            if (treeChance >= 95)
+            {
+                cell = cells[i] = Instantiate<HexCell>(landA);
+            }
+            else
+            {
+                cell = cells[i] = Instantiate<HexCell>(landB);
+            }
             cell.Type = "Land";
         }
         else
