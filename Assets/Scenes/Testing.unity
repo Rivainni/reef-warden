@@ -97,8 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: ec0eebf32e1662a4aa73330de49ba860, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: a06112cdaa1624c48af868ef51d8a1f2, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -693,6 +693,7 @@ MonoBehaviour:
   timeController: {fileID: 1907426807}
   unsafeCells: {fileID: 4900000, guid: 54554f94cd6905f49abf0895676c9868, type: 3}
   escapeCells: {fileID: 4900000, guid: 66789a558c028004793bd2c5a21de3e4, type: 3}
+  adjacentChecks: {fileID: 4900000, guid: 48e8409b268bb734bb530f5fa98fbade, type: 3}
   audioManager: {fileID: 916974535}
 --- !u!4 &306096921
 Transform:
@@ -1009,6 +1010,7 @@ MonoBehaviour:
   - Service Boat
   - Tourist Boat
   - Fishing Boat
+  - Research Boat
   movementPoints: 070000000a000000020000000300000004000000
   unitPrefabs:
   - {fileID: -678434393824927237, guid: 2b395fd535d8b9c45b47cce453b6aeb1, type: 3}
@@ -1016,6 +1018,7 @@ MonoBehaviour:
   - {fileID: -6607372331495214366, guid: dcff82307f3aec840a3dc977a0979e84, type: 3}
   - {fileID: -145626158155621914, guid: c1fdb885bb1d06a4491c87386507abcc, type: 3}
   - {fileID: -9008059652368044876, guid: 27f24a1a61aefe343807582176caa413, type: 3}
+  - {fileID: 8913429063992691099, guid: 2e6dfbc0af071894a9fd8cc3fd627677, type: 3}
   structureTypes:
   - Ranger Station
   - Buoy
@@ -2030,6 +2033,63 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1001 &1030960710
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1829116461306768, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_Name
+      value: Outside
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428311454710422, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f3da468467a144c478d2a68b5764dd4f, type: 3}
 --- !u!1 &1058414800
 GameObject:
   m_ObjectHideFlags: 0

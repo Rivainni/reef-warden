@@ -22,6 +22,7 @@ public class HexGrid : MonoBehaviour
     public TimeController timeController;
     [SerializeField] TextAsset unsafeCells;
     [SerializeField] TextAsset escapeCells;
+    [SerializeField] TextAsset adjacentChecks;
     [SerializeField] AudioManager audioManager;
 
     public bool HasPath
@@ -51,6 +52,7 @@ public class HexGrid : MonoBehaviour
         playerBehaviour = this.gameObject.GetComponent<PlayerBehaviour>();
         GlobalCellCheck.SetUnsafeCells(unsafeCells);
         GlobalCellCheck.SetEscapeCells(escapeCells);
+        GlobalCellCheck.SetAdjacentChecks(adjacentChecks);
 
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -102,14 +104,23 @@ public class HexGrid : MonoBehaviour
 
         if (mapCreation.IsLand(check))
         {
-            int treeChance = Random.Range(0, 101);
-            if (treeChance < 85)
+            // int treeChance = Random.Range(0, 101);
+            // if (treeChance < 85)
+            // {
+            //     cell = cells[i] = Instantiate<HexCell>(landA);
+            // }
+            // else
+            // {
+            //     cell = cells[i] = Instantiate<HexCell>(landB);
+            // }
+
+            if (i == 465)
             {
-                cell = cells[i] = Instantiate<HexCell>(landA);
+                cell = cells[i] = Instantiate<HexCell>(landB);
             }
             else
             {
-                cell = cells[i] = Instantiate<HexCell>(landB);
+                cell = cells[i] = Instantiate<HexCell>(landA);
             }
             cell.Type = "Land";
         }

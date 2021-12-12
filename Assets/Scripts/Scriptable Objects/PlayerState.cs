@@ -17,11 +17,14 @@ public class PlayerState : ScriptableObject
     float seenReefHealth;
 
     [SerializeField] int turn;
+    [SerializeField] int level;
     [SerializeField] int checkHealthCD1;
     [SerializeField] int checkHealthCD2;
     [SerializeField] int checkHealthCD3;
     [SerializeField] int birdCD;
-    [SerializeField] int clamCD;
+    [SerializeField] int clamCD1;
+    [SerializeField] int clamCD2;
+    [SerializeField] int clamCD3;
     [SerializeField] int turtleCD;
     [SerializeField] int researchCD;
     [SerializeField] int radarCD;
@@ -100,6 +103,21 @@ public class PlayerState : ScriptableObject
     public int GetTurn()
     {
         return turn;
+    }
+
+    public int GetLevel()
+    {
+        return level;
+    }
+
+    public void AddLevel()
+    {
+        level++;
+    }
+
+    public void SetLevel(int newLevel)
+    {
+        level = newLevel;
     }
 
     public string[] GetPossibleActions()
@@ -198,9 +216,17 @@ public class PlayerState : ScriptableObject
         {
             return birdCD;
         }
-        else if (type.Equals("C"))
+        else if (type.Equals("C1"))
         {
-            return clamCD;
+            return clamCD1;
+        }
+        else if (type.Equals("C2"))
+        {
+            return clamCD2;
+        }
+        else if (type.Equals("C3"))
+        {
+            return clamCD3;
         }
         else if (type.Equals("T"))
         {
@@ -226,7 +252,9 @@ public class PlayerState : ScriptableObject
         checkHealthCD2 = (checkHealthCD2 > 0) ? checkHealthCD2 -= 1 : checkHealthCD2;
         checkHealthCD3 = (checkHealthCD3 > 0) ? checkHealthCD3 -= 1 : checkHealthCD3;
         birdCD = (birdCD > 0) ? birdCD -= 1 : birdCD;
-        clamCD = (clamCD > 0) ? clamCD -= 1 : clamCD;
+        clamCD1 = (clamCD1 > 0) ? clamCD1 -= 1 : clamCD1;
+        clamCD2 = (clamCD2 > 0) ? clamCD2 -= 1 : clamCD2;
+        clamCD3 = (clamCD3 > 0) ? clamCD3 -= 1 : clamCD3;
         turtleCD = (turtleCD > 0) ? turtleCD -= 1 : turtleCD;
         researchCD = (researchCD > 0) ? researchCD -= 1 : researchCD;
         radarCD = (radarCD > 0) ? radarCD -= 1 : radarCD;
@@ -250,9 +278,17 @@ public class PlayerState : ScriptableObject
         {
             birdCD = 5;
         }
-        else if (type.Equals("C"))
+        else if (type.Equals("C1"))
         {
-            clamCD = 10;
+            clamCD1 = 10;
+        }
+        else if (type.Equals("C2"))
+        {
+            clamCD2 = 10;
+        }
+        else if (type.Equals("C3"))
+        {
+            clamCD3 = 10;
         }
         else if (type.Equals("T"))
         {
@@ -420,11 +456,14 @@ public class PlayerState : ScriptableObject
         trueReefHealth = 100;
         seenReefHealth = 50;
         turn = 1;
+        level = 1;
         checkHealthCD1 = 0;
         checkHealthCD2 = 0;
         checkHealthCD3 = 0;
         birdCD = 0;
-        clamCD = 0;
+        clamCD1 = 0;
+        clamCD2 = 0;
+        clamCD3 = 0;
         turtleCD = 0;
         researchCD = 0;
         unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };

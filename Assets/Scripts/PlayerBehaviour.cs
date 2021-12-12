@@ -127,6 +127,7 @@ public class PlayerBehaviour : MonoBehaviour
                 }
                 current = current.PathFrom;
             }
+            current.HasOverlap = false;
             current.DisableHighlight();
             grid.HasPath = false;
         }

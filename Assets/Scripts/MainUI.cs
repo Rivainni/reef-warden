@@ -142,6 +142,7 @@ public class MainUI : MonoBehaviour
         HexUnit targetA = null;
         HexUnit targetB = null;
         HexUnit targetC = null;
+        int reefStructure = 0;
 
         List<string> contextMenuContent = new List<string>();
 
@@ -152,12 +153,6 @@ public class MainUI : MonoBehaviour
                 if (grid.HasPath && grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints) < int.MaxValue && selectedUnit.ActionPoints > 0)
                 {
                     contextMenuContent.Add("Patrol");
-
-                    // moving this check once we've marked the location of the reefs
-                    if (currentState.FetchCD("CH1") == 0 && currentState.FetchCD("CH2") == 0 && currentState.FetchCD("CH3") == 0)
-                    {
-                        contextMenuContent.Add("Check Reef Health");
-                    }
 
                     for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
                     {
@@ -181,6 +176,37 @@ public class MainUI : MonoBehaviour
                                 contextMenuContent.Add("Inspect Tourist");
                                 tempB = toCheckCell;
                                 targetB = toCheckCell.Unit;
+                            }
+                            else if (toCheckCell.Unit.UnitType == "Research Boat" && !contextMenuContent.Contains("Assist Researcher"))
+                            {
+                                contextMenuContent.Add("Assist Researcher");
+                                tempB = toCheckCell;
+                                targetB = toCheckCell.Unit;
+                            }
+                        }
+                        else if (toCheckCell != null)
+                        {
+                            // add level checks in a bit
+                            if (GlobalCellCheck.IsAdjacentToShore(toCheckCell) > 0)
+                            {
+                                Debug.Log("reef structure" + GlobalCellCheck.IsAdjacentToShore(toCheckCell));
+                                if (currentState.FetchCD("CH" + GlobalCellCheck.IsAdjacentToShore(toCheckCell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
+                                {
+                                    contextMenuContent.Add("Check Reef Health");
+                                }
+                                if (currentState.FetchCD("B") == 0 && toCheckCell.Type == "Land" && toCheckCell.Index == 465 && !contextMenuContent.Contains("Count Birds"))
+                                {
+                                    contextMenuContent.Add("Count Birds");
+                                }
+                                if (currentState.FetchCD("C" + GlobalCellCheck.IsAdjacentToShore(toCheckCell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
+                                {
+                                    contextMenuContent.Add("Monitor Clams");
+                                }
+                                if (currentState.FetchCD("T") == 0)
+                                {
+                                    contextMenuContent.Add("Tag Turtles");
+                                }
+                                reefStructure = GlobalCellCheck.IsAdjacentToShore(toCheckCell);
                             }
                         }
                     }
@@ -225,7 +251,23 @@ public class MainUI : MonoBehaviour
                 }
                 else if (item == "Check Reef Health")
                 {
-                    currentButton.onClick.AddListener(() => CheckHealth(cell, contextMenu));
+                    currentButton.onClick.AddListener(() => CheckHealth(cell, contextMenu, reefStructure));
+                }
+                else if (item == "Count Birds")
+                {
+                    currentButton.onClick.AddListener(() => CountBirds(cell, contextMenu));
+                }
+                else if (item == "Monitor Clams")
+                {
+                    currentButton.onClick.AddListener(() => MonitorClam(selectedUnit, contextMenu, reefStructure));
+                }
+                else if (item == "Tag Turtles")
+                {
+                    currentButton.onClick.AddListener(() => TagTurtle(selectedUnit, contextMenu));
+                }
+                else if (item == "Assist Researcher")
+                {
+                    currentButton.onClick.AddListener(() => AssistResearcher(tempB, contextMenu, targetB));
                 }
                 else if (item == "Catch Fisherman")
                 {
@@ -316,23 +358,62 @@ public class MainUI : MonoBehaviour
         AfterAction(remove);
     }
 
-    void CheckHealth(HexCell destination, GameObject remove)
+    void CheckHealth(HexCell destination, GameObject remove, int reefStructure)
     {
         currentState.UpdateHealth();
         currentState.AddResearch(250);
-        currentState.ResetCD("CH1");
-        currentState.ResetCD("CH2");
-        currentState.ResetCD("CH3");
-        // playerLocation = destination;
-        // Debug.Log("You are at " + playerLocation.coordinates.ToString());
+        currentState.ResetCD("CH" + reefStructure);
+        AfterAction(remove);
+    }
+
+    void CountBirds(HexCell destination, GameObject remove)
+    {
+        currentState.AddResearch(500);
+        currentState.ResetCD("B");
+        AfterAction(remove);
+    }
+
+    void MonitorClam(HexUnit unit, GameObject remove, int reefStructure)
+    {
+        AfterAction(remove);
+        int startTurn = currentState.GetTurn();
+        unit.ToggleBusy();
+        StartCoroutine(WaitForTwoTurns());
+        IEnumerator WaitForTwoTurns()
+        {
+            yield return new WaitUntil(() => currentState.GetTurn() == startTurn + 2);
+            unit.ToggleBusy();
+            currentState.AddResearch(1000);
+            currentState.ResetCD("C" + reefStructure);
+        }
+    }
+
+    void TagTurtle(HexUnit unit, GameObject remove)
+    {
+        AfterAction(remove);
+        currentState.AdjustMoney(-10000);
+        int startTurn = currentState.GetTurn();
+        unit.ToggleBusy();
+        StartCoroutine(WaitForTwoTurns());
+        IEnumerator WaitForTwoTurns()
+        {
+            yield return new WaitUntil(() => currentState.GetTurn() == startTurn + 2);
+            unit.ToggleBusy();
+            currentState.AddResearch(1000);
+            currentState.ResetCD("T");
+        }
+    }
+
+    void AssistResearcher(HexCell destination, GameObject remove, HexUnit target)
+    {
+        spawner.DestroyUnit(target);
+        currentState.AddResearch(10000);
         AfterAction(remove);
     }
 
     void InspectTourist(HexCell destination, GameObject remove, HexUnit target)
     {
         StartCoroutine(InspectTouristGame(target));
-        // playerLocation = destination;
-        // Debug.Log("You are at " + playerLocation.coordinates.ToString());
         AfterAction(remove);
     }
 
@@ -588,6 +669,11 @@ public class MainUI : MonoBehaviour
             {
                 currentState.AddFisherman(1);
                 spawner.RandomSpawn("Fishing Boat");
+            }
+
+            if (currentState.GetLevel() == 5 && timeController.IsDay())
+            {
+                spawner.RandomSpawn("Research Boat");
             }
         }
 

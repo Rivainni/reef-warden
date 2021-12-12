@@ -105,6 +105,7 @@ public class HexUnit : MonoBehaviour
     public HexGrid Grid { get; set; }
 
     float orientation;
+    bool busy;
     const float travelSpeed = 2f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
@@ -120,6 +121,7 @@ public class HexUnit : MonoBehaviour
             healthBar.SetMaxHealth(HP);
         }
         IsVisible = true;
+        busy = false;
     }
 
     public void ValidateLocation()
@@ -264,7 +266,14 @@ public class HexUnit : MonoBehaviour
 
     public void ResetMovement()
     {
-        ActionPoints = reducedActionPoints;
+        if (busy)
+        {
+            ActionPoints = 0;
+        }
+        else
+        {
+            ActionPoints = reducedActionPoints;
+        }
     }
 
     public void ToggleVisibility()
@@ -279,6 +288,18 @@ public class HexUnit : MonoBehaviour
         {
             IsVisible = true;
             gameObject.transform.Translate(Vector3.up * 10);
+        }
+    }
+
+    public void ToggleBusy()
+    {
+        if (busy)
+        {
+            busy = false;
+        }
+        else
+        {
+            busy = true;
         }
     }
 

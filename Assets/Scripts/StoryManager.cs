@@ -152,6 +152,7 @@ public class StoryManager : MonoBehaviour
         else
         {
             mainUI.GetPlayerState().EndTutorial();
+            mainUI.GetPlayerState().AddLevel();
         }
     }
 
