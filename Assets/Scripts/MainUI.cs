@@ -35,6 +35,7 @@ public class MainUI : MonoBehaviour
         currentState.Clean();
         UpdateUIElements();
         // PointToObject(grid.GetUnits()[0].gameObject);
+        minigameData.SetInspection();
     }
 
     void Update()
@@ -97,17 +98,20 @@ public class MainUI : MonoBehaviour
         UpdateCurrentCell();
         Debug.Log("This is cell index " + currentCell.Index);
 
-        if (!currentCell.Unit || selectedUnit == currentCell.Unit)
+        if (currentCell)
         {
-            selectedUnit = null;
-            currentState.SetMessage("No unit selected.");
-        }
-        else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
-        {
-            selectedUnit = currentCell.Unit;
-            Debug.Log("Selected " + selectedUnit.UnitType);
-            currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType);
-            grid.ShowUI(true);
+            if (!currentCell.Unit || selectedUnit == currentCell.Unit)
+            {
+                selectedUnit = null;
+                currentState.SetMessage("No unit selected.");
+            }
+            else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
+            {
+                selectedUnit = currentCell.Unit;
+                Debug.Log("Selected " + selectedUnit.UnitType);
+                currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType);
+                grid.ShowUI(true);
+            }
         }
         UpdateUIElements();
     }
@@ -202,7 +206,7 @@ public class MainUI : MonoBehaviour
                                 {
                                     contextMenuContent.Add("Monitor Clams");
                                 }
-                                if (currentState.FetchCD("T") == 0)
+                                if (currentState.FetchCD("T") == 0 && !contextMenuContent.Contains("Tag Turtles"))
                                 {
                                     contextMenuContent.Add("Tag Turtles");
                                 }
@@ -307,7 +311,6 @@ public class MainUI : MonoBehaviour
         }
         UpdateUIElements();
         Destroy(remove);
-        selectedUnit = null;
     }
 
     void Inspect(HexCell target, GameObject remove)
@@ -424,15 +427,25 @@ public class MainUI : MonoBehaviour
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject gamePanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
 
+        // determine if value should be true or not
+        int correct = Random.Range(0, 2);
+        bool correctValue = correct < 1;
+
+        int random = Random.Range(0, 30);
+
         for (int i = 0; i < 2; i++)
         {
             GameObject toShow = Instantiate(textPrefab, gamePanel.transform.GetChild(i).position, Quaternion.identity, gamePanel.transform.GetChild(i));
             Text matchText = toShow.GetComponent<Text>();
-            matchText.text = minigameData.GenerateSet(0, i);
+            if (correctValue)
+            {
+                matchText.text = minigameData.GenerateSet(random, correct);
+            }
+            else
+            {
+                matchText.text = minigameData.GenerateSet(random, correct + i);
+            }
         }
-
-        // determine if value should be true or not
-        bool correctValue = false;
 
         GameObject approvePanel = Instantiate(panelPrefab, gamePanel.transform.position, Quaternion.identity, gamePanel.transform);
         GameObject buttonA = Instantiate(buttonPrefab, approvePanel.transform.position, Quaternion.identity, approvePanel.transform);
@@ -450,20 +463,25 @@ public class MainUI : MonoBehaviour
     void InspectTouristGameApprove(bool correctValue, GameObject toRemove)
     {
         Destroy(toRemove);
+        if (correctValue)
+        {
+            currentState.AddSecurity(5);
+            currentState.SetMessage("Inspection correct.");
+            UpdateUIElements();
+        }
         currentState.AddTouristScore();
     }
 
     void InspectTouristGameDisapprove(bool correctValue, HexUnit target, GameObject toRemove)
     {
-        spawner.DestroyUnit(target);
         if (!correctValue)
         {
             currentState.AddSecurity(5);
+            currentState.SetMessage("Inspection correct.");
             UpdateUIElements();
         }
         Destroy(toRemove);
         currentState.AddTouristScore();
-        currentState.AddTourists(-1);
     }
 
     void AssistMooring(HexCell destination, GameObject remove, HexUnit target)
@@ -471,7 +489,7 @@ public class MainUI : MonoBehaviour
         // probably a minigame
         AIBehaviour current = target.GetComponent<AIBehaviour>();
         current.Moor();
-        target.Location.DisableHeavyHighlight();
+        target.Location.ResetColor();
         AfterAction(remove);
     }
 
@@ -634,6 +652,14 @@ public class MainUI : MonoBehaviour
                 if (!currentUnit.IsVisible)
                 {
                     grid.GetUnits()[i].ToggleVisibility();
+                }
+            }
+
+            foreach (HexCell cell in grid.GetCells())
+            {
+                if (!cell.Structure)
+                {
+                    cell.IncreaseVisibility();
                 }
             }
         }

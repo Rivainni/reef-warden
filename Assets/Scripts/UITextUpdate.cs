@@ -21,7 +21,7 @@ public class UITextUpdate : MonoBehaviour
 
         if (current.text.Contains("GP: "))
         {
-            current.text = "GP: " + currentState.GetMoney() + " + (" + currentState.GetIncome() + ")";
+            current.text = "GP: " + currentState.GetMoney();
         }
         else if (current.text.Contains("RP: "))
         {

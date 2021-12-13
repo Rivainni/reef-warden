@@ -93,10 +93,12 @@ public class HexCell : MonoBehaviour
     public HexStructure Structure { get; set; }
 
     Renderer renderer;
+    Color defaultColor;
 
-    void Start()
+    void Awake()
     {
         renderer = GetComponent<Renderer>();
+        defaultColor = renderer.material.color;
     }
 
     public HexCell GetNeighbor(HexDirection direction)
@@ -133,19 +135,25 @@ public class HexCell : MonoBehaviour
         renderer.material.color = Color.red;
     }
 
-    public void DisableHeavyHighlight()
+    public void ResetColor()
     {
-        renderer.material.color = Color.white;
+        renderer.material.color = defaultColor;
     }
 
     public void IncreaseVisibility()
     {
-        visibility++;
+        if (visibility < 1)
+        {
+            visibility++;
+        }
     }
 
     public void DecreaseVisibility()
     {
-        visibility--;
+        if (visibility > 0)
+        {
+            visibility--;
+        }
     }
 
     // public void Save(BinaryWriter writer)

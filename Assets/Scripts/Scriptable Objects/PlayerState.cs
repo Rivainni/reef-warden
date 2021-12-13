@@ -477,7 +477,6 @@ public class PlayerState : ScriptableObject
     public void EndTurn()
     {
         turn++;
-        money += income;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
 

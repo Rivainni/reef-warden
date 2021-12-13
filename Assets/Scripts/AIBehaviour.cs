@@ -46,6 +46,11 @@ public class AIBehaviour : MonoBehaviour
             if (turnStopped == 0)
             {
                 turnStopped = mainUI.GetPlayerState().GetTurn();
+                ClearPath();
+                if (currentUnit.UnitType == "Tourist Boat")
+                {
+                    currentUnit.Location.EnableHeavyHighlight();
+                }
             }
 
             if (currentUnit.UnitType == "Fishing Boat")
@@ -76,6 +81,10 @@ public class AIBehaviour : MonoBehaviour
         else if (stateChanged && currentUnit.Location == finalDestination)
         {
             spawner.DestroyUnit(currentUnit);
+            if (currentUnit.UnitType == "Tourist Boat")
+            {
+                mainUI.GetPlayerState().AdjustMoney(250);
+            }
         }
     }
 
@@ -378,7 +387,7 @@ public class AIBehaviour : MonoBehaviour
             current.DisableHighlight();
             currentPathExists = false;
         }
-        else if (currentPathFrom && !currentPathFrom.Structure)
+        if (currentPathFrom && !currentPathFrom.Structure)
         {
             currentPathFrom.DisableHighlight();
             if (!currentPathTo.Structure)
