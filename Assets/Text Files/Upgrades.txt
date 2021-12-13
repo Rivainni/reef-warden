@@ -5,7 +5,7 @@ Unlocked from the start.
 Build Cost: 500
 Time: 1
 Manpower: 1
-[NEXT]
+END
 !Rec Room!
 Provides +x/2x/4x morale. 
 Has a 5 turn cooldown.
@@ -14,7 +14,7 @@ Research Cost: 100
 Upkeep: 100
 Time: 1
 Manpower: 1
-[NEXT]
+END
 !Double-engine Patrol Boat!
 Faster and bigger than the single-engine starter boat. Limit 1, does not take up slots.
 Requires 4 manpower to operate.
@@ -22,11 +22,11 @@ Can move 8-10 hexes, depending on health.
 Build Cost: 10000
 Research Cost: 1000
 Manpower: 4
-[NEXT]
+END
 !Radio!
 Lets the player warn oncoming boats to stay away from the reef.
 The player starts with this upgrade unlocked and built.
-[NEXT]
+END
 !Automatic Identification System (AIS)!
 Lets the player know the information of the vessels in the area by Identifying their purpose.
 Build Cost: 2000
@@ -34,7 +34,7 @@ Research Cost: 250
 Upkeep: 1
 Time: 1
 Manpower: 1
-[NEXT]
+END
 !RADAR!
 When triggered, it gives the player map-wide visibility for one turn.
 May be used again after 5 turns.
@@ -43,7 +43,7 @@ Research Cost: 250
 Upkeep: 200
 Time: 1
 Manpower: 1
-[NEXT]
+END
 !Satellite Internet!
 Gives +x% base bonus to security and base morale
 Build Cost: 2000
@@ -51,7 +51,7 @@ Research Cost: 250
 Upkeep: 200
 Time: 4
 Manpower: 1
-[NEXT]
+END
 !Souvenir Stand!
 Allows tourists to buy souvenirs from the ranger station before leaving.
 Provides +x%/2x%/4x% increase in revenue from each tourist.
@@ -59,8 +59,8 @@ Build Cost: 1000
 Research Cost: 100
 Upkeep: 0
 Time: 2
-Manpower:
-[NEXT]
+Manpower: 1
+END
 !3rd Party Marketing Agencies!
 Advertises tourism opportunities to the reef
 Increases incoming tourists by x/2x/3x.
@@ -69,21 +69,22 @@ Research Cost: 500
 Upkeep: 250
 Time: 4
 Manpower: 2
-[NEXT]
+END
 !Service Boat!
 Used to repair the station and the patrol boats
 The player starts with this upgrade unlocked and built.
-[NEXT]
+END
 !Species Tagging and Tracking!
 Unlocks turtle tagging as a research action, which provides greatly increased research points over other research actions. Unlock takes effect immediately after research.
 Research Cost: 1000
 Time: 3
-[NEXT]
+END
 !Access to Research Boat!
 Players will be able to call in an off-map research boat once every 10 turns to give a +30% bonus to research actions done within the next 5 turns.
-[NEXT]
+END
 !Total Protection!
 The rangers’ findings in the reef are enough to convince politicians across the country of the necessity to dedicate more resources to defend the reef.
 Researching this will result in game victory.
 Research Cost: 10000
 Time: 10
+END

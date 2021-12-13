@@ -694,6 +694,8 @@ MonoBehaviour:
   unsafeCells: {fileID: 4900000, guid: 54554f94cd6905f49abf0895676c9868, type: 3}
   escapeCells: {fileID: 4900000, guid: 66789a558c028004793bd2c5a21de3e4, type: 3}
   adjacentChecks: {fileID: 4900000, guid: 48e8409b268bb734bb530f5fa98fbade, type: 3}
+  objectives: {fileID: 4900000, guid: 431f1a0ebdf3e2b48a6a4c2958ad0c3d, type: 3}
+  upgrades: {fileID: 4900000, guid: cf9042ebcc986bf418f00e79a5c58ac6, type: 3}
   audioManager: {fileID: 916974535}
 --- !u!4 &306096921
 Transform:

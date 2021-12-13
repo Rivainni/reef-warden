@@ -23,6 +23,8 @@ public class HexGrid : MonoBehaviour
     [SerializeField] TextAsset unsafeCells;
     [SerializeField] TextAsset escapeCells;
     [SerializeField] TextAsset adjacentChecks;
+    [SerializeField] TextAsset objectives;
+    [SerializeField] TextAsset upgrades;
     [SerializeField] AudioManager audioManager;
 
     public bool HasPath
@@ -62,6 +64,9 @@ public class HexGrid : MonoBehaviour
 
         spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
         spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
+
+        TextRW.SetObjectives(objectives);
+        TextRW.SetUpgrades(upgrades);
     }
 
     void CreateChunks()

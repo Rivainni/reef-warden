@@ -62,10 +62,6 @@ public class MainUI : MonoBehaviour
                     DoPathfinding();
                 }
             }
-            else if (Input.GetMouseButtonDown(1) && grid.CheckUpgradeCell(currentCell))
-            {
-                DoUpgrade();
-            }
             else if (Input.GetMouseButtonDown(1))
             {
                 HexAction();
@@ -238,6 +234,10 @@ public class MainUI : MonoBehaviour
         else
         {
             contextMenuContent.Add("Inspect");
+            if (grid.CheckUpgradeCell(cell))
+            {
+                contextMenuContent.Add("Build Upgrade");
+            }
         }
 
         if (contextMenuContent.Count > 0)
@@ -296,6 +296,10 @@ public class MainUI : MonoBehaviour
                 else if (item == "Move")
                 {
                     currentButton.onClick.AddListener(() => AfterAction(contextMenu));
+                }
+                else if (item == "Build Upgrade")
+                {
+                    currentButton.onClick.AddListener(() => DoUpgrade(contextMenu));
                 }
             }
         }
@@ -501,17 +505,21 @@ public class MainUI : MonoBehaviour
         currentState.AddCatchScore();
     }
 
-    void DoUpgrade()
+    void DoUpgrade(GameObject remove)
     {
+        Destroy(remove);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
         // clear the context menu
         List<string> contextMenuContent = new List<string>();
 
-        foreach (string item in spawner.GetUpgradeTypes())
+        foreach (TextRW.UpgradeItem item in TextRW.GetUpgrades())
         {
-            contextMenuContent.Add(item);
+            if (item.BuildCost > 0)
+            {
+                contextMenuContent.Add(item.Name);
+            }
         }
         if (contextMenuContent.Count > 0)
         {
@@ -573,27 +581,35 @@ public class MainUI : MonoBehaviour
         int buildCost = 0;
         int upkeep = 0;
 
-        if (upgrade == "RADAR")
-        {
-            toReplace.GetComponent<Text>().text = "When triggered, it gives the player map-wide visibility for one turn. May be used again after 5 turns.";
-            toReplace.GetComponent<Text>().text += "\n\nCosts 2000. Requires 250 RP. Has upkeep of 200 per turn.";
-            toReplace.GetComponent<Text>().text += "\nRequires 1 turn and 1 manpower to construct.";
+        // if (upgrade == "RADAR")
+        // {
+        //     toReplace.GetComponent<Text>().text = "When triggered, it gives the player map-wide visibility for one turn. May be used again after 5 turns.";
+        //     toReplace.GetComponent<Text>().text += "\n\nCosts 2000. Requires 250 RP. Has upkeep of 200 per turn.";
+        //     toReplace.GetComponent<Text>().text += "\nRequires 1 turn and 1 manpower to construct.";
 
-            constructionTime = 1;
-            researchCost = 250;
-            buildCost = 2000;
-            upkeep = 200;
-        }
-        else if (upgrade == "AIS")
-        {
-            toReplace.GetComponent<Text>().text = "Lets the player know the information of the vessels in the area by Identifying their purpose.";
-            toReplace.GetComponent<Text>().text += "\n\nCosts 2500. Requires 250 RP. Has upkeep of 250 per turn. ";
+        //     constructionTime = 1;
+        //     researchCost = 250;
+        //     buildCost = 2000;
+        //     upkeep = 200;
+        // }
+        // else if (upgrade == "AIS")
+        // {
+        //     toReplace.GetComponent<Text>().text = "Lets the player know the information of the vessels in the area by Identifying their purpose.";
+        //     toReplace.GetComponent<Text>().text += "\n\nCosts 2500. Requires 250 RP. Has upkeep of 250 per turn. ";
 
-            constructionTime = 1;
-            researchCost = 250;
-            buildCost = 2500;
-            upkeep = 250;
-        }
+        //     constructionTime = 1;
+        //     researchCost = 250;
+        //     buildCost = 2500;
+        //     upkeep = 250;
+        // }
+
+        TextRW.UpgradeItem curr = TextRW.GetUpgrade(upgrade);
+
+        toReplace.GetComponent<Text>().text = curr.Description;
+        constructionTime = curr.Turns;
+        researchCost = curr.ResearchCost;
+        buildCost = curr.BuildCost;
+        upkeep = curr.Upkeep;
 
         GameObject generic = Instantiate(buttonPrefab, toReplace.transform.parent.position, Quaternion.identity, toReplace.transform.parent);
         Button currentButton = generic.GetComponent<Button>();

@@ -1,10 +1,10 @@
 [Level1]
-Build a souvenir stand.
+Build a radar.
 Check the health of the reef at least 3x.
 Conduct patrols for at least 4 turns in a row.
 At least 4 turns have passed since Level 1.
 [Level2]
-Build a radar.
+Build a souvenir stand.
 Conduct distance count of birds at least 2x.
 At least 4 turns have passed since Level 2.
 [Level3]
