@@ -1,34 +1,39 @@
-[NAME=Diana]3: Ok, so now that you’re here, we could start with our daily patrol.
-3: Click on the boat and right click on the spot you want to go to.
-3: Then, click on the prompt ‘Patrol’.
-[ACTION=Patrol]3: Click on the boat and select a spot close to one of the atolls.
-3: Right click on the reef and select ‘Check Reef Health’.
-[ACTION=CheckReefHealth]3: Ok, well the reef is looking great and healthy. Our job is to make sure that it’s health doesn’t go down to the point that there would be nothing to save anymore, where’s the fun in that right?
-3: We also need to document its condition everytime we check on the reef.
-3: We can maintain its health by looking out for stuff like rowdy tourists doing things that can hurt the reef or illegal fishermen looking for stuff to catch and sell.
-3: Speaking of tourists, we just got word that there is an unidentified ship coming near the area.
-3: Probably tourists, but we’re still not sure cause we still don’t have an AIS a.k.a. the Automatic Identification System.
-3: We really need to get that thing as soon as we can, Manuel keeps on bugging us about that.
-[ACTION=InspectTourist1]3: There they are. Yeah they're tourists, you can see that they know the protocol to head towards marked buoys to indicate safe areas that they can go to.
-4: Ok, we need to do an inspection. Right click on them and click ‘Inspect Tourists’. Check their permits.
-4: If it does then we can let them go, but if it doesn’t then we need to deny them further entry.
-4: We also need to report to the Management Office in the mainland about our inspections if ever we might face up against violators in court.
-[ACTION=InspectTourist2]5: As soon as we’re done, we need to get back to the station.
-4: Manuel said on the radio that we need to setup the planned Radar before it gets dark.
+[NAME=Diana]Happy: Ok, so now that you’re here, we could start with our daily patrol.
+Happy: First off, let’s teach you how to adjust your view.
+Happy: Use the W, A, S, D keyboard buttons or move the mouse to the corner of the screen to move the camera from side to side.
+[ACTION=WASD]Happy: Use the Q, or E buttons to rotate the camera.
+[ACTION=QE]Lastly to zoom in, use the Mousewheel, R, or F.
+[ACTION=RF]Happy: There we go, now let's move on to the patrol
+Happy: Click on the boat and right click on the spot you want to go to.
+Happy: Then, click on the prompt ‘Patrol’.
+[ACTION=Patrol]Happy: Click on the boat and select a spot close to one of the atolls.
+Happy: Right click on the reef and select ‘Check Reef Health’.
+[ACTION=CheckReefHealth]Happy: Ok, well the reef is looking great and healthy. Our job is to make sure that it’s health doesn’t go down to the point that there would be nothing to save anymore, where’s the fun in that right?
+Happy: We also need to document its condition everytime we check on the reef.
+Happy: We can maintain its health by looking out for stuff like rowdy tourists doing things that can hurt the reef or illegal fishermen looking for stuff to catch and sell.
+Happy: Speaking of tourists, we just got word that there is an unidentified ship coming near the area.
+Happy: Probably tourists, but we’re still not sure cause we still don’t have an AIS a.k.a. the Automatic Identification System.
+Happy: We really need to get that thing as soon as we can, Manuel keeps on bugging us about that.
+[ACTION=InspectTourist1]Happy: There they are. Yeah they're tourists, you can see that they know the protocol to head towards marked buoys to indicate safe areas that they can go to.
+Concerned: Ok, we need to do an inspection. Right click on them and click ‘Inspect Tourists’. Check their permits.
+Concerned: If it does then we can let them go, but if it doesn’t then we need to deny them further entry.
+Concerned: We also need to report to the Management Office in the mainland about our inspections if ever we might face up against violators in court.
+[ACTION=InspectTourist2]Idle: As soon as we’re done, we need to get back to the station.
+Concerned: Manuel said on the radio that we need to setup the planned Radar before it gets dark.
 [ACTION=MoveBack]3: Ok now we’re here, go to the build menu to start building the Radar--!
-4: Ohh right! We need research, we can’t build it without knowing anything about it.
-3: Click on the Research button, the magnifying glass, then click on the Radar icon to start on researching it.
+Concerned: Ohh right! We need research, we can’t build it without knowing anything about it.
+Happy: Click on the Research button, the magnifying glass, then click on the Radar icon to start on researching it.
 [ACTION=Research]3: Now that it’s ready, try building it. Select one of the tiles adjacent to the station and right-click.
 [ACTION=Build]3: Click on the Radar button near the Research button.
 [ACTION=UseRADAR]4: It looks like we spotted some unidentified ships with the radar, a good thing too since those pesky illegal fishermen mostly come at night when it’s hard to spot them.
-5: So I’m going to send the report to the Office about this possible confrontation with violators.
-4: This is going to be a hassle in court and for Julio haha, since he is the Protocol Officer.
-3: Go on and hurry to the boat! We need to get to them before they start damaging the marine life.
+Idle: So I’m going to send the report to the Office about this possible confrontation with violators.
+Concerned: This is going to be a hassle in court and for Julio haha, since he is the Protocol Officer.
+Happy: Go on and hurry to the boat! We need to get to them before they start damaging the marine life.
 [ACTION=CatchFisherman]3: Now we’ve caught them, we have to check on the reef if they did any damage.
-4: Go to the reefs and check their health.
+Concerned: Go to the reefs and check their health.
 [ACTION=CheckReefHealth]3: No damage? That’s good to hear, imagine if these guys actually planned on doing dangerous stuff rather than just catching fishes.
-5: We gotta go back to the station and detain these violators there until Management sends someone to pick them up.
-5: And we need to make another report detailing everything that happened and what we found about these guys.
-4: Julio might also have to go to the Mainland for a while to testify as a witness during the trial of these guys.
-3: Well it looks like that’s it for today, we can head back to the station now.
+Idle: We gotta go back to the station and detain these violators there until Management sends someone to pick them up.
+Idle: And we need to make another report detailing everything that happened and what we found about these guys.
+Concerned: Julio might also have to go to the Mainland for a while to testify as a witness during the trial of these guys.
+Happy: Well it looks like that’s it for today, we can head back to the station now.
 EndQueue

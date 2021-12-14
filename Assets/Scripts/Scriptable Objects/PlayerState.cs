@@ -17,14 +17,18 @@ public class PlayerState : ScriptableObject
     float seenReefHealth;
 
     [SerializeField] int turn;
+    [SerializeField] int level;
     [SerializeField] int checkHealthCD1;
     [SerializeField] int checkHealthCD2;
     [SerializeField] int checkHealthCD3;
     [SerializeField] int birdCD;
-    [SerializeField] int clamCD;
+    [SerializeField] int clamCD1;
+    [SerializeField] int clamCD2;
+    [SerializeField] int clamCD3;
     [SerializeField] int turtleCD;
     [SerializeField] int researchCD;
     [SerializeField] int radarCD;
+    [SerializeField] int basketballCD;
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
@@ -34,10 +38,27 @@ public class PlayerState : ScriptableObject
     [SerializeField] Queue<UpgradeItem> researchQueue = new Queue<UpgradeItem>();
     [SerializeField] int touristsInspected;
     [SerializeField] int fishermenCaught;
-    const float moraleLambda = 0.04f;
+    string message;
+    List<string> currentObjectives = new List<string>();
+    const float moraleLambda = 0.01f;
     const float securityLambda = 0.04f;
-    bool day = true;
     bool radarActive = false;
+    bool inTutorial;
+    bool AIS = false;
+    bool SAT = false;
+    bool SS = false;
+    bool daySpawn = false;
+    bool nightSpawn = false;
+
+    // counters for objectives
+    int levelTurns = 0;
+    int healthCount = 0;
+    int patrols = 0;
+    int birdCount = 0;
+    int securityTurns = 0;
+    int monitorClams = 0;
+    int moraleTurns = 0;
+    int tagCount = 0;
 
     struct UpgradeItem
     {
@@ -101,9 +122,34 @@ public class PlayerState : ScriptableObject
         return turn;
     }
 
+    public int GetLevel()
+    {
+        return level;
+    }
+
+    public void AddLevel()
+    {
+        level++;
+    }
+
+    public void SetLevel(int newLevel)
+    {
+        level = newLevel;
+    }
+
     public string[] GetPossibleActions()
     {
         return possibleActions;
+    }
+
+    public string GetMessage()
+    {
+        return message;
+    }
+
+    public void SetMessage(string message)
+    {
+        this.message = message;
     }
 
     public int GetIncome()
@@ -140,6 +186,11 @@ public class PlayerState : ScriptableObject
     public void AddTourists(int toAdd)
     {
         tourists += toAdd;
+    }
+
+    public void SetTourists(int toSet)
+    {
+        tourists = toSet;
     }
 
 
@@ -187,9 +238,17 @@ public class PlayerState : ScriptableObject
         {
             return birdCD;
         }
-        else if (type.Equals("C"))
+        else if (type.Equals("C1"))
         {
-            return clamCD;
+            return clamCD1;
+        }
+        else if (type.Equals("C2"))
+        {
+            return clamCD2;
+        }
+        else if (type.Equals("C3"))
+        {
+            return clamCD3;
         }
         else if (type.Equals("T"))
         {
@@ -215,10 +274,13 @@ public class PlayerState : ScriptableObject
         checkHealthCD2 = (checkHealthCD2 > 0) ? checkHealthCD2 -= 1 : checkHealthCD2;
         checkHealthCD3 = (checkHealthCD3 > 0) ? checkHealthCD3 -= 1 : checkHealthCD3;
         birdCD = (birdCD > 0) ? birdCD -= 1 : birdCD;
-        clamCD = (clamCD > 0) ? clamCD -= 1 : clamCD;
+        clamCD1 = (clamCD1 > 0) ? clamCD1 -= 1 : clamCD1;
+        clamCD2 = (clamCD2 > 0) ? clamCD2 -= 1 : clamCD2;
+        clamCD3 = (clamCD3 > 0) ? clamCD3 -= 1 : clamCD3;
         turtleCD = (turtleCD > 0) ? turtleCD -= 1 : turtleCD;
         researchCD = (researchCD > 0) ? researchCD -= 1 : researchCD;
         radarCD = (radarCD > 0) ? radarCD -= 1 : radarCD;
+        basketballCD = (basketballCD > 0) ? basketballCD -= 1 : basketballCD;
     }
 
     public void ResetCD(string type)
@@ -239,9 +301,17 @@ public class PlayerState : ScriptableObject
         {
             birdCD = 5;
         }
-        else if (type.Equals("C"))
+        else if (type.Equals("C1"))
         {
-            clamCD = 10;
+            clamCD1 = 10;
+        }
+        else if (type.Equals("C2"))
+        {
+            clamCD2 = 10;
+        }
+        else if (type.Equals("C3"))
+        {
+            clamCD3 = 10;
         }
         else if (type.Equals("T"))
         {
@@ -255,6 +325,10 @@ public class PlayerState : ScriptableObject
         {
             radarCD = 5;
         }
+        else if (type.Equals("BB"))
+        {
+            basketballCD = 5;
+        }
     }
 
     public void QueueUpgrade(string upgradeType, int constructionTime)
@@ -264,12 +338,12 @@ public class PlayerState : ScriptableObject
 
     void UpdateUpgradeQueue()
     {
-        UpgradeItem current = upgradeQueue.Peek();
+        UpgradeItem current = upgradeQueue.Dequeue();
 
         current.Turns -= 1;
-        if (current.Turns <= 0)
+        if (current.Turns > 0)
         {
-            upgradeQueue.Dequeue();
+            upgradeQueue.Enqueue(current);
         }
     }
 
@@ -313,12 +387,12 @@ public class PlayerState : ScriptableObject
 
     void UpdateResearchQueue()
     {
-        UpgradeItem current = researchQueue.Peek();
+        UpgradeItem current = researchQueue.Dequeue();
 
         current.Turns -= 1;
-        if (current.Turns <= 0)
+        if (current.Turns > 0)
         {
-            researchQueue.Dequeue();
+            researchQueue.Enqueue(current);
         }
     }
 
@@ -372,6 +446,51 @@ public class PlayerState : ScriptableObject
         radarActive = false;
     }
 
+    public void AddAIS()
+    {
+        AIS = true;
+    }
+
+    public void RemoveAIS()
+    {
+        AIS = false;
+    }
+
+    public bool CheckAIS()
+    {
+        return AIS;
+    }
+
+    public void AddSAT()
+    {
+        SAT = true;
+    }
+
+    public void RemoveSAT()
+    {
+        SAT = false;
+    }
+
+    public bool CheckSAT()
+    {
+        return SAT;
+    }
+
+    public void AddSS()
+    {
+        SS = true;
+    }
+
+    public void RemoveSS()
+    {
+        SS = false;
+    }
+
+    public bool CheckSS()
+    {
+        return SS;
+    }
+
     public void AddTouristScore()
     {
         touristsInspected++;
@@ -387,6 +506,11 @@ public class PlayerState : ScriptableObject
         fishermen += count;
     }
 
+    public void ResetFisherman()
+    {
+        fishermen = 0;
+    }
+
     public int GetTouristScore()
     {
         return touristsInspected;
@@ -400,6 +524,7 @@ public class PlayerState : ScriptableObject
     public void Clean()
     {
         money = 10000;
+        income = 0;
         research = 250;
         manpower = 6;
         tourists = 0;
@@ -409,35 +534,42 @@ public class PlayerState : ScriptableObject
         trueReefHealth = 100;
         seenReefHealth = 50;
         turn = 1;
+        level = 1;
         checkHealthCD1 = 0;
         checkHealthCD2 = 0;
         checkHealthCD3 = 0;
         birdCD = 0;
-        clamCD = 0;
+        clamCD1 = 0;
+        clamCD2 = 0;
+        clamCD3 = 0;
         turtleCD = 0;
         researchCD = 0;
-        day = true;
-        unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };
-        builtUpgrades.Clear();
+        unlockedUpgrades = new List<string> { "Basketball Court", "Radio", "Service Boat" };
+        builtUpgrades = new List<string> { "Radio" };
         touristsInspected = 0;
         fishermenCaught = 0;
         radarActive = false;
+        message = "";
+        currentObjectives = new List<string>();
+        daySpawn = false;
+        nightSpawn = false;
+        levelTurns = 0;
+        healthCount = 0;
+        patrols = 0;
+        birdCount = 0;
+        securityTurns = 0;
+        monitorClams = 0;
+        moraleTurns = 0;
+        tagCount = 0;
     }
 
     public void EndTurn()
     {
         turn++;
+        incrementLevelCounters("level");
         money += income;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
-        if (turn % 4 == 0)
-        {
-            day = false;
-        }
-        else
-        {
-            day = true;
-        }
 
         if (upgradeQueue.Count > 0)
         {
@@ -447,10 +579,248 @@ public class PlayerState : ScriptableObject
         {
             UpdateResearchQueue();
         }
-        if (fishermen > 0)
+        if (security >= 55 && level == 3)
         {
-            trueReefHealth -= fishermen * 2;
+            incrementLevelCounters("security");
         }
+        if (morale >= 55 && level == 4)
+        {
+            incrementLevelCounters("morale");
+        }
+
         ReduceCD();
+        UpdateObjectives();
+        if (currentObjectives.Count == 0)
+        {
+            AddLevel();
+            SetObjectives(TextRW.GetObjectives(level));
+        }
+    }
+
+    public void StartTutorial()
+    {
+        inTutorial = true;
+    }
+
+    public void EndTutorial()
+    {
+        inTutorial = false;
+    }
+
+    public bool CheckTutorial()
+    {
+        return inTutorial;
+    }
+
+    public List<string> GetObjectives()
+    {
+        return currentObjectives;
+    }
+
+    public void SetObjectives(List<string> replace)
+    {
+        currentObjectives = replace;
+    }
+
+    public void RemoveObjective(string objective)
+    {
+        currentObjectives.Remove(objective);
+    }
+
+    public void incrementLevelCounters(string name)
+    {
+        if (name == "level")
+        {
+            levelTurns++;
+        }
+        else if (name == "health")
+        {
+            healthCount++;
+        }
+        else if (name == "bird")
+        {
+            birdCount++;
+        }
+        else if (name == "patrol")
+        {
+            patrols++;
+        }
+        else if (name == "security")
+        {
+            security++;
+        }
+        else if (name == "monitor")
+        {
+            monitorClams++;
+        }
+        else if (name == "morale")
+        {
+            moraleTurns++;
+        }
+        else if (name == "tag")
+        {
+            tagCount++;
+        }
+    }
+
+    public void resetLevelCounters(string name)
+    {
+        if (name == "level")
+        {
+            levelTurns = 0;
+        }
+        else if (name == "health")
+        {
+            healthCount = 0;
+        }
+        else if (name == "patrol")
+        {
+            patrols = 0;
+        }
+        else if (name == "security")
+        {
+            security = 0;
+        }
+        else if (name == "monitor")
+        {
+            monitorClams = 0;
+        }
+        else if (name == "morale")
+        {
+            moraleTurns = 0;
+        }
+        else if (name == "tag")
+        {
+            tagCount = 0;
+        }
+    }
+
+    public void UpdateObjectives()
+    {
+        List<string> toRemove = new List<string>();
+        foreach (string item in currentObjectives)
+        {
+            // honestly, we could put all these under one big if statement pero for the sake of readability I won't.
+            switch (level)
+            {
+                case 1:
+                    if (CheckBuilt("RADAR") && item.Contains("RADAR"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (healthCount >= 3 && item.Contains("health"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (patrols >= 2 && item.Contains("patrols"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
+                    break;
+                case 2:
+                    if (CheckBuilt("Souvenir Stand") && item.Contains("Souvenir"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (birdCount >= 2 && item.Contains("bird"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
+                    break;
+                case 3:
+                    if (CheckResearched("Double-engine Patrol Boat") && item.Contains("engine"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (securityTurns >= 4 && item.Contains("security"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (monitorClams >= 1 && item.Contains("clams"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
+                    break;
+                case 4:
+                    if (moraleTurns >= 2 && item.Contains("morale"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if ((CheckBuilt("Rec Room") || CheckBuilt("Basketball Court")) && item.Contains("personnel"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (tagCount >= 2 && item.Contains("turtle"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
+                    break;
+                case 5:
+                    if (CheckResearched("Total Protection") && item.Contains("Research"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    break;
+            }
+        }
+
+        foreach (string item in toRemove)
+        {
+            currentObjectives.Remove(item);
+        }
+    }
+
+    public bool SpawnedDay()
+    {
+        return daySpawn;
+    }
+
+    public bool SpawnedNight()
+    {
+        return nightSpawn;
+    }
+
+    public void ToggleDaySpawn()
+    {
+        if (daySpawn)
+        {
+            daySpawn = false;
+        }
+        else
+        {
+            daySpawn = true;
+        }
+    }
+
+    public void ToggleNightSpawn()
+    {
+        if (nightSpawn)
+        {
+            nightSpawn = false;
+        }
+        else
+        {
+            nightSpawn = true;
+        }
     }
 }

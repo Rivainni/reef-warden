@@ -18,6 +18,7 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] bool cutscene = true;
     [SerializeField] PlayerState initState;
+    [SerializeField] Text objectives;
     Queue<string> inputStream = new Queue<string>();
 
     // Start is called before the first frame update
@@ -79,118 +80,57 @@ public class StoryManager : MonoBehaviour
             {
                 secondarySprite.enabled = false;
             }
+            else
+            {
+                mainUI.GetPlayerState().StartTutorial();
+                Tutorial(action);
+            }
 
-            // TUTORIAL STUFF
-            else if (action == "Patrol")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetSecurity() > 50);
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "CheckReefHealth")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "InspectTourist1")
-            {
-                storyUI.SetActive(false);
-                mainUI.GetSpawner().RandomSpawn("Tourist Boat");
-                mainUI.GetPlayerState().AddTourists(1);
-                mainUI.UpdateUIElements();
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitForSeconds(15.0f);
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "InspectTourist2")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "MoveBack")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "Research")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => mainUI.GetPlayerState().CheckResearched("RADAR"));
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "Build")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "UseRADAR")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetRadarState());
-                    storyUI.SetActive(true);
-                }
-            }
-            else if (action == "CatchFisherman")
-            {
-                storyUI.SetActive(false);
-                StartCoroutine(WaitForPlayer());
-                mainUI.GetSpawner().RandomSpawn("Fishing Boat");
-                mainUI.GetPlayerState().AddFisherman(1);
-                IEnumerator WaitForPlayer()
-                {
-                    yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
-                    storyUI.SetActive(true);
-                }
-            }
+            // if (SceneManager.GetActiveScene().name == "Main Game")
+            // {
+            //     mainUI.GetPlayerState().StartTutorial();
+            //     if (mainUI.GetPlayerState().CheckTutorial())
+            //     {
+            //         Debug.Log("WTF");
+            //         Tutorial(action);
+            //     }
+            // }
+
             PrintDialogue();
         }
         else if (inputStream.Peek().Contains("{0}"))
         {
             string current = inputStream.Dequeue();
-            int newSprite = int.Parse(current[0].ToString());
-            storyText.text = string.Format(current.Substring(2), initState.GetName());
-            SwitchSprites(characterName.text, newSprite);
+
+            int stop = 0;
+            for (int i = 0; i < current.Length; i++)
+            {
+                if (current[i] == ':')
+                {
+                    stop = i;
+                    break;
+                }
+            }
+            string expression = current.Substring(0, stop);
+            storyText.text = string.Format(current.Substring(stop + 1), initState.GetName());
+            SwitchSprites(characterName.text, expression);
         }
         else if (inputStream.Peek().Contains(":"))
         {
             string current = inputStream.Dequeue();
-            int newSprite = int.Parse(current[0].ToString());
-            storyText.text = current.Substring(3);
-            SwitchSprites(characterName.text, newSprite);
+
+            int stop = 0;
+            for (int i = 0; i < current.Length; i++)
+            {
+                if (current[i] == ':')
+                {
+                    stop = i;
+                    break;
+                }
+            }
+            string expression = current.Substring(0, stop);
+            storyText.text = current.Substring(stop + 1);
+            SwitchSprites(characterName.text, expression);
         }
         else
         {
@@ -207,7 +147,12 @@ public class StoryManager : MonoBehaviour
         // isOpen = false;
         if (cutscene)
         {
-            SceneManager.LoadScene("Tutorial");
+            SceneManager.LoadScene("Main Game");
+        }
+        else
+        {
+            mainUI.GetPlayerState().EndTutorial();
+            mainUI.GetPlayerState().AddLevel();
         }
     }
 
@@ -218,11 +163,11 @@ public class StoryManager : MonoBehaviour
         PrintDialogue();
     }
 
-    void SwitchSprites(string character, int counter)
+    void SwitchSprites(string character, string expression)
     {
         Image[] current = characterSprites.GetComponentsInChildren<Image>();
-        string toLoad = character + "_" + counter;
-        Sprite newSprite = Resources.Load<Sprite>("Characters/" + toLoad);
+        string toLoad = character + expression;
+        Sprite newSprite = Resources.Load<Sprite>("Characters/" + expression + "/" + toLoad);
 
         foreach (Image item in current)
         {
@@ -239,7 +184,154 @@ public class StoryManager : MonoBehaviour
     {
         secondarySprite.enabled = true;
         string toLoad = character;
-        Sprite newSprite = Resources.Load<Sprite>("Characters/" + toLoad);
+        Sprite newSprite = Resources.Load<Sprite>("Characters/Idle/" + toLoad + "Idle");
         secondarySprite.sprite = newSprite;
+    }
+
+
+    // separated tutorial because it's built different
+    void Tutorial(string action)
+    {
+        // TUTORIAL STUFF
+        if (action == "WASD")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Move the camera with WASD.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S));
+                yield return new WaitForSeconds(6.0f);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "QE")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Rotate the camera with Q or E.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E));
+                yield return new WaitForSeconds(6.0f);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "RF")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Zoom in using the Mousewheel, R, or F.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => Input.GetKey(KeyCode.R) || Input.GetKey(KeyCode.F) || Input.mouseScrollDelta.y != 0);
+                yield return new WaitForSeconds(6.0f);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "Patrol")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Patrol to any location.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().GetSecurity() > 50);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "CheckReefHealth")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Check the reef health.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "InspectTourist1")
+        {
+            storyUI.SetActive(false);
+            mainUI.GetSpawner().RandomSpawn("Tourist Boat");
+            mainUI.GetPlayerState().AddTourists(1);
+            mainUI.UpdateUIElements();
+            objectives.text = "Look for the tourist.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitForSeconds(15.0f);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "InspectTourist2")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Do a random inspection on the tourist.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "MoveBack")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Return to the ranger station (next to the boat).";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "Research")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Research the RADAR.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().CheckResearched("RADAR"));
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "Build")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Build a RADAR.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "UseRADAR")
+        {
+            storyUI.SetActive(false);
+            objectives.text = "Use the RADAR.";
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().GetRadarState());
+                storyUI.SetActive(true);
+            }
+        }
+        else if (action == "CatchFisherman")
+        {
+            storyUI.SetActive(false);
+            StartCoroutine(WaitForPlayer());
+            mainUI.GetSpawner().RandomSpawn("Fishing Boat");
+            mainUI.GetPlayerState().AddFisherman(1);
+            objectives.text = "Catch the Fishing Boat.";
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
+                storyUI.SetActive(true);
+            }
+        }
     }
 }

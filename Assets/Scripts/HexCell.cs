@@ -67,8 +67,40 @@ public class HexCell : MonoBehaviour
     }
     int distance;
 
+    public int Index
+    {
+        get
+        {
+            return index;
+        }
+        set
+        {
+            index = value;
+        }
+    }
+    int index;
+
+    public bool IsVisible
+    {
+        get
+        {
+            return visibility > 0;
+        }
+    }
+    int visibility;
+
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
+    public Upgrade Upgrade { get; set; }
+
+    Renderer renderer;
+    Color defaultColor;
+
+    void Awake()
+    {
+        renderer = GetComponent<Renderer>();
+        defaultColor = renderer.material.color;
+    }
 
     public HexCell GetNeighbor(HexDirection direction)
     {
@@ -97,6 +129,32 @@ public class HexCell : MonoBehaviour
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();
         highlight.color = color;
         highlight.enabled = true;
+    }
+
+    public void EnableHeavyHighlight()
+    {
+        renderer.material.color = Color.red;
+    }
+
+    public void ResetColor()
+    {
+        renderer.material.color = defaultColor;
+    }
+
+    public void IncreaseVisibility()
+    {
+        if (visibility < 1)
+        {
+            visibility++;
+        }
+    }
+
+    public void DecreaseVisibility()
+    {
+        if (visibility > 0)
+        {
+            visibility--;
+        }
     }
 
     // public void Save(BinaryWriter writer)

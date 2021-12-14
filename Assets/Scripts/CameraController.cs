@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float movementSpeed;
     [SerializeField] float movementTime;
     [SerializeField] float rotationAmount;
+    [SerializeField] float edgeSize;
     [SerializeField] Vector3 zoomAmount;
 
     Vector3 newPosition;
@@ -22,11 +23,24 @@ public class CameraController : MonoBehaviour
     Vector3 rotateStartPosition;
     Vector3 rotateCurrentPosition;
 
+    float minX;
+    float minZoomY;
+    float minZoomZ;
+    float minZ;
+    float maxX;
+    float maxZoomY;
+    float maxZoomZ;
+    float maxZ;
+    bool edgeToggle;
+
     void Start()
     {
+        SetClamps();
         newPosition = transform.position;
         newRotation = transform.rotation;
+        // newZoom = new Vector3(cameraTransform.localPosition.x, cameraTransform.localPosition.y + 20.0f, cameraTransform.localPosition.z);
         newZoom = cameraTransform.localPosition;
+        edgeToggle = true;
     }
 
     void Update()
@@ -88,6 +102,7 @@ public class CameraController : MonoBehaviour
 
     void HandleMovementInput()
     {
+        // fast movement
         if (Input.GetKey(KeyCode.LeftShift))
         {
             movementSpeed = fastSpeed;
@@ -97,21 +112,56 @@ public class CameraController : MonoBehaviour
             movementSpeed = normalSpeed;
         }
 
+        // keyboard movement
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            newPosition += (transform.forward * movementSpeed);
+            newPosition += transform.forward * movementSpeed;
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            newPosition += (transform.forward * -movementSpeed);
+            newPosition += transform.forward * -movementSpeed;
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            newPosition += (transform.right * -movementSpeed);
+            newPosition += transform.right * -movementSpeed;
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            newPosition += (transform.right * movementSpeed);
+            newPosition += transform.right * movementSpeed;
+        }
+
+        // edge movement. if you hold spacebar it temporarily suspends the thingo.
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (edgeToggle)
+            {
+                edgeToggle = false;
+            }
+            else
+            {
+                edgeToggle = true;
+            }
+        }
+
+        if (edgeToggle)
+        {
+            if (Input.mousePosition.y > Screen.height - edgeSize)
+            {
+                newPosition += transform.forward * movementSpeed;
+            }
+            if (Input.mousePosition.y < edgeSize)
+            {
+                newPosition += transform.forward * -movementSpeed;
+            }
+            if (Input.mousePosition.x < edgeSize)
+            {
+                newPosition += transform.right * -movementSpeed;
+            }
+            if (Input.mousePosition.x > Screen.width - edgeSize)
+            {
+                newPosition += transform.right * movementSpeed;
+            }
         }
 
         if (Input.GetKey(KeyCode.Q))
@@ -133,9 +183,27 @@ public class CameraController : MonoBehaviour
             newZoom -= zoomAmount;
         }
 
+        // Debug.Log("X: " + newPosition.x + " Y: " + newZoom.y + " Z: " + newPosition.z + "\n");
+        // Debug.Log("Y: " + newZoom.y + " Z: " + newZoom.z + "\n");
+        newPosition = new Vector3(Mathf.Clamp(newPosition.x, minX, maxX), newPosition.y, Mathf.Clamp(newPosition.z, minZ, maxZ));
+        newZoom = new Vector3(newZoom.x, Mathf.Clamp(newZoom.y, minZoomY, maxZoomY), Mathf.Clamp(newZoom.z, minZoomZ, maxZoomZ));
+
         // smooth movement, have to linear interpolate
-        transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime);
-        transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTime);
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, Time.deltaTime * movementTime);
+        transform.position = Vector3.Lerp(transform.position, newPosition, 0.5f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, 0.5f);
+        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, 0.5f);
+    }
+
+    void SetClamps()
+    {
+        // hardcode for now
+        minX = -230.0f;
+        minZoomY = -20.0f;
+        minZoomZ = 25.0f;
+        minZ = -230.0f;
+        maxX = 1004f;
+        maxZoomY = 35.0f;
+        maxZoomZ = 80.0f;
+        maxZ = 836f;
     }
 }

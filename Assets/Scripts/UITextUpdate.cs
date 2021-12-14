@@ -21,7 +21,7 @@ public class UITextUpdate : MonoBehaviour
 
         if (current.text.Contains("GP: "))
         {
-            current.text = "GP: " + currentState.GetMoney() + " + (" + currentState.GetIncome() + ")";
+            current.text = "GP: " + currentState.GetMoney();
         }
         else if (current.text.Contains("RP: "))
         {
@@ -47,5 +47,19 @@ public class UITextUpdate : MonoBehaviour
         {
             current.text = "HP: " + Mathf.Round(currentState.GetHealth());
         }
+        else if (current.text.Contains(":"))
+        {
+            current.text = ": " + currentState.GetMessage();
+        }
+    }
+
+    public void UpdateObjective(string objective)
+    {
+        current.text = objective;
+    }
+
+    public void UpdateLog(string message)
+    {
+        current.text = message;
     }
 }

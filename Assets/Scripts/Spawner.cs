@@ -19,6 +19,13 @@ public class Spawner : MonoBehaviour
     [SerializeField] HexStructure[] structurePrefabs;
     [SerializeField] Upgrade[] upgradePrefabs;
 
+    Queue<HexUnit> destructionQueue;
+
+    void Start()
+    {
+        destructionQueue = new Queue<HexUnit>();
+    }
+
     public void SpawnUnit(HexCell cell, string unitType)
     {
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
@@ -33,22 +40,38 @@ public class Spawner : MonoBehaviour
         int structureIndex = System.Array.IndexOf(structureTypes, structureType);
         if (cell && !cell.Structure)
         {
-            hexGrid.AddStructure(Instantiate(structurePrefabs[structureIndex]), cell, Random.Range(0f, 360f), structureType);
+            hexGrid.AddStructure(Instantiate(structurePrefabs[structureIndex]), cell, 315f, structureType);
         }
     }
 
-    public void SpawnUpgrade(HexCell cell, string upgradeType, int constructionTime, int researchCost, int buildCost)
+    public void SpawnUpgrade(HexCell cell, string upgradeType, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
-        int upgradeIndex = System.Array.IndexOf(upgradeTypes, upgradeType);
         if (cell && !cell.Structure)
         {
-            hexGrid.AddUpgrade(Instantiate(upgradePrefabs[upgradeIndex]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost);
+            hexGrid.AddUpgrade(Instantiate(upgradePrefabs[0]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
         }
+    }
+
+    public void DestroyUpgrade(Upgrade upgrade)
+    {
+        upgrade.Location.Upgrade = null;
+        hexGrid.RemoveUpgrade(upgrade);
     }
 
     public void DestroyUnit(HexUnit unit)
     {
-        hexGrid.RemoveUnit(unit);
+        destructionQueue.Enqueue(unit);
+    }
+
+    public void DestroyUnits()
+    {
+        while (destructionQueue.Count > 0)
+        {
+            HexUnit unit = destructionQueue.Dequeue();
+            AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
+            currentBehaviour.Clean();
+            hexGrid.RemoveUnit(unit);
+        }
     }
 
     public string[] GetStructureTypes()
@@ -64,19 +87,15 @@ public class Spawner : MonoBehaviour
     // actually spawning other types
     public void RandomSpawn(string unitType)
     {
-        int random = Random.Range(0, 624);
-        HexCell cell = hexGrid.GetCells()[random];
-
-        while (GlobalCellCheck.IsImpassable(cell) || GlobalCellCheck.IsNotReachable(random))
-        {
-            random = Random.Range(0, 624);
-            cell = hexGrid.GetCells()[random];
-        }
+        int random = Random.Range(0, GlobalCellCheck.GetEscapeCellCount() - 1);
+        HexCell cell = hexGrid.GetCells()[GlobalCellCheck.GetEscapeCell(random)];
 
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
         if (cell && !cell.Unit)
         {
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
         }
+
+        Debug.Log("Spawned " + unitType);
     }
 }

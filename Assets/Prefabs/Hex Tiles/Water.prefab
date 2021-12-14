@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 23221899074137596}
   - component: {fileID: 64715734128579546}
   - component: {fileID: -6283204732262520918}
+  - component: {fileID: -2200768995076884375}
   m_Layer: 0
   m_Name: Water
   m_TagString: Untagged
@@ -122,6 +123,25 @@ MonoBehaviour:
   - {fileID: 0}
   uiRect: {fileID: 0}
   chunk: {fileID: 0}
+--- !u!95 &-2200768995076884375
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829116461306768}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 49a268b2b9080bc43abf6e9a5f8703fa, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &4905266123690756733
 PrefabInstance:
   m_ObjectHideFlags: 0

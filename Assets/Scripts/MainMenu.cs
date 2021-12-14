@@ -15,6 +15,11 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Cutscene");
     }
 
+    public void Skip()
+    {
+        SceneManager.LoadScene("Testing");
+    }
+
     public void Exit()
     {
         Application.Quit();

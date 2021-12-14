@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.IO;
 
 public class HexGrid : MonoBehaviour
@@ -12,12 +13,19 @@ public class HexGrid : MonoBehaviour
     public Color defaultColor = Color.white;
     public Color touchedColor = Color.magenta;
     public HexCell water;
-    public HexCell land;
+    public HexCell landA;
+    public HexCell landB;
     public Spawner spawner;
     public MainUI mainUI;
     public Text cellLabelPrefab;
     public MapCreation mapCreation;
+    public TimeController timeController;
     [SerializeField] TextAsset unsafeCells;
+    [SerializeField] TextAsset escapeCells;
+    [SerializeField] TextAsset adjacentChecks;
+    [SerializeField] TextAsset objectives;
+    [SerializeField] TextAsset upgrades;
+    [SerializeField] AudioManager audioManager;
 
     public bool HasPath
     {
@@ -39,11 +47,14 @@ public class HexGrid : MonoBehaviour
     List<HexCell> buoyCells = new List<HexCell>();
     HexCell rangerStation;
     PlayerBehaviour playerBehaviour;
+    int patrolBoatSpawn, serviceBoatSpawn;
 
     void Awake()
     {
         playerBehaviour = this.gameObject.GetComponent<PlayerBehaviour>();
         GlobalCellCheck.SetUnsafeCells(unsafeCells);
+        GlobalCellCheck.SetEscapeCells(escapeCells);
+        GlobalCellCheck.SetAdjacentChecks(adjacentChecks);
 
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -51,8 +62,11 @@ public class HexGrid : MonoBehaviour
         CreateCells();
         PopulateUpgradeCells();
 
-        spawner.RandomSpawn("Tourist Boat");
-        spawner.RandomSpawn("Fishing Boat");
+        spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
+        spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
+
+        TextRW.SetObjectives(objectives);
+        TextRW.SetUpgrades(upgrades);
     }
 
     void CreateChunks()
@@ -95,20 +109,43 @@ public class HexGrid : MonoBehaviour
 
         if (mapCreation.IsLand(check))
         {
-            cell = cells[i] = Instantiate<HexCell>(land);
+            // int treeChance = Random.Range(0, 101);
+            // if (treeChance < 85)
+            // {
+            //     cell = cells[i] = Instantiate<HexCell>(landA);
+            // }
+            // else
+            // {
+            //     cell = cells[i] = Instantiate<HexCell>(landB);
+            // }
+
+            if (i == 465)
+            {
+                cell = cells[i] = Instantiate<HexCell>(landB);
+            }
+            else
+            {
+                cell = cells[i] = Instantiate<HexCell>(landA);
+            }
             cell.Type = "Land";
         }
         else
         {
             cell = cells[i] = Instantiate<HexCell>(water);
             cell.Type = "Water";
+
+            // Randomise waves
+            Animator waves = cell.gameObject.GetComponent<Animator>();
+            waves.SetFloat("Offset", Random.Range(0, 0.25f));
         }
 
         cell.transform.localPosition = position;
-        cell.transform.localScale = new Vector3(17.2f, 1.0f, 17.2f);
+        cell.transform.localScale = new Vector3(17.2f, 5.0f, 17.2f);
         // cell.transform.localScale = new Vector3(17.2f, 17.2f, 17.2f);
         cell.coordinates = computed;
         cell.HasOverlap = false;
+        cell.Index = i;
+
 
         // Set neighbours
         // x = 0 has no neighbours west. We start with west neighbours.
@@ -143,16 +180,14 @@ public class HexGrid : MonoBehaviour
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
         cell.uiRect = label.rectTransform;
 
-        // add units *after* the cell has spawned
+        // add units *after* the cells have spawned
         switch (mapCreation.HasInitialUnit(check))
         {
             case 0:
-                spawner.SpawnUnit(cell, "Tier 1 Patrol Boat");
-                Debug.Log("P1 spawned.");
+                patrolBoatSpawn = i;
                 break;
             case 1:
-                spawner.SpawnUnit(cell, "Service Boat");
-                Debug.Log("S spawned.");
+                serviceBoatSpawn = i;
                 break;
         }
 
@@ -160,13 +195,12 @@ public class HexGrid : MonoBehaviour
         {
             case 0:
                 spawner.SpawnStructure(cell, "Ranger Station");
-                Debug.Log("RS spawned.");
                 rangerStation = cell;
                 break;
             case 1:
                 spawner.SpawnStructure(cell, "Buoy");
-                Debug.Log("B spawned.");
                 buoyCells.Add(cell);
+                cell.EnableHighlight(Color.green);
                 break;
         }
 
@@ -226,10 +260,15 @@ public class HexGrid : MonoBehaviour
             unit.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
         }
 
+        // Should only matter for players
+        unit.Grid = this;
+        unit.VisionRange = 5; // This is just default vision range; it's only for players
+
+        unit.UnitType = unitType;
         unit.Location = location;
         unit.Orientation = orientation;
-        unit.UnitType = unitType;
         unit.ActionPoints = actionPoints;
+        unit.transform.Translate(Vector3.up * 0.8f);
 
         if (unitType == "Fishing Boat" || unitType == "Tourist Boat")
         {
@@ -249,15 +288,19 @@ public class HexGrid : MonoBehaviour
     public void AddStructure(HexStructure structure, HexCell location, float orientation, string structureType)
     {
         structures.Add(structure);
+        location.Structure = structure;
         structure.transform.SetParent(transform, false);
         structure.Location = location;
         structure.Orientation = orientation;
         structure.StructureType = structureType;
+        structure.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
+        structure.transform.Translate(Vector3.up * 0.8f);
     }
 
-    public void AddUpgrade(Upgrade upgrade, HexCell location, float orientation, string upgradeType, int constructionTime, int researchCost, int constructionCost)
+    public void AddUpgrade(Upgrade upgrade, HexCell location, float orientation, string upgradeType, int constructionTime, int researchCost, int constructionCost, int upkeep)
     {
         structures.Add(upgrade);
+        location.Upgrade = upgrade;
         upgrade.transform.SetParent(transform, false);
         upgrade.Location = location;
         upgrade.Orientation = orientation;
@@ -266,6 +309,13 @@ public class HexGrid : MonoBehaviour
         upgrade.SetBuildTime(constructionTime);
         upgrade.SetResearchCost(researchCost);
         upgrade.SetBuildCost(constructionCost);
+        upgrade.SetUpkeep(upkeep);
+    }
+
+    public void RemoveUpgrade(Upgrade upgrade)
+    {
+        structures.Remove(upgrade);
+        upgrade.Die();
     }
 
     public void ResetPoints()
@@ -325,6 +375,81 @@ public class HexGrid : MonoBehaviour
     //     }
     // }
 
+
+    List<HexCell> GetVisibleCells(HexCell fromCell, int range)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Distance = int.MaxValue;
+        }
+
+        List<HexCell> frontier = new List<HexCell>();
+        List<HexCell> visibleCells = new List<HexCell>();
+        fromCell.Distance = 0;
+        frontier.Add(fromCell);
+        while (frontier.Count > 0)
+        {
+            HexCell current = frontier[0];
+            frontier.RemoveAt(0);
+            visibleCells.Add(current);
+
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = current.GetNeighbor(d);
+
+                if (neighbor == null)
+                {
+                    continue;
+                }
+
+                int distance = current.Distance + 1;
+                if (distance > range)
+                {
+                    continue;
+                }
+
+                neighbor.Distance = distance;
+                neighbor.SearchHeuristic = 0;
+                frontier.Add(neighbor);
+                frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
+            }
+        }
+        return visibleCells;
+    }
+
+    public void IncreaseVisibility(HexCell fromCell, int range)
+    {
+        List<HexCell> curr = GetVisibleCells(fromCell, range);
+        for (int i = 0; i < curr.Count; i++)
+        {
+            cells[i].IncreaseVisibility();
+            if (cells[i].Unit)
+            {
+                if (!cells[i].Unit.IsVisible)
+                {
+                    cells[i].Unit.ToggleVisibility();
+                }
+            }
+        }
+    }
+
+    public void DecreaseVisibility(HexCell fromCell, int range)
+    {
+        List<HexCell> curr = GetVisibleCells(fromCell, range);
+        for (int i = 0; i < curr.Count; i++)
+        {
+            cells[i].DecreaseVisibility();
+
+            if (cells[i].Unit)
+            {
+                if (cells[i].Unit.IsVisible)
+                {
+                    cells[i].Unit.ToggleVisibility();
+                }
+            }
+        }
+    }
+
     public HexCell GetCell(Ray ray)
     {
         RaycastHit hit;
@@ -353,5 +478,10 @@ public class HexGrid : MonoBehaviour
     public PlayerBehaviour GetPlayerBehaviour()
     {
         return playerBehaviour;
+    }
+
+    public AudioManager GetAudioManager()
+    {
+        return audioManager;
     }
 }

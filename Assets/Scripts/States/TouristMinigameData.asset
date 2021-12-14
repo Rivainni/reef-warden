@@ -12,11 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea55cae78d14d044cb1b27388e0ebf49, type: 3}
   m_Name: TouristMinigameData
   m_EditorClassIdentifier: 
-  shipName:
-  - M/V Pearl of the Orient
-  shipID:
-  - NCC-1701
-  - NCC-1701-A
-  crew:
-  - 24
-  - 20
+  inspection: {fileID: 4900000, guid: ec15b6aa72094574282e9d32e385fc15, type: 3}
