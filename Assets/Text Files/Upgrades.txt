@@ -45,7 +45,7 @@ Time: 1
 Manpower: 1
 END
 !Satellite Internet!
-Gives +x% base bonus to security and base morale
+Gives +20% base bonus to security and base morale
 Build Cost: 2000
 Research Cost: 500
 Upkeep: 200
@@ -54,7 +54,7 @@ Manpower: 1
 END
 !Souvenir Stand!
 Allows tourists to buy souvenirs from the ranger station before leaving.
-Provides +x%/2x%/4x% increase in revenue from each tourist.
+Provides +10%/20%/40% increase in revenue from each tourist.
 Build Cost: 1000
 Research Cost: 100
 Upkeep: 0

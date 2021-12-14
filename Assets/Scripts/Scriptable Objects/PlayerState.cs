@@ -45,9 +45,20 @@ public class PlayerState : ScriptableObject
     bool radarActive = false;
     bool inTutorial;
     bool AIS = false;
+    bool SAT = false;
+    bool SS = false;
     bool daySpawn = false;
     bool nightSpawn = false;
+
+    // counters for objectives
     int levelTurns = 0;
+    int healthCount = 0;
+    int patrols = 0;
+    int birdCount = 0;
+    int securityTurns = 0;
+    int monitorClams = 0;
+    int moraleTurns = 0;
+    int tagCount = 0;
 
     struct UpgradeItem
     {
@@ -175,6 +186,11 @@ public class PlayerState : ScriptableObject
     public void AddTourists(int toAdd)
     {
         tourists += toAdd;
+    }
+
+    public void SetTourists(int toSet)
+    {
+        tourists = toSet;
     }
 
 
@@ -322,12 +338,12 @@ public class PlayerState : ScriptableObject
 
     void UpdateUpgradeQueue()
     {
-        UpgradeItem current = upgradeQueue.Peek();
+        UpgradeItem current = upgradeQueue.Dequeue();
 
         current.Turns -= 1;
-        if (current.Turns <= 0)
+        if (current.Turns > 0)
         {
-            upgradeQueue.Dequeue();
+            upgradeQueue.Enqueue(current);
         }
     }
 
@@ -371,12 +387,12 @@ public class PlayerState : ScriptableObject
 
     void UpdateResearchQueue()
     {
-        UpgradeItem current = researchQueue.Peek();
+        UpgradeItem current = researchQueue.Dequeue();
 
         current.Turns -= 1;
-        if (current.Turns <= 0)
+        if (current.Turns > 0)
         {
-            researchQueue.Dequeue();
+            researchQueue.Enqueue(current);
         }
     }
 
@@ -435,9 +451,44 @@ public class PlayerState : ScriptableObject
         AIS = true;
     }
 
+    public void RemoveAIS()
+    {
+        AIS = false;
+    }
+
     public bool CheckAIS()
     {
         return AIS;
+    }
+
+    public void AddSAT()
+    {
+        SAT = true;
+    }
+
+    public void RemoveSAT()
+    {
+        SAT = false;
+    }
+
+    public bool CheckSAT()
+    {
+        return SAT;
+    }
+
+    public void AddSS()
+    {
+        SS = true;
+    }
+
+    public void RemoveSS()
+    {
+        SS = false;
+    }
+
+    public bool CheckSS()
+    {
+        return SS;
     }
 
     public void AddTouristScore()
@@ -453,6 +504,11 @@ public class PlayerState : ScriptableObject
     public void AddFisherman(int count)
     {
         fishermen += count;
+    }
+
+    public void ResetFisherman()
+    {
+        fishermen = 0;
     }
 
     public int GetTouristScore()
@@ -495,11 +551,22 @@ public class PlayerState : ScriptableObject
         radarActive = false;
         message = "";
         currentObjectives = new List<string>();
+        daySpawn = false;
+        nightSpawn = false;
+        levelTurns = 0;
+        healthCount = 0;
+        patrols = 0;
+        birdCount = 0;
+        securityTurns = 0;
+        monitorClams = 0;
+        moraleTurns = 0;
+        tagCount = 0;
     }
 
     public void EndTurn()
     {
         turn++;
+        incrementLevelCounters("level");
         money += income;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
@@ -512,11 +579,22 @@ public class PlayerState : ScriptableObject
         {
             UpdateResearchQueue();
         }
-        if (fishermen > 0)
+        if (security >= 55 && level == 3)
         {
-            DecreaseHealth(fishermen * 2);
+            incrementLevelCounters("security");
         }
+        if (morale >= 55 && level == 4)
+        {
+            incrementLevelCounters("morale");
+        }
+
         ReduceCD();
+        UpdateObjectives();
+        if (currentObjectives.Count == 0)
+        {
+            AddLevel();
+            SetObjectives(TextRW.GetObjectives(level));
+        }
     }
 
     public void StartTutorial()
@@ -549,24 +627,200 @@ public class PlayerState : ScriptableObject
         currentObjectives.Remove(objective);
     }
 
+    public void incrementLevelCounters(string name)
+    {
+        if (name == "level")
+        {
+            levelTurns++;
+        }
+        else if (name == "health")
+        {
+            healthCount++;
+        }
+        else if (name == "bird")
+        {
+            birdCount++;
+        }
+        else if (name == "patrol")
+        {
+            patrols++;
+        }
+        else if (name == "security")
+        {
+            security++;
+        }
+        else if (name == "monitor")
+        {
+            monitorClams++;
+        }
+        else if (name == "morale")
+        {
+            moraleTurns++;
+        }
+        else if (name == "tag")
+        {
+            tagCount++;
+        }
+    }
+
+    public void resetLevelCounters(string name)
+    {
+        if (name == "level")
+        {
+            levelTurns = 0;
+        }
+        else if (name == "health")
+        {
+            healthCount = 0;
+        }
+        else if (name == "patrol")
+        {
+            patrols = 0;
+        }
+        else if (name == "security")
+        {
+            security = 0;
+        }
+        else if (name == "monitor")
+        {
+            monitorClams = 0;
+        }
+        else if (name == "morale")
+        {
+            moraleTurns = 0;
+        }
+        else if (name == "tag")
+        {
+            tagCount = 0;
+        }
+    }
+
     public void UpdateObjectives()
     {
         List<string> toRemove = new List<string>();
         foreach (string item in currentObjectives)
         {
+            // honestly, we could put all these under one big if statement pero for the sake of readability I won't.
             switch (level)
             {
                 case 1:
+                    if (CheckBuilt("RADAR") && item.Contains("RADAR"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (healthCount >= 3 && item.Contains("health"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (patrols >= 2 && item.Contains("patrols"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
                     break;
                 case 2:
+                    if (CheckBuilt("Souvenir Stand") && item.Contains("Souvenir"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (birdCount >= 2 && item.Contains("bird"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
                     break;
                 case 3:
+                    if (CheckResearched("Double-engine Patrol Boat") && item.Contains("engine"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (securityTurns >= 4 && item.Contains("security"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (monitorClams >= 1 && item.Contains("clams"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
                     break;
                 case 4:
+                    if (moraleTurns >= 2 && item.Contains("morale"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if ((CheckBuilt("Rec Room") || CheckBuilt("Basketball Court")) && item.Contains("personnel"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (tagCount >= 2 && item.Contains("turtle"))
+                    {
+                        toRemove.Add(item);
+                    }
+                    else if (levelTurns >= 6 && item.Contains("since Level"))
+                    {
+                        toRemove.Add(item);
+                        levelTurns = 0;
+                    }
                     break;
                 case 5:
+                    if (CheckResearched("Total Protection") && item.Contains("Research"))
+                    {
+                        toRemove.Add(item);
+                    }
                     break;
             }
+        }
+
+        foreach (string item in toRemove)
+        {
+            currentObjectives.Remove(item);
+        }
+    }
+
+    public bool SpawnedDay()
+    {
+        return daySpawn;
+    }
+
+    public bool SpawnedNight()
+    {
+        return nightSpawn;
+    }
+
+    public void ToggleDaySpawn()
+    {
+        if (daySpawn)
+        {
+            daySpawn = false;
+        }
+        else
+        {
+            daySpawn = true;
+        }
+    }
+
+    public void ToggleNightSpawn()
+    {
+        if (nightSpawn)
+        {
+            nightSpawn = false;
+        }
+        else
+        {
+            nightSpawn = true;
         }
     }
 }

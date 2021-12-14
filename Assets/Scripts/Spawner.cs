@@ -46,10 +46,9 @@ public class Spawner : MonoBehaviour
 
     public void SpawnUpgrade(HexCell cell, string upgradeType, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
-        int upgradeIndex = System.Array.IndexOf(upgradeTypes, upgradeType);
         if (cell && !cell.Structure)
         {
-            hexGrid.AddUpgrade(Instantiate(upgradePrefabs[upgradeIndex]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
+            hexGrid.AddUpgrade(Instantiate(upgradePrefabs[0]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
         }
     }
 

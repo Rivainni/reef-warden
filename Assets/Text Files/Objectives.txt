@@ -1,19 +1,19 @@
 [Level1]
-Build a radar.
+Build a RADAR.
 Check the health of the reef at least 3x.
-Conduct patrols for at least 4 turns in a row.
-At least 4 turns have passed since Level 1.
+Conduct patrols for at least 2 turns in a row.
+At least 6 turns have passed since Level 1.
 [Level2]
 Build a souvenir stand.
 Conduct distance count of birds at least 2x.
-At least 4 turns have passed since Level 2.
+At least 6 turns have passed since Level 2.
 [Level3]
 Get access to another patrol boat.
-Keep security above 60% for at least 4 consecutive turns.
+Keep security above 55% for at least 4 turns.
 Conduct monitoring of clams at least once.
 At least 6 turns have passed since Level 3.
 [Level4]
-Keep morale above 60% for at least 4 consecutive turns.
+Keep morale above 55% for at least 4 turns.
 Have at least one personnel upgrade active.
 Tag turtles at least 2x.
 At least 6 turns have passed since Level 4.

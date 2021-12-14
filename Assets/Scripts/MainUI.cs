@@ -26,13 +26,18 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject valuesContainer;
     [SerializeField] GameObject queueDisplay;
     [SerializeField] GameObject arrowPrefab;
+    [SerializeField] GameObject endPrefab;
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
+    [SerializeField] ObjectivesDisplay objectivesDisplay;
 
     void Start()
     {
         currentState = initState;
         currentState.Clean();
+        currentState.SetObjectives(TextRW.GetObjectives(1));
+        objectivesDisplay.currentState = currentState;
+        objectivesDisplay.DisplayObjectives();
         UpdateUIElements();
         // PointToObject(grid.GetUnits()[0].gameObject);
         minigameData.SetInspection();
@@ -40,7 +45,7 @@ public class MainUI : MonoBehaviour
 
     void Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject())
+        if (!EventSystem.current.IsPointerOverGameObject() && currentState.GetHealth() > 0)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -370,6 +375,7 @@ public class MainUI : MonoBehaviour
 
     void Patrol(HexCell destination, GameObject remove)
     {
+        currentState.incrementLevelCounters("patrol");
         float factor = destination.Distance * 0.5f;
         playerLocation = destination;
         // Debug.Log("You are at " + playerLocation.coordinates.ToString());
@@ -379,6 +385,7 @@ public class MainUI : MonoBehaviour
 
     void CheckHealth(HexCell destination, GameObject remove, int reefStructure)
     {
+        currentState.incrementLevelCounters("health");
         currentState.UpdateHealth();
         currentState.AddResearch(250);
         currentState.ResetCD("CH" + reefStructure);
@@ -387,6 +394,7 @@ public class MainUI : MonoBehaviour
 
     void CountBirds(HexCell destination, GameObject remove)
     {
+        currentState.incrementLevelCounters("bird");
         currentState.AddResearch(500);
         currentState.ResetCD("B");
         AfterAction(remove);
@@ -405,6 +413,7 @@ public class MainUI : MonoBehaviour
             unit.ToggleBusy();
             currentState.AddResearch(1000);
             currentState.ResetCD("C" + reefStructure);
+            currentState.incrementLevelCounters("clam");
         }
     }
 
@@ -525,6 +534,18 @@ public class MainUI : MonoBehaviour
     void DemolishUpgrade(GameObject remove, HexCell target)
     {
         Destroy(remove);
+        if (target.Upgrade.UpgradeType == "AIS")
+        {
+            currentState.RemoveAIS();
+        }
+        else if (target.Upgrade.UpgradeType == "Satellite Internet")
+        {
+            currentState.RemoveSAT();
+        }
+        else if (target.Upgrade.UpgradeType == "Souvenir Stand")
+        {
+            currentState.RemoveSS();
+        }
         spawner.DestroyUpgrade(target.Upgrade);
     }
     void DoUpgrade(GameObject remove)
@@ -556,7 +577,7 @@ public class MainUI : MonoBehaviour
                         GameObject generic = Instantiate(buttonPrefab, upgradePanel.transform.GetChild(i).position, Quaternion.identity, upgradePanel.transform.GetChild(i));
                         Button currentButton = generic.GetComponent<Button>();
                         currentButton.GetComponentInChildren<Text>().text = item;
-                        currentButton.onClick.AddListener(() => UpgradeText(item, currentButton, upgradePanel));
+                        currentButton.onClick.AddListener(() => UpgradeText(item, currentButton, upgradePanel, cell));
                     }
                 }
                 else
@@ -569,7 +590,7 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    void BuildUpgrade(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep, GameObject remove)
+    void BuildUpgrade(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep, GameObject remove, HexCell target)
     {
         currentState.QueueUpgrade(upgrade, constructionTime);
         Destroy(remove);
@@ -577,20 +598,20 @@ public class MainUI : MonoBehaviour
         currentState.AddManpower(-1);
         UpdateUIElements();
         UpdateUIQueue(upgrade, 1, constructionTime);
-        StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost, upkeep));
+        StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost, upkeep, target));
     }
 
-    IEnumerator DelayedBuild(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep)
+    IEnumerator DelayedBuild(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep, HexCell target)
     {
         yield return new WaitUntil(() => currentState.CheckUpgrade(upgrade) == 0);
         UpdateUIQueue(upgrade, 1, 0);
         if (currentCell.Upgrade)
         {
-            spawner.DestroyUpgrade(currentCell.Upgrade);
+            spawner.DestroyUpgrade(target.Upgrade);
         }
         if (upgrade != "Double-engine Patrol Boat")
         {
-            spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost, upkeep);
+            spawner.SpawnUpgrade(target, upgrade, constructionTime, researchCost, buildCost, upkeep);
             currentState.AddUpgrade(upgrade);
         }
         else
@@ -608,10 +629,18 @@ public class MainUI : MonoBehaviour
         {
             currentState.AddAIS();
         }
+        else if (upgrade == "Satellite Internet")
+        {
+            currentState.AddSAT();
+        }
+        else if (upgrade == "Souvenir Stand")
+        {
+            currentState.AddSS();
+        }
         UpdateUIElements();
     }
 
-    void UpgradeText(string upgrade, Button button, GameObject toRemove)
+    void UpgradeText(string upgrade, Button button, GameObject toRemove, HexCell target)
     {
         GameObject toReplace = button.transform.parent.parent.GetChild(1).GetChild(0).gameObject;
         Button[] rem = toReplace.transform.parent.gameObject.GetComponentsInChildren<Button>();
@@ -657,7 +686,7 @@ public class MainUI : MonoBehaviour
         else
         {
             currentButton.GetComponentInChildren<Text>().text = "BUILD";
-            currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, upkeep, toRemove));
+            currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, upkeep, toRemove, target));
         }
     }
 
@@ -680,6 +709,7 @@ public class MainUI : MonoBehaviour
     {
         grid.GetAudioManager().Play("Next", 0);
         currentState.EndTurn();
+        objectivesDisplay.DisplayObjectives();
         clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
         grid.ResetPoints();
         selectedUnit = null;
@@ -719,34 +749,76 @@ public class MainUI : MonoBehaviour
                 currentBehaviour.Execute();
             }
         }
+        SpawnUnits();
+        spawner.DestroyUnits();
+        UpdateUIElements();
 
-        // spawn only every 6 turns
+        if (currentState.GetHealth() <= 0)
+        {
+            GenerateEndScreen("Defeat.");
+        }
+        else if (currentState.CheckResearched("Total Protection"))
+        {
+            GenerateEndScreen("Victory!");
+        }
+    }
+
+    void GenerateEndScreen(string text)
+    {
+        GameObject end = Instantiate(endPrefab, transform.position, Quaternion.identity, transform);
+        Button button = end.transform.GetChild(1).gameObject.GetComponent<Button>();
+        Text curr = button.GetComponentInChildren<Text>();
+
+        curr.text = text;
+    }
+
+    void SpawnUnits()
+    {
         if (!currentState.CheckTutorial())
         {
-            if (currentState.GetTurn() == 2)
+            if (timeController.IsDay() && !currentState.SpawnedDay())
             {
-                currentState.AddTourists(1);
-                int count = currentState.GetTourists();
+                currentState.ResetFisherman();
+                foreach (HexUnit unit in grid.GetUnits())
+                {
+                    if (unit.UnitType == "Fishing Boat")
+                    {
+                        spawner.DestroyUnit(unit);
+                    }
+                }
+                int max = currentState.GetLevel();
+                if (currentState.GetTourists() == 0)
+                {
+                    currentState.SetTourists(max);
+                }
 
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < max; i++)
                 {
                     spawner.RandomSpawn("Tourist Boat");
                 }
-            }
-            else if (!timeController.IsDay() && currentState.GetTurn() == 8)
-            {
-                currentState.AddFisherman(1);
-                spawner.RandomSpawn("Fishing Boat");
-            }
 
-            if (currentState.GetLevel() == 5 && timeController.IsDay())
+                if (currentState.GetLevel() == 5 && currentState.FetchCD("R") == 0)
+                {
+                    spawner.RandomSpawn("Research Boat");
+                    currentState.ResetCD("R");
+                }
+
+                currentState.ToggleDaySpawn();
+            }
+            else if (!timeController.IsDay() && !currentState.SpawnedNight())
             {
-                spawner.RandomSpawn("Research Boat");
+                int max = currentState.GetLevel();
+                // int random = Random.Range(0, max * ((int)currentState.GetSecurity() / 100));
+
+                for (int i = 0; i < max; i++)
+                {
+                    spawner.RandomSpawn("Fishing Boat");
+                    currentState.AddFisherman(1);
+                }
+
+                currentState.ToggleNightSpawn();
             }
         }
-
-        spawner.DestroyUnits();
-        UpdateUIElements();
     }
 
     IEnumerator Movement(Button clicked)
@@ -837,7 +909,14 @@ public class MainUI : MonoBehaviour
         if (upgrade == "Basketball Court")
         {
             currentState.ResetCD("BB");
-            currentState.AddMorale(currentState.GetLevel() * 5);
+            if (currentState.CheckSAT())
+            {
+                currentState.AddMorale(currentState.GetLevel() * 5 * 1.2f);
+            }
+            else
+            {
+                currentState.AddMorale(currentState.GetLevel() * 5);
+            }
         }
         Destroy(toRemove);
     }

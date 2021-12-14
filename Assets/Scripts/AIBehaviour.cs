@@ -46,7 +46,10 @@ public class AIBehaviour : MonoBehaviour
             if (turnStopped == 0)
             {
                 turnStopped = mainUI.GetPlayerState().GetTurn();
-                ClearPath();
+                if (currentPathExists)
+                {
+                    ClearPath();
+                }
                 if (currentUnit.UnitType == "Tourist Boat")
                 {
                     currentUnit.Location.EnableHeavyHighlight();
@@ -56,6 +59,7 @@ public class AIBehaviour : MonoBehaviour
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
+                mainUI.GetPlayerState().DecreaseHealth(2);
             }
             else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 3)
             {
@@ -84,7 +88,14 @@ public class AIBehaviour : MonoBehaviour
             spawner.DestroyUnit(currentUnit);
             if (currentUnit.UnitType == "Tourist Boat")
             {
-                mainUI.GetPlayerState().AdjustMoney(250);
+                if (mainUI.GetPlayerState().CheckSS())
+                {
+                    mainUI.GetPlayerState().AdjustMoney((int)(250 * 1.1f));
+                }
+                else
+                {
+                    mainUI.GetPlayerState().AdjustMoney(250);
+                }
             }
         }
     }
@@ -148,20 +159,9 @@ public class AIBehaviour : MonoBehaviour
 
     void ChooseTarget()
     {
-        if (currentUnit.UnitType == "Tourist Boat")
+        if (currentUnit.UnitType == "Tourist Boat" || currentUnit.UnitType == "Fishing Boat")
         {
             ChooseBuoy();
-        }
-        else if (currentUnit.UnitType == "Fishing Boat")
-        {
-            int randomIndex = Random.Range(0, grid.GetCells().Length);
-
-            while (GlobalCellCheck.IsImpassable(grid.GetCells()[randomIndex]) && GlobalCellCheck.IsNotReachable(randomIndex)
-            && grid.GetCells()[randomIndex] == currentUnit.Location)
-            {
-                randomIndex = Random.Range(0, grid.GetCells().Length);
-            }
-            finalDestination = grid.GetCells()[randomIndex];
         }
 
         SetMovementTarget(finalDestination);

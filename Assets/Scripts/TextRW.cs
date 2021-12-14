@@ -132,7 +132,7 @@ public static class TextRW
             {
                 if (line.StartsWith("["))
                 {
-                    currentLevel = line.Substring(0, line.IndexOf(']') + 1);
+                    currentLevel = line.Substring(1, line.IndexOf(']') - 1);
                 }
                 else
                 {
@@ -142,19 +142,19 @@ public static class TextRW
                     }
                     else if (currentLevel == "Level2")
                     {
-                        level1Objectives.Add(line);
+                        level2Objectives.Add(line);
                     }
                     else if (currentLevel == "Level3")
                     {
-                        level1Objectives.Add(line);
+                        level3Objectives.Add(line);
                     }
                     else if (currentLevel == "Level4")
                     {
-                        level1Objectives.Add(line);
+                        level4Objectives.Add(line);
                     }
                     else if (currentLevel == "Level5")
                     {
-                        level1Objectives.Add(line);
+                        level5Objectives.Add(line);
                     }
                 }
             }
