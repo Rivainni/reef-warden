@@ -106,6 +106,7 @@ public class HexUnit : MonoBehaviour
 
     float orientation;
     bool busy;
+    bool interacted;
     const float travelSpeed = 2f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
@@ -122,6 +123,7 @@ public class HexUnit : MonoBehaviour
         }
         IsVisible = true;
         busy = false;
+        interacted = false;
     }
 
     public void ValidateLocation()
@@ -321,6 +323,16 @@ public class HexUnit : MonoBehaviour
     public PlayerBehaviour GetPlayerBehaviour()
     {
         return GetComponent<PlayerBehaviour>();
+    }
+
+    public void SetInteracted()
+    {
+        interacted = true;
+    }
+
+    public bool HasInteracted()
+    {
+        return interacted;
     }
 
 

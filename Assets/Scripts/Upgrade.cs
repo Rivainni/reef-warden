@@ -20,6 +20,7 @@ public class Upgrade : HexStructure
     int buildTime;
     int researchCost;
     int buildCost;
+    int upkeep;
 
     bool built = false;
 
@@ -34,6 +35,11 @@ public class Upgrade : HexStructure
     public void SetBuildCost(int cost)
     {
         buildCost = cost;
+    }
+
+    public void SetUpkeep(int upk)
+    {
+        upkeep = upk;
     }
 
     public void SetBuilt()
@@ -59,5 +65,10 @@ public class Upgrade : HexStructure
     public bool CheckBuilt()
     {
         return built;
+    }
+
+    public int GetUpkeep()
+    {
+        return upkeep;
     }
 }

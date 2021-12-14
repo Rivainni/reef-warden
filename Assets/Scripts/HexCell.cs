@@ -91,6 +91,7 @@ public class HexCell : MonoBehaviour
 
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
+    public Upgrade Upgrade { get; set; }
 
     Renderer renderer;
     Color defaultColor;

@@ -159,7 +159,7 @@ public class MainUI : MonoBehaviour
                         HexCell toCheckCell = cell.GetNeighbor(d);
                         if (toCheckCell != null && toCheckCell.Unit != null)
                         {
-                            if (toCheckCell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman"))
+                            if (toCheckCell.Unit.UnitType == "Fishing Boat" && !contextMenuContent.Contains("Catch Fisherman") && !toCheckCell.Unit.HasInteracted())
                             {
                                 contextMenuContent.Add("Catch Fisherman");
                                 tempA = toCheckCell;
@@ -171,7 +171,7 @@ public class MainUI : MonoBehaviour
                                 tempB = toCheckCell;
                                 targetB = toCheckCell.Unit;
                             }
-                            else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist"))
+                            else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Inspect Tourist") && !toCheckCell.Unit.HasInteracted())
                             {
                                 contextMenuContent.Add("Inspect Tourist");
                                 tempB = toCheckCell;
@@ -202,7 +202,7 @@ public class MainUI : MonoBehaviour
                                 {
                                     contextMenuContent.Add("Monitor Clams");
                                 }
-                                if (currentState.FetchCD("T") == 0 && !contextMenuContent.Contains("Tag Turtles"))
+                                if (currentState.FetchCD("T") == 0 && !contextMenuContent.Contains("Tag Turtles") && currentState.CheckResearched("Species Tagging"))
                                 {
                                     contextMenuContent.Add("Tag Turtles");
                                 }
@@ -234,9 +234,17 @@ public class MainUI : MonoBehaviour
         else
         {
             contextMenuContent.Add("Inspect");
-            if (grid.CheckUpgradeCell(cell))
+            if (grid.CheckUpgradeCell(cell) && !cell.Upgrade)
             {
                 contextMenuContent.Add("Build Upgrade");
+            }
+            else if (cell.Upgrade)
+            {
+                contextMenuContent.Add("Replace Upgrade");
+            }
+            if (cell.Upgrade)
+            {
+                contextMenuContent.Add("Demolish Upgrade");
             }
         }
 
@@ -297,9 +305,13 @@ public class MainUI : MonoBehaviour
                 {
                     currentButton.onClick.AddListener(() => AfterAction(contextMenu));
                 }
-                else if (item == "Build Upgrade")
+                else if (item == "Build Upgrade" || item == "Replace Upgrade")
                 {
                     currentButton.onClick.AddListener(() => DoUpgrade(contextMenu));
+                }
+                else if (item == "Demolish Upgrade")
+                {
+                    currentButton.onClick.AddListener(() => DemolishUpgrade(contextMenu, cell));
                 }
             }
         }
@@ -385,6 +397,7 @@ public class MainUI : MonoBehaviour
         AfterAction(remove);
         int startTurn = currentState.GetTurn();
         unit.ToggleBusy();
+        unit.ActionPoints = 0;
         StartCoroutine(WaitForTwoTurns());
         IEnumerator WaitForTwoTurns()
         {
@@ -401,6 +414,7 @@ public class MainUI : MonoBehaviour
         currentState.AdjustMoney(-10000);
         int startTurn = currentState.GetTurn();
         unit.ToggleBusy();
+        unit.ActionPoints = 0;
         StartCoroutine(WaitForTwoTurns());
         IEnumerator WaitForTwoTurns()
         {
@@ -460,11 +474,11 @@ public class MainUI : MonoBehaviour
         actualButtonA.GetComponentInChildren<Text>().text = "Approve";
         actualButtonB.GetComponentInChildren<Text>().text = "Disapprove";
 
-        actualButtonA.onClick.AddListener(() => InspectTouristGameApprove(correctValue, gamePanel));
+        actualButtonA.onClick.AddListener(() => InspectTouristGameApprove(correctValue, target, gamePanel));
         actualButtonB.onClick.AddListener(() => InspectTouristGameDisapprove(correctValue, target, gamePanel));
     }
 
-    void InspectTouristGameApprove(bool correctValue, GameObject toRemove)
+    void InspectTouristGameApprove(bool correctValue, HexUnit target, GameObject toRemove)
     {
         Destroy(toRemove);
         if (correctValue)
@@ -474,6 +488,7 @@ public class MainUI : MonoBehaviour
             UpdateUIElements();
         }
         currentState.AddTouristScore();
+        target.SetInteracted();
     }
 
     void InspectTouristGameDisapprove(bool correctValue, HexUnit target, GameObject toRemove)
@@ -486,6 +501,7 @@ public class MainUI : MonoBehaviour
         }
         Destroy(toRemove);
         currentState.AddTouristScore();
+        target.SetInteracted();
     }
 
     void AssistMooring(HexCell destination, GameObject remove, HexUnit target)
@@ -503,8 +519,14 @@ public class MainUI : MonoBehaviour
         currentState.AddSecurity(2);
         AfterAction(remove);
         currentState.AddCatchScore();
+        target.SetInteracted();
     }
 
+    void DemolishUpgrade(GameObject remove, HexCell target)
+    {
+        Destroy(remove);
+        spawner.DestroyUpgrade(target.Upgrade);
+    }
     void DoUpgrade(GameObject remove)
     {
         Destroy(remove);
@@ -562,54 +584,57 @@ public class MainUI : MonoBehaviour
     {
         yield return new WaitUntil(() => currentState.CheckUpgrade(upgrade) == 0);
         UpdateUIQueue(upgrade, 1, 0);
-        spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost);
+        if (currentCell.Upgrade)
+        {
+            spawner.DestroyUpgrade(currentCell.Upgrade);
+        }
+        if (upgrade != "Double-engine Patrol Boat")
+        {
+            spawner.SpawnUpgrade(currentCell, upgrade, constructionTime, researchCost, buildCost, upkeep);
+            currentState.AddUpgrade(upgrade);
+        }
+        else
+        {
+            spawner.RandomSpawn("Tier 2 Patrol Boat");
+            currentState.AddManpower(-4);
+        }
         currentState.AdjustIncome(-upkeep);
         currentState.AddManpower(1);
         if (upgrade == "RADAR")
         {
             radarButton.interactable = true;
         }
-        currentState.AddUpgrade(upgrade);
+        else if (upgrade == "AIS")
+        {
+            currentState.AddAIS();
+        }
         UpdateUIElements();
     }
 
     void UpgradeText(string upgrade, Button button, GameObject toRemove)
     {
         GameObject toReplace = button.transform.parent.parent.GetChild(1).GetChild(0).gameObject;
+        Button[] rem = toReplace.transform.parent.gameObject.GetComponentsInChildren<Button>();
         int constructionTime = 0;
         int researchCost = 0;
         int buildCost = 0;
         int upkeep = 0;
 
-        // if (upgrade == "RADAR")
-        // {
-        //     toReplace.GetComponent<Text>().text = "When triggered, it gives the player map-wide visibility for one turn. May be used again after 5 turns.";
-        //     toReplace.GetComponent<Text>().text += "\n\nCosts 2000. Requires 250 RP. Has upkeep of 200 per turn.";
-        //     toReplace.GetComponent<Text>().text += "\nRequires 1 turn and 1 manpower to construct.";
-
-        //     constructionTime = 1;
-        //     researchCost = 250;
-        //     buildCost = 2000;
-        //     upkeep = 200;
-        // }
-        // else if (upgrade == "AIS")
-        // {
-        //     toReplace.GetComponent<Text>().text = "Lets the player know the information of the vessels in the area by Identifying their purpose.";
-        //     toReplace.GetComponent<Text>().text += "\n\nCosts 2500. Requires 250 RP. Has upkeep of 250 per turn. ";
-
-        //     constructionTime = 1;
-        //     researchCost = 250;
-        //     buildCost = 2500;
-        //     upkeep = 250;
-        // }
-
         TextRW.UpgradeItem curr = TextRW.GetUpgrade(upgrade);
 
         toReplace.GetComponent<Text>().text = curr.Description;
+        toReplace.GetComponent<Text>().text += "Build: " + curr.BuildCost + "\n";
+        toReplace.GetComponent<Text>().text += "Research: " + curr.ResearchCost + "\n";
+        toReplace.GetComponent<Text>().text += "Upkeep: " + curr.Upkeep + "\n";
         constructionTime = curr.Turns;
         researchCost = curr.ResearchCost;
         buildCost = curr.BuildCost;
         upkeep = curr.Upkeep;
+
+        foreach (Button trash in rem)
+        {
+            Destroy(trash.gameObject);
+        }
 
         GameObject generic = Instantiate(buttonPrefab, toReplace.transform.parent.position, Quaternion.identity, toReplace.transform.parent);
         Button currentButton = generic.GetComponent<Button>();
@@ -617,11 +642,17 @@ public class MainUI : MonoBehaviour
         if (currentState.CheckUpgrade(upgrade) > 0)
         {
             currentButton.GetComponentInChildren<Text>().text = "IN QUEUE (" + currentState.CheckUpgrade(upgrade) + " TURNS)";
+            currentButton.onClick.AddListener(() => Close(toRemove));
         }
         else if (!currentState.CheckResearched(upgrade) || buildCost > currentState.GetMoney())
         {
             currentButton.GetComponentInChildren<Text>().text = "CLOSE";
             currentButton.onClick.AddListener(() => Close(toRemove));
+        }
+        else if (currentState.CheckBuilt(upgrade) && upgrade == "Basketball Court")
+        {
+            currentButton.GetComponentInChildren<Text>().text = "USE";
+            currentButton.onClick.AddListener(() => Use(upgrade, toRemove));
         }
         else
         {
@@ -702,11 +733,6 @@ public class MainUI : MonoBehaviour
                     spawner.RandomSpawn("Tourist Boat");
                 }
             }
-            // else if (!timeController.IsDay() && currentState.GetTurn() % 6 == 0)
-            // {
-            //     currentState.AddFisherman(1);
-            //     spawner.RandomSpawn("Fishing Boat");
-            // }
             else if (!timeController.IsDay() && currentState.GetTurn() == 8)
             {
                 currentState.AddFisherman(1);
@@ -754,7 +780,7 @@ public class MainUI : MonoBehaviour
 
         foreach (Button button in buttons)
         {
-            if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text))
+            if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) || TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch())
             {
                 button.interactable = false;
             }
@@ -775,11 +801,11 @@ public class MainUI : MonoBehaviour
         int researchTime = 0;
         int researchCost = 0;
 
-        if (name == "RADAR")
-        {
-            researchTime = 1;
-            researchCost = 250;
-        }
+        TextRW.UpgradeItem curr = TextRW.GetUpgrade(name);
+
+        researchTime = curr.Turns;
+        researchCost = curr.ResearchCost;
+        Debug.Log(name + ", " + researchTime + " turns and " + researchCost + " points.");
 
         if (currentState.GetResearch() >= researchCost)
         {
@@ -803,6 +829,16 @@ public class MainUI : MonoBehaviour
     void Close(GameObject toRemove)
     {
         grid.GetAudioManager().Play("Prev", 0);
+        Destroy(toRemove);
+    }
+
+    void Use(string upgrade, GameObject toRemove)
+    {
+        if (upgrade == "Basketball Court")
+        {
+            currentState.ResetCD("BB");
+            currentState.AddMorale(currentState.GetLevel() * 5);
+        }
         Destroy(toRemove);
     }
 
@@ -859,6 +895,7 @@ public class MainUI : MonoBehaviour
             toUpdate.text += name + " - ";
             toUpdate.text += time;
         }
+        UpdateUIElements();
     }
 
     public void UseRadar()

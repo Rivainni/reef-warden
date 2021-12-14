@@ -28,6 +28,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int turtleCD;
     [SerializeField] int researchCD;
     [SerializeField] int radarCD;
+    [SerializeField] int basketballCD;
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
@@ -38,10 +39,15 @@ public class PlayerState : ScriptableObject
     [SerializeField] int touristsInspected;
     [SerializeField] int fishermenCaught;
     string message;
-    const float moraleLambda = 0.04f;
+    List<string> currentObjectives = new List<string>();
+    const float moraleLambda = 0.01f;
     const float securityLambda = 0.04f;
     bool radarActive = false;
     bool inTutorial;
+    bool AIS = false;
+    bool daySpawn = false;
+    bool nightSpawn = false;
+    int levelTurns = 0;
 
     struct UpgradeItem
     {
@@ -258,6 +264,7 @@ public class PlayerState : ScriptableObject
         turtleCD = (turtleCD > 0) ? turtleCD -= 1 : turtleCD;
         researchCD = (researchCD > 0) ? researchCD -= 1 : researchCD;
         radarCD = (radarCD > 0) ? radarCD -= 1 : radarCD;
+        basketballCD = (basketballCD > 0) ? basketballCD -= 1 : basketballCD;
     }
 
     public void ResetCD(string type)
@@ -301,6 +308,10 @@ public class PlayerState : ScriptableObject
         else if (type.Equals("RADAR"))
         {
             radarCD = 5;
+        }
+        else if (type.Equals("BB"))
+        {
+            basketballCD = 5;
         }
     }
 
@@ -419,6 +430,16 @@ public class PlayerState : ScriptableObject
         radarActive = false;
     }
 
+    public void AddAIS()
+    {
+        AIS = true;
+    }
+
+    public bool CheckAIS()
+    {
+        return AIS;
+    }
+
     public void AddTouristScore()
     {
         touristsInspected++;
@@ -447,6 +468,7 @@ public class PlayerState : ScriptableObject
     public void Clean()
     {
         money = 10000;
+        income = 0;
         research = 250;
         manpower = 6;
         tourists = 0;
@@ -466,17 +488,19 @@ public class PlayerState : ScriptableObject
         clamCD3 = 0;
         turtleCD = 0;
         researchCD = 0;
-        unlockedUpgrades = new List<string> { "Basketball Court, Radio, Service Boat" };
-        builtUpgrades.Clear();
+        unlockedUpgrades = new List<string> { "Basketball Court", "Radio", "Service Boat" };
+        builtUpgrades = new List<string> { "Radio" };
         touristsInspected = 0;
         fishermenCaught = 0;
         radarActive = false;
         message = "";
+        currentObjectives = new List<string>();
     }
 
     public void EndTurn()
     {
         turn++;
+        money += income;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
 
@@ -508,5 +532,41 @@ public class PlayerState : ScriptableObject
     public bool CheckTutorial()
     {
         return inTutorial;
+    }
+
+    public List<string> GetObjectives()
+    {
+        return currentObjectives;
+    }
+
+    public void SetObjectives(List<string> replace)
+    {
+        currentObjectives = replace;
+    }
+
+    public void RemoveObjective(string objective)
+    {
+        currentObjectives.Remove(objective);
+    }
+
+    public void UpdateObjectives()
+    {
+        List<string> toRemove = new List<string>();
+        foreach (string item in currentObjectives)
+        {
+            switch (level)
+            {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+            }
+        }
     }
 }

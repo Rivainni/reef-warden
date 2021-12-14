@@ -288,6 +288,7 @@ public class HexGrid : MonoBehaviour
     public void AddStructure(HexStructure structure, HexCell location, float orientation, string structureType)
     {
         structures.Add(structure);
+        location.Structure = structure;
         structure.transform.SetParent(transform, false);
         structure.Location = location;
         structure.Orientation = orientation;
@@ -296,9 +297,10 @@ public class HexGrid : MonoBehaviour
         structure.transform.Translate(Vector3.up * 0.8f);
     }
 
-    public void AddUpgrade(Upgrade upgrade, HexCell location, float orientation, string upgradeType, int constructionTime, int researchCost, int constructionCost)
+    public void AddUpgrade(Upgrade upgrade, HexCell location, float orientation, string upgradeType, int constructionTime, int researchCost, int constructionCost, int upkeep)
     {
         structures.Add(upgrade);
+        location.Upgrade = upgrade;
         upgrade.transform.SetParent(transform, false);
         upgrade.Location = location;
         upgrade.Orientation = orientation;
@@ -307,6 +309,13 @@ public class HexGrid : MonoBehaviour
         upgrade.SetBuildTime(constructionTime);
         upgrade.SetResearchCost(researchCost);
         upgrade.SetBuildCost(constructionCost);
+        upgrade.SetUpkeep(upkeep);
+    }
+
+    public void RemoveUpgrade(Upgrade upgrade)
+    {
+        structures.Remove(upgrade);
+        upgrade.Die();
     }
 
     public void ResetPoints()

@@ -61,11 +61,12 @@ public class AIBehaviour : MonoBehaviour
             {
                 if (!satisfied)
                 {
-                    mainUI.GetPlayerState().DecreaseHealth(10);
-                }
-                if (currentPathExists)
-                {
-                    ClearPath();
+                    int random = Random.Range(0, 10);
+                    if (random == 0)
+                    {
+                        mainUI.GetPlayerState().DecreaseHealth(10);
+                    }
+                    mainUI.UpdateUIElements();
                 }
                 ChooseEscape();
                 StartCoroutine(TurnMove());
@@ -232,7 +233,7 @@ public class AIBehaviour : MonoBehaviour
         currentPathFrom = fromCell;
         currentPathTo = toCell;
         currentPathExists = Search(fromCell, toCell, speed);
-        if (currentUnit.UnitType == "Tourist Boat")
+        if (currentUnit.UnitType == "Tourist Boat" || mainUI.GetPlayerState().CheckAIS())
         {
             ShowPath(speed);
         }
