@@ -35,7 +35,12 @@ public class MainUI : MonoBehaviour
     {
         currentState = initState;
         currentState.Clean();
-        currentState.SetObjectives(TextRW.GetObjectives(1));
+
+        if (!currentState.CheckTutorial())
+        {
+            currentState.SetObjectives(TextRW.GetObjectives(1));
+        }
+
         objectivesDisplay.currentState = currentState;
         objectivesDisplay.DisplayObjectives();
         UpdateUIElements();
