@@ -20,17 +20,19 @@ public class StoryManager : MonoBehaviour
     [SerializeField] PlayerState initState;
     [SerializeField] Text objectives;
     Queue<string> inputStream = new Queue<string>();
+    bool inDialogue;
 
     // Start is called before the first frame update
     void Start()
     {
+        inDialogue = false;
         secondarySprite.enabled = false;
     }
 
     public void StartDialogue(Queue<string> dialogue)
     {
+        inDialogue = true;
         storyUI.SetActive(true); // open the dialogue box
-        // isOpen = true;
         inputStream = dialogue; // store the dialogue from dialogue trigger
         PrintDialogue(); // Prints out the first line of dialogue
     }
@@ -80,9 +82,8 @@ public class StoryManager : MonoBehaviour
             {
                 secondarySprite.enabled = false;
             }
-            else
+            else if (mainUI.GetPlayerState().CheckTutorial())
             {
-                mainUI.GetPlayerState().StartTutorial();
                 Tutorial(action);
             }
 
@@ -144,12 +145,13 @@ public class StoryManager : MonoBehaviour
         characterName.text = "";
         inputStream.Clear();
         storyUI.SetActive(false);
-        // isOpen = false;
+
         if (cutscene)
         {
             SceneManager.LoadScene("Main Game");
+            mainUI.GetPlayerState().StartTutorial();
         }
-        else
+        else if (mainUI.GetPlayerState().CheckTutorial())
         {
             mainUI.GetPlayerState().EndTutorial();
             mainUI.GetPlayerState().AddLevel();

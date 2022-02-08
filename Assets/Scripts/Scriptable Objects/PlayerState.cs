@@ -523,6 +523,7 @@ public class PlayerState : ScriptableObject
 
     public void Clean()
     {
+        inTutorial = true;
         money = 10000;
         income = 0;
         research = 250;
@@ -534,7 +535,7 @@ public class PlayerState : ScriptableObject
         trueReefHealth = 100;
         seenReefHealth = 50;
         turn = 1;
-        level = 1;
+        level = 0;
         checkHealthCD1 = 0;
         checkHealthCD2 = 0;
         checkHealthCD3 = 0;
@@ -590,7 +591,7 @@ public class PlayerState : ScriptableObject
 
         ReduceCD();
         UpdateObjectives();
-        if (currentObjectives.Count == 0)
+        if (currentObjectives.Count == 0 && !CheckTutorial())
         {
             AddLevel();
             SetObjectives(TextRW.GetObjectives(level));
