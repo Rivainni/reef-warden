@@ -203,7 +203,7 @@ public class StoryManager : MonoBehaviour
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S));
-                yield return new WaitForSeconds(6.0f);
+                yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
             }
         }
@@ -215,7 +215,7 @@ public class StoryManager : MonoBehaviour
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E));
-                yield return new WaitForSeconds(6.0f);
+                yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
             }
         }
@@ -227,7 +227,7 @@ public class StoryManager : MonoBehaviour
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.R) || Input.GetKey(KeyCode.F) || Input.mouseScrollDelta.y != 0);
-                yield return new WaitForSeconds(6.0f);
+                yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
             }
         }
@@ -256,7 +256,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "InspectTourist1")
         {
             storyUI.SetActive(false);
-            mainUI.GetSpawner().RandomSpawn("Tourist Boat");
+            mainUI.GetSpawner().TutorialSpawn("Tourist Boat");
             mainUI.GetPlayerState().AddTourists(1);
             mainUI.UpdateUIElements();
             objectives.text = "Look for the tourist.";
@@ -326,7 +326,7 @@ public class StoryManager : MonoBehaviour
         {
             storyUI.SetActive(false);
             StartCoroutine(WaitForPlayer());
-            mainUI.GetSpawner().RandomSpawn("Fishing Boat");
+            mainUI.GetSpawner().TutorialSpawn("Fishing Boat");
             mainUI.GetPlayerState().AddFisherman(1);
             objectives.text = "Catch the Fishing Boat.";
             IEnumerator WaitForPlayer()

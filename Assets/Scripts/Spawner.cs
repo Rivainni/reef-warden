@@ -98,4 +98,18 @@ public class Spawner : MonoBehaviour
 
         Debug.Log("Spawned " + unitType);
     }
+
+    public void TutorialSpawn(string unitType)
+    {
+        int random = unitType == "Tourist Boat" ? 300 : 299;
+        HexCell cell = hexGrid.GetCells()[GlobalCellCheck.GetEscapeCell(random)];
+
+        int unitIndex = System.Array.IndexOf(unitTypes, unitType);
+        if (cell && !cell.Unit)
+        {
+            hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
+        }
+
+        Debug.Log("Spawned " + unitType);
+    }
 }
