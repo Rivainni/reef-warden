@@ -74,7 +74,10 @@ public class MainUI : MonoBehaviour
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                HexAction();
+                if (grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition)) != null || currentCell)
+                {
+                    HexAction();
+                }
             }
         }
 
@@ -102,10 +105,10 @@ public class MainUI : MonoBehaviour
     {
         grid.GetPlayerBehaviour().ClearPath();
         UpdateCurrentCell();
-        Debug.Log("This is cell index " + currentCell.Index);
 
         if (currentCell)
         {
+            Debug.Log("This is cell index " + currentCell.Index);
             if (!currentCell.Unit || selectedUnit == currentCell.Unit)
             {
                 selectedUnit = null;
@@ -146,7 +149,7 @@ public class MainUI : MonoBehaviour
     void HexAction()
     {
         Vector3 spawnAt = Input.mousePosition;
-        HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition)) == null ? currentCell : grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         HexCell tempA = null;
         HexCell tempB = null;
         HexUnit targetA = null;

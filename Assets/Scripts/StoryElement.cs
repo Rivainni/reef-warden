@@ -16,7 +16,10 @@ public class StoryElement : MonoBehaviour
         {
             TriggerDialogue();
         }
-        StartCoroutine(LevelDialogue());
+        else
+        {
+            StartCoroutine(LevelDialogue());
+        }
     }
 
     IEnumerator LevelDialogue()
