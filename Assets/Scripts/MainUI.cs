@@ -43,9 +43,9 @@ public class MainUI : MonoBehaviour
 
         objectivesDisplay.currentState = currentState;
         objectivesDisplay.DisplayObjectives();
-        UpdateUIElements();
         // PointToObject(grid.GetUnits()[0].gameObject);
         minigameData.SetInspection();
+        StartCoroutine(UIUpdateDelay());
     }
 
     void Update()
@@ -1040,5 +1040,11 @@ public class MainUI : MonoBehaviour
         GameObject temp = Instantiate(arrowPrefab, transform.position, Quaternion.identity, transform);
         ObjectiveArrow objectiveArrow = temp.GetComponent<ObjectiveArrow>();
         objectiveArrow.targetTransform = gameObject.transform;
+    }
+
+    IEnumerator UIUpdateDelay()
+    {
+        yield return new WaitUntil(() => currentState != null);
+        UpdateUIElements();
     }
 }
