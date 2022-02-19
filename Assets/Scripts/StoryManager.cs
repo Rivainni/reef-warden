@@ -18,20 +18,16 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] bool cutscene = true;
     [SerializeField] PlayerState initState;
-    [SerializeField] Text objectives;
     Queue<string> inputStream = new Queue<string>();
-    bool inDialogue;
 
     // Start is called before the first frame update
     void Start()
     {
-        inDialogue = false;
         secondarySprite.enabled = false;
     }
 
     public void StartDialogue(Queue<string> dialogue)
     {
-        inDialogue = true;
         storyUI.SetActive(true); // open the dialogue box
         inputStream = dialogue; // store the dialogue from dialogue trigger
         PrintDialogue(); // Prints out the first line of dialogue
@@ -198,7 +194,7 @@ public class StoryManager : MonoBehaviour
         if (action == "WASD")
         {
             storyUI.SetActive(false);
-            objectives.text = "Move the camera with WASD.";
+            mainUI.DisplayTutorialObjective("Move the camera with WASD.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -210,7 +206,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "QE")
         {
             storyUI.SetActive(false);
-            objectives.text = "Rotate the camera with Q or E.";
+            mainUI.DisplayTutorialObjective("Rotate the camera with Q or E.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -222,7 +218,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "RF")
         {
             storyUI.SetActive(false);
-            objectives.text = "Zoom in using the Mousewheel, R, or F.";
+            mainUI.DisplayTutorialObjective("Zoom in using the Mousewheel, R, or F.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -234,7 +230,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "Patrol")
         {
             storyUI.SetActive(false);
-            objectives.text = "Patrol to any location.";
+            mainUI.DisplayTutorialObjective("Patrol to any location.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -245,7 +241,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "CheckReefHealth")
         {
             storyUI.SetActive(false);
-            objectives.text = "Check the reef health.";
+            mainUI.DisplayTutorialObjective("Check the reef health.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -259,7 +255,7 @@ public class StoryManager : MonoBehaviour
             mainUI.GetSpawner().TutorialSpawn("Tourist Boat");
             mainUI.GetPlayerState().AddTourists(1);
             mainUI.UpdateUIElements();
-            objectives.text = "Look for the tourist.";
+            mainUI.DisplayTutorialObjective("Look for the tourist.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -270,7 +266,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "InspectTourist2")
         {
             storyUI.SetActive(false);
-            objectives.text = "Do a random inspection on the tourist.";
+            mainUI.DisplayTutorialObjective("Do a random inspection on the tourist.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -281,7 +277,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "MoveBack")
         {
             storyUI.SetActive(false);
-            objectives.text = "Return to the ranger station (next to the boat).";
+            mainUI.DisplayTutorialObjective("Return to the ranger station (next to the boat).");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -292,7 +288,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "Research")
         {
             storyUI.SetActive(false);
-            objectives.text = "Research the RADAR.";
+            mainUI.DisplayTutorialObjective("Research the RADAR.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -303,7 +299,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "Build")
         {
             storyUI.SetActive(false);
-            objectives.text = "Build a RADAR.";
+            mainUI.DisplayTutorialObjective("Build a RADAR.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -314,7 +310,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "UseRADAR")
         {
             storyUI.SetActive(false);
-            objectives.text = "Use the RADAR.";
+            mainUI.DisplayTutorialObjective("Use the RADAR.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -328,7 +324,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             mainUI.GetSpawner().TutorialSpawn("Fishing Boat");
             mainUI.GetPlayerState().AddFisherman(1);
-            objectives.text = "Catch the Fishing Boat.";
+            mainUI.DisplayTutorialObjective("Catch the Fishing Boat.");
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);

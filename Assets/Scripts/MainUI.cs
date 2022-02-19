@@ -1042,6 +1042,12 @@ public class MainUI : MonoBehaviour
         objectiveArrow.targetTransform = gameObject.transform;
     }
 
+    public void DisplayTutorialObjective(string objective)
+    {
+        GetPlayerState().SetObjectives(objective);
+        objectivesDisplay.DisplayObjectives();
+    }
+
     IEnumerator UIUpdateDelay()
     {
         yield return new WaitUntil(() => currentState != null);

@@ -622,6 +622,11 @@ public class PlayerState : ScriptableObject
     {
         currentObjectives = replace;
     }
+    public void SetObjectives(string replace)
+    {
+        currentObjectives.Clear();
+        currentObjectives.Add(replace);
+    }
 
     public void RemoveObjective(string objective)
     {
