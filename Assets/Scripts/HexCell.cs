@@ -149,7 +149,6 @@ public class HexCell : MonoBehaviour
         if (adjacency > 0)
         {
             EnableFeature();
-            Debug.Log("see");
         }
     }
 
@@ -158,7 +157,6 @@ public class HexCell : MonoBehaviour
         if (adjacency > 0)
         {
             ClearFeature();
-            Debug.Log("see not");
         }
     }
 

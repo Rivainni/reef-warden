@@ -76,11 +76,7 @@ public class HexUnit : MonoBehaviour
             }
             location = value;
             value.Unit = this;
-
-            if (IsPatrolBoat())
-            {
-                Grid.IncreaseVisibility(value, visionRange);
-            }
+            value.IncreaseVisibility();
 
             transform.localPosition = value.Position;
         }
@@ -110,6 +106,7 @@ public class HexUnit : MonoBehaviour
     const float travelSpeed = 2f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
+    Renderer renderer;
 
     // methods beyond this point
     void Start()
@@ -124,6 +121,8 @@ public class HexUnit : MonoBehaviour
         IsVisible = true;
         busy = false;
         interacted = false;
+
+        renderer = GetComponentInChildren<Renderer>();
     }
 
     public void ValidateLocation()
@@ -283,13 +282,12 @@ public class HexUnit : MonoBehaviour
         if (IsVisible)
         {
             IsVisible = false;
-            // this basically just moves the unit off-screen
-            gameObject.transform.Translate(Vector3.down * 10);
+            renderer.enabled = false;
         }
         else
         {
             IsVisible = true;
-            gameObject.transform.Translate(Vector3.up * 10);
+            renderer.enabled = true;
         }
     }
 
