@@ -35,36 +35,75 @@ public static class GlobalCellCheck
 
     public static int IsAdjacentToShore(HexCell cell)
     {
-        if (cell.Type == "Land")
+        for (HexDirection i = HexDirection.NE; i <= HexDirection.NW; i++)
         {
-            // int cmp = 0;
-            for (int i = 0; i < adjacentToShore.Count; i += 2)
+            HexCell currentA = cell.GetNeighbor(i);
+            if (currentA != null)
             {
-                if (cell.Index >= adjacentToShore[i] && cell.Index <= adjacentToShore[i + 1])
+                if (currentA.Type == "Land")
                 {
-                    if (i == 0)
+                    return 1;
+                }
+                for (HexDirection j = HexDirection.NE; j <= HexDirection.NW; j++)
+                {
+                    HexCell currentB = currentA.GetNeighbor(j);
+                    if (currentB.Type == "Land")
+                    {
+                        return 2;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    public static int IsAdjacentToBuoy(HexCell cell)
+    {
+        if (cell.Type != "Land")
+        {
+            for (HexDirection i = HexDirection.NE; i <= HexDirection.NW; i++)
+            {
+                HexCell currentA = cell.GetNeighbor(i);
+                if (currentA != null && currentA.Structure != null)
+                {
+                    if (currentA.Structure.StructureType == "Buoy")
                     {
                         return 1;
                     }
-                    else if (i == 2)
+                    for (HexDirection j = HexDirection.NE; j <= HexDirection.NW; j++)
                     {
-                        // cmp = Distance(cell.Index, adjacentToShore[i + 1]);
-                        return 2;
+                        HexCell currentB = currentA.GetNeighbor(j);
+                        if (currentB != null && currentB.Structure != null)
+                        {
+                            if (currentB.Structure.StructureType == "Buoy")
+                            {
+                                return 2;
+                            }
+                        }
                     }
-                    else
-                    {
-                        // int currA = Distance(cell.Index, adjacentToShore[i]);
-                        // int currB = Distance(cell.Index, adjacentToShore[i + 1]);
-                        // if (cmp <= currA && cmp <= currB)
-                        // {
-                        //     return 2;
-                        // }
-                        // else
-                        // {
-                        //     return 3;
-                        // }
-                        return 3;
-                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    public static int GetIsland(HexCell cell)
+    {
+        for (int i = 0; i < adjacentToShore.Count; i += 2)
+        {
+            if (cell.Index >= adjacentToShore[i] && cell.Index <= adjacentToShore[i + 1])
+            {
+                if (i == 0)
+                {
+                    return 1;
+                }
+                else if (i == 2)
+                {
+                    return 2;
+                }
+                else
+                {
+                    return 3;
                 }
             }
         }

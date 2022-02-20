@@ -92,6 +92,7 @@ public class HexCell : MonoBehaviour
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
     public Upgrade Upgrade { get; set; }
+    public int adjacency { get; set; }
 
     Renderer renderer;
     Color defaultColor;
@@ -129,6 +130,36 @@ public class HexCell : MonoBehaviour
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();
         highlight.color = color;
         highlight.enabled = true;
+    }
+
+    void ClearFeature()
+    {
+        Image highlight = uiRect.GetChild(adjacency).GetComponent<Image>();
+        highlight.enabled = false;
+    }
+
+    void EnableFeature()
+    {
+        Image highlight = uiRect.GetChild(adjacency).GetComponent<Image>();
+        highlight.enabled = true;
+    }
+
+    void OnMouseOver()
+    {
+        if (adjacency > 0)
+        {
+            EnableFeature();
+            Debug.Log("see");
+        }
+    }
+
+    void OnMouseExit()
+    {
+        if (adjacency > 0)
+        {
+            ClearFeature();
+            Debug.Log("see not");
+        }
     }
 
     public void EnableHeavyHighlight()

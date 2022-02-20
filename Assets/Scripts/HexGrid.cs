@@ -93,6 +93,19 @@ public class HexGrid : MonoBehaviour
                 CreateCell(x, z, i++);
             }
         }
+
+        for (int i = 0; i < cells.Length; i++)
+        {
+            switch (GlobalCellCheck.IsAdjacentToBuoy(cells[i]))
+            {
+                case 1:
+                    cells[i].adjacency = 1;
+                    break;
+                case 2:
+                    cells[i].adjacency = 2;
+                    break;
+            }
+        }
     }
 
     // Create cell using metrics and assign it to its respective chunk.

@@ -199,11 +199,10 @@ public class MainUI : MonoBehaviour
                         }
                         else if (toCheckCell != null)
                         {
-                            // add level checks in a bit
-                            if (GlobalCellCheck.IsAdjacentToShore(toCheckCell) > 0)
+                            if (GlobalCellCheck.GetIsland(toCheckCell) > 0)
                             {
-                                Debug.Log("reef structure" + GlobalCellCheck.IsAdjacentToShore(toCheckCell));
-                                if (currentState.FetchCD("CH" + GlobalCellCheck.IsAdjacentToShore(toCheckCell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
+                                Debug.Log("reef structure" + GlobalCellCheck.GetIsland(toCheckCell));
+                                if (currentState.FetchCD("CH" + GlobalCellCheck.GetIsland(toCheckCell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
                                 {
                                     contextMenuContent.Add("Check Reef Health");
                                 }
@@ -211,7 +210,7 @@ public class MainUI : MonoBehaviour
                                 {
                                     contextMenuContent.Add("Count Birds");
                                 }
-                                if (currentState.FetchCD("C" + GlobalCellCheck.IsAdjacentToShore(toCheckCell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
+                                if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(toCheckCell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
                                 {
                                     contextMenuContent.Add("Monitor Clams");
                                 }
@@ -219,7 +218,7 @@ public class MainUI : MonoBehaviour
                                 {
                                     contextMenuContent.Add("Tag Turtles");
                                 }
-                                reefStructure = GlobalCellCheck.IsAdjacentToShore(toCheckCell);
+                                reefStructure = GlobalCellCheck.GetIsland(toCheckCell);
                             }
                         }
                     }
@@ -728,7 +727,7 @@ public class MainUI : MonoBehaviour
         StartCoroutine(Movement(clicked));
 
         // makes everything visible again
-        if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0))
+        if (timeController.IsDay())
         {
             for (int i = 0; i < grid.GetUnits().Count; i++)
             {
