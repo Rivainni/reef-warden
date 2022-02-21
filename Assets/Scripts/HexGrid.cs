@@ -15,6 +15,7 @@ public class HexGrid : MonoBehaviour
     public HexCell water;
     public HexCell landA;
     public HexCell landB;
+    public WaypointMarker waypointMarker;
     public Spawner spawner;
     public MainUI mainUI;
     public Text cellLabelPrefab;
@@ -45,6 +46,7 @@ public class HexGrid : MonoBehaviour
     List<HexStructure> structures = new List<HexStructure>();
     List<HexCell> upgradeCells = new List<HexCell>();
     List<HexCell> buoyCells = new List<HexCell>();
+    List<WaypointMarker> waypoints = new List<WaypointMarker>();
     HexCell rangerStation;
     PlayerBehaviour playerBehaviour;
     int patrolBoatSpawn, serviceBoatSpawn;
@@ -332,6 +334,28 @@ public class HexGrid : MonoBehaviour
         upgrade.Die();
     }
 
+    public void AddWaypoint(WaypointMarker waypointMarker, Transform target)
+    {
+        waypoints.Add(waypointMarker);
+        waypointMarker.target = target;
+        waypointMarker.transform.SetParent(mainUI.transform);
+    }
+
+    public void RemoveWaypoint(WaypointMarker waypointMarker)
+    {
+        waypoints.Remove(waypointMarker);
+        Destroy(waypointMarker);
+    }
+
+    public void RemoveWaypoints()
+    {
+        for (int i = 0; i < waypoints.Count; i++)
+        {
+            RemoveWaypoint(waypoints[i]);
+        }
+        waypoints.Clear();
+    }
+
     public void ResetPoints()
     {
         for (int i = 0; i < units.Count; i++)
@@ -497,5 +521,10 @@ public class HexGrid : MonoBehaviour
     public AudioManager GetAudioManager()
     {
         return audioManager;
+    }
+
+    public WaypointMarker GetWaypointMarker()
+    {
+        return waypointMarker;
     }
 }

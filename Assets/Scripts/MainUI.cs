@@ -25,15 +25,16 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject researchPrefab;
     [SerializeField] GameObject valuesContainer;
     [SerializeField] GameObject queueDisplay;
-    [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject endPrefab;
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
     [SerializeField] ObjectivesDisplay objectivesDisplay;
     [SerializeField] CameraController cameraController;
+    bool freeze;
 
     void Start()
     {
+        freeze = false;
         currentState = initState;
         currentState.Clean();
 
@@ -51,7 +52,7 @@ public class MainUI : MonoBehaviour
 
     void Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject() && currentState.GetHealth() > 0)
+        if (!EventSystem.current.IsPointerOverGameObject() && currentState.GetHealth() > 0 && !freeze)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -87,6 +88,7 @@ public class MainUI : MonoBehaviour
             SceneManager.LoadScene("Main Menu");
         }
     }
+
     bool UpdateCurrentCell()
     {
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
@@ -1025,6 +1027,11 @@ public class MainUI : MonoBehaviour
         radarButton.interactable = true;
     }
 
+    public void FreezeInput(bool toggle)
+    {
+        freeze = toggle;
+    }
+
     public Spawner GetSpawner()
     {
         return spawner;
@@ -1033,13 +1040,6 @@ public class MainUI : MonoBehaviour
     public HexCell GetPlayerLocation()
     {
         return playerLocation;
-    }
-
-    public void PointToObject(GameObject gameObject)
-    {
-        GameObject temp = Instantiate(arrowPrefab, transform.position, Quaternion.identity, transform);
-        ObjectiveArrow objectiveArrow = temp.GetComponent<ObjectiveArrow>();
-        objectiveArrow.targetTransform = gameObject.transform;
     }
 
     public void DisplayTutorialObjective(string objective)
@@ -1057,5 +1057,10 @@ public class MainUI : MonoBehaviour
     public CameraController GetCameraController()
     {
         return cameraController;
+    }
+
+    public HexGrid GetHexGrid()
+    {
+        return grid;
     }
 }

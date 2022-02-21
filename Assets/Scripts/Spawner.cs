@@ -102,7 +102,7 @@ public class Spawner : MonoBehaviour
     public void TutorialSpawn(string unitType)
     {
         int random = unitType == "Tourist Boat" ? 300 : 299;
-        HexCell cell = hexGrid.GetCells()[GlobalCellCheck.GetEscapeCell(random)];
+        HexCell cell = hexGrid.GetCells()[random];
 
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
         if (cell && !cell.Unit)
@@ -111,5 +111,26 @@ public class Spawner : MonoBehaviour
         }
 
         Debug.Log("Spawned " + unitType);
+    }
+
+    public void AddUnitWaypoint(HexCell cell)
+    {
+        hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.Unit.transform);
+        Debug.Log("waypoint added");
+    }
+
+    public void AddCellWaypoint(HexCell cell)
+    {
+        hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.transform);
+    }
+
+    public void DestroyWaypoint(WaypointMarker waypointMarker)
+    {
+        hexGrid.RemoveWaypoint(waypointMarker);
+    }
+
+    public void DestroyWaypoints()
+    {
+        hexGrid.RemoveWaypoints();
     }
 }

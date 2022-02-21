@@ -97,8 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: ad9869164e2f0f84aa82ca33a35c3702, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 073a399f5de000143abd3ff9450cfce4, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -566,6 +566,7 @@ MonoBehaviour:
   water: {fileID: -6283204732262520918, guid: cd4f2cbde7d033f45a5d96afb77a69e1, type: 3}
   landA: {fileID: -4583013346327355518, guid: 8bf655974e76bee4686e26a1a0d0e773, type: 3}
   landB: {fileID: -4583013346327355518, guid: deb60cdd7b925504eb37d18de03e39e3, type: 3}
+  waypointMarker: {fileID: 5822157999589017094, guid: 1a841f5ff34cf7b47915180a7dd67209, type: 3}
   spawner: {fileID: 356808183}
   mainUI: {fileID: 2078076715}
   cellLabelPrefab: {fileID: 8365395652673976220, guid: f078f3abc320eb24787e6080890efdca, type: 3}
@@ -3736,8 +3737,7 @@ MonoBehaviour:
   researchPrefab: {fileID: 3570511537018259731, guid: aba1c7afa2aef234e89c588d24ee4473, type: 3}
   valuesContainer: {fileID: 184876450}
   queueDisplay: {fileID: 459767313}
-  arrowPrefab: {fileID: 3781951757510695997, guid: 81eeb9e6107c99b49ba5d60a47f77cb5, type: 3}
-  endPrefab: {fileID: 0}
+  endPrefab: {fileID: 3570511537018259731, guid: 0f6acd1ea560df3499c2cb269baab8fb, type: 3}
   timeController: {fileID: 2015350036}
   radarButton: {fileID: 89648778}
   objectivesDisplay: {fileID: 1375062249}

@@ -28,7 +28,10 @@ public class StoryManager : MonoBehaviour
 
     public void StartDialogue(Queue<string> dialogue)
     {
-        mainUI.GetCameraController().FreezeCamera(true); // freeze input
+        if (!cutscene)
+        {
+            mainUI.GetCameraController().FreezeCamera(true); // freeze input
+        }
         storyUI.SetActive(true); // open the dialogue box
         inputStream = dialogue; // store the dialogue from dialogue trigger
         PrintDialogue(); // Prints out the first line of dialogue
@@ -128,7 +131,11 @@ public class StoryManager : MonoBehaviour
 
     public void EndDialogue()
     {
-        mainUI.GetCameraController().FreezeCamera(false);
+        if (!cutscene)
+        {
+            mainUI.GetCameraController().FreezeCamera(false);
+        }
+
         storyText.text = "";
         characterName.text = "";
         inputStream.Clear();
@@ -136,8 +143,13 @@ public class StoryManager : MonoBehaviour
 
         if (cutscene)
         {
-            SceneManager.LoadScene("Main Game");
-            mainUI.GetPlayerState().StartTutorial();
+            SceneManager.LoadSceneAsync("Main Game");
+            cutscene = false;
+            IEnumerator loaded()
+            {
+                yield return new WaitUntil(() => mainUI != null);
+                mainUI.GetPlayerState().StartTutorial();
+            }
         }
         else if (mainUI.GetPlayerState().CheckTutorial())
         {
@@ -186,6 +198,7 @@ public class StoryManager : MonoBehaviour
         // TUTORIAL STUFF
         if (action == "WASD")
         {
+            mainUI.FreezeInput(true);
             storyUI.SetActive(false);
             mainUI.DisplayTutorialObjective("Move the camera with WASD.");
             StartCoroutine(WaitForPlayer());
@@ -221,6 +234,7 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.FreezeInput(false);
             }
         }
         else if (action == "Patrol")
@@ -252,6 +266,7 @@ public class StoryManager : MonoBehaviour
         {
             storyUI.SetActive(false);
             mainUI.GetSpawner().TutorialSpawn("Tourist Boat");
+            mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[300]);
             mainUI.GetPlayerState().AddTourists(1);
             mainUI.UpdateUIElements();
             mainUI.DisplayTutorialObjective("Look for the tourist.");
@@ -273,12 +288,14 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.GetSpawner().DestroyWaypoints();
             }
         }
         else if (action == "MoveBack")
         {
             storyUI.SetActive(false);
             mainUI.DisplayTutorialObjective("Return to the ranger station (next to the boat).");
+            mainUI.GetSpawner().AddCellWaypoint(mainUI.GetHexGrid().GetCells()[261]);
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -328,6 +345,7 @@ public class StoryManager : MonoBehaviour
             storyUI.SetActive(false);
             StartCoroutine(WaitForPlayer());
             mainUI.GetSpawner().TutorialSpawn("Fishing Boat");
+            mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[299]);
             mainUI.GetPlayerState().AddFisherman(1);
             mainUI.DisplayTutorialObjective("Catch the Fishing Boat.");
             IEnumerator WaitForPlayer()
