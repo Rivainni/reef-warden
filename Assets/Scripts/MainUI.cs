@@ -528,6 +528,7 @@ public class MainUI : MonoBehaviour
         // probably a minigame
         AIBehaviour current = target.GetComponent<AIBehaviour>();
         current.Moor();
+        currentState.AddTouristScore();
         target.Location.ResetColor();
         AfterAction(remove);
     }

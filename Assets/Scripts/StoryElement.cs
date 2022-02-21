@@ -6,27 +6,16 @@ using UnityEngine.SceneManagement;
 public class StoryElement : MonoBehaviour
 {
     [SerializeField] TextAsset TextFileAsset; // your imported text file for your NPC
-    [SerializeField] int id;
+    [SerializeField] string name;
     [SerializeField] MainUI mainUI; // need to access the player state to determine whether to start dialogue or nah.
     Queue<string> dialogue = new Queue<string>(); // stores the dialogue (Great Performance!)
 
     void Start()
     {
-        if (id == 0 || SceneManager.GetActiveScene().name == "Cutscene")
+        if (name == "Tutorial" || SceneManager.GetActiveScene().name == "Cutscene")
         {
             TriggerDialogue();
         }
-        else
-        {
-            StartCoroutine(LevelDialogue());
-        }
-    }
-
-    IEnumerator LevelDialogue()
-    {
-        yield return new WaitUntil(() => mainUI.GetPlayerState());
-        yield return new WaitUntil(() => mainUI.GetPlayerState().GetLevel() == id);
-        TriggerDialogue();
     }
 
     /* Called when you want to start dialogue */

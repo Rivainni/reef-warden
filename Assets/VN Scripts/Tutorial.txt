@@ -15,10 +15,12 @@ Happy: Speaking of tourists, we just got word that there is an unidentified ship
 Happy: Probably tourists, but we’re still not sure cause we still don’t have an AIS a.k.a. the Automatic Identification System.
 Happy: We really need to get that thing as soon as we can, Manuel keeps on bugging us about that.
 [ACTION=InspectTourist1]Happy: There they are. Yeah they're tourists, you can see that they know the protocol to head towards marked buoys to indicate safe areas that they can go to.
-Concerned: Ok, we need to do an inspection. Right click on them and click ‘Inspect Tourists’. Check their permits.
-Concerned: If it does then we can let them go, but if it doesn’t then we need to deny them further entry.
+Concerned: Ok, we need to do an inspection. Move next to them, then right click on them and click ‘Inspect Tourists’. Check their permits.
+Concerned: If these hold up then we can let them go, but if it not, they need to pay a fine.
 Concerned: We also need to report to the Management Office in the mainland about our inspections if ever we might face up against violators in court.
-[ACTION=InspectTourist2]Idle: As soon as we’re done, we need to get back to the station.
+[ACTION=InspectTourist2]Idle: We then need to follow it to its destination buoy. They need our help with mooring.
+Happy: Like last time, move up to them and right-click and select 'Moor'. Wait for their tile to glow red.
+[ACTION=InspectTourist3]Idle: As soon as we’re done, we need to get back to the station.
 Concerned: Manuel said on the radio that we need to setup the planned Radar before it gets dark.
 [ACTION=MoveBack]3: Ok now we’re here, go to the build menu to start building the Radar--!
 Concerned: Ohh right! We need research, we can’t build it without knowing anything about it.
@@ -29,6 +31,7 @@ Happy: Click on the Research button, the magnifying glass, then click on the Rad
 Idle: So I’m going to send the report to the Office about this possible confrontation with violators.
 Concerned: This is going to be a hassle in court and for Julio haha, since he is the Protocol Officer.
 Happy: Go on and hurry to the boat! We need to get to them before they start damaging the marine life.
+Idle: Go on and hurry to the boat! We need to get to them before they start damaging the marine life.
 [ACTION=CatchFisherman]3: Now we’ve caught them, we have to check on the reef if they did any damage.
 Concerned: Go to the reefs and check their health.
 [ACTION=CheckReefHealth]3: No damage? That’s good to hear, imagine if these guys actually planned on doing dangerous stuff rather than just catching fishes.

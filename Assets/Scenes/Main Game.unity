@@ -500,7 +500,6 @@ Transform:
   - {fileID: 1296624402}
   - {fileID: 772858388}
   - {fileID: 1878738063}
-  - {fileID: 1250712681}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1176,6 +1175,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6db1cb787a1e9e840a07c4cd6f6e18e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &647917549
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 647917550}
+  - component: {fileID: 647917552}
+  - component: {fileID: 647917551}
+  m_Layer: 5
+  m_Name: Ranger Station
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &647917550
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647917549}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2758738053191230345}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -0.2858}
+  m_SizeDelta: {x: 1920, y: 1080}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &647917551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647917549}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.46666667}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: f23d3305b6716d64b974c1058bf27c85, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &647917552
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647917549}
+  m_CullTransparentMesh: 1
 --- !u!1 &664731475
 GameObject:
   m_ObjectHideFlags: 0
@@ -1451,7 +1525,7 @@ GameObject:
   - component: {fileID: 772858388}
   - component: {fileID: 772858389}
   m_Layer: 0
-  m_Name: Level 4
+  m_Name: Ship Spawning
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1483,8 +1557,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7880781563a481443b76fcc83d05e2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TextFileAsset: {fileID: 4900000, guid: a42503f95aeca3f45972fd10a501cc1c, type: 3}
-  id: 3
+  TextFileAsset: {fileID: 4900000, guid: f57a12d207bbdbd4e905dffa2c2425d4, type: 3}
+  name: Ship Spawning
   mainUI: {fileID: 2078076715}
 --- !u!1 &842104298
 GameObject:
@@ -2127,52 +2201,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1250712680
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1250712681}
-  - component: {fileID: 1250712682}
-  m_Layer: 0
-  m_Name: Ending
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1250712681
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1250712680}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 234571798}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1250712682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1250712680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7880781563a481443b76fcc83d05e2ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TextFileAsset: {fileID: 4900000, guid: a42503f95aeca3f45972fd10a501cc1c, type: 3}
-  id: 5
-  mainUI: {fileID: 2078076715}
 --- !u!1 &1296624401
 GameObject:
   m_ObjectHideFlags: 0
@@ -2184,7 +2212,7 @@ GameObject:
   - component: {fileID: 1296624402}
   - component: {fileID: 1296624403}
   m_Layer: 0
-  m_Name: Level 3
+  m_Name: Bad End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2216,8 +2244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7880781563a481443b76fcc83d05e2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TextFileAsset: {fileID: 4900000, guid: a42503f95aeca3f45972fd10a501cc1c, type: 3}
-  id: 2
+  TextFileAsset: {fileID: 4900000, guid: 11a943b506931ae4a9487a1a5c9b5560, type: 3}
+  name: Bad End
   mainUI: {fileID: 2078076715}
 --- !u!1 &1327331566
 GameObject:
@@ -2926,7 +2954,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 5bb17eaba0ea4d9459bb3b72dd339a85, type: 3}
-  id: 0
+  name: Tutorial
   mainUI: {fileID: 2078076715}
 --- !u!1 &1622912344
 GameObject:
@@ -3291,7 +3319,7 @@ GameObject:
   - component: {fileID: 1878738063}
   - component: {fileID: 1878738064}
   m_Layer: 0
-  m_Name: Level 5
+  m_Name: Checking Reef
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3323,8 +3351,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7880781563a481443b76fcc83d05e2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TextFileAsset: {fileID: 4900000, guid: a42503f95aeca3f45972fd10a501cc1c, type: 3}
-  id: 4
+  TextFileAsset: {fileID: 4900000, guid: 5965036558017e64186f5b5b9a314a56, type: 3}
+  name: Checking Reef
   mainUI: {fileID: 2078076715}
 --- !u!1 &1898122666
 GameObject:
@@ -3485,7 +3513,7 @@ GameObject:
   - component: {fileID: 1999322273}
   - component: {fileID: 1999322274}
   m_Layer: 0
-  m_Name: Level 2
+  m_Name: Good End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3517,8 +3545,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7880781563a481443b76fcc83d05e2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TextFileAsset: {fileID: 4900000, guid: a42503f95aeca3f45972fd10a501cc1c, type: 3}
-  id: 1
+  TextFileAsset: {fileID: 4900000, guid: 62e4c3f905c8b7a498a0855bbdd5713f, type: 3}
+  name: Good End
   mainUI: {fileID: 2078076715}
 --- !u!1 &2015350035
 GameObject:
@@ -4064,6 +4092,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1327331567}
+  - {fileID: 647917550}
   - {fileID: 2758738053770305529}
   - {fileID: 2758738054506275771}
   - {fileID: 2758738053584986508}
@@ -4247,7 +4276,7 @@ RectTransform:
   m_Children:
   - {fileID: 1841070978}
   m_Father: {fileID: 2758738053191230345}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -4367,7 +4396,7 @@ Transform:
   - {fileID: 1652910333}
   - {fileID: 26483382}
   m_Father: {fileID: 2758738053191230345}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2758738053770305530
 GameObject:
@@ -4593,7 +4622,7 @@ RectTransform:
   m_Children:
   - {fileID: 2758738053687724527}
   m_Father: {fileID: 2758738053191230345}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -4710,7 +4739,7 @@ RectTransform:
   m_Children:
   - {fileID: 536372649}
   m_Father: {fileID: 2758738053191230345}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}

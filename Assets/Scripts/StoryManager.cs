@@ -76,15 +76,43 @@ public class StoryManager : MonoBehaviour
             else if (action.Contains("EnterCharacter"))
             {
                 string newCharacter = action.Substring(14);
+                if (!cutscene)
+                {
+                    characterName.text = newCharacter;
+                }
                 AddSprite(newCharacter);
             }
             else if (action == "ExitCharacter")
             {
                 secondarySprite.enabled = false;
             }
+            else if (action == "BG")
+            {
+                Image bg1 = storyUI.transform.GetChild(1).GetComponent<Image>();
+                bg1.enabled = true;
+
+                Image bg0 = storyUI.transform.GetChild(0).GetComponent<Image>();
+                bg0.enabled = false;
+            }
             else if (mainUI.GetPlayerState().CheckTutorial())
             {
                 Tutorial(action);
+            }
+
+            PrintDialogue();
+        }
+        else if (inputStream.Peek().Contains("[CONDITIONAL="))
+        {
+            string condition = inputStream.Peek();
+            condition = inputStream.Dequeue().Substring(condition.IndexOf('=') + 1, condition.IndexOf(']') - (condition.IndexOf('=') + 1));
+
+            if (condition == "UpgradeAIS" && mainUI.GetPlayerState().CheckBuilt("AIS"))
+            {
+
+            }
+            else if (condition == "Spotted")
+            {
+
             }
 
             PrintDialogue();
@@ -286,6 +314,19 @@ public class StoryManager : MonoBehaviour
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.GetSpawner().DestroyWaypoints();
+            }
+        }
+        else if (action == "InspectTourist3")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Help the tourist with mooring.");
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 1);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
                 mainUI.GetSpawner().DestroyWaypoints();

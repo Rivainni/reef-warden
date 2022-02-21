@@ -1,0 +1,4 @@
+[NAME=Diana]Idle: Base to (patrol boat codename), there’s a boat entering our Area of Jurisdiction over.
+Idle: Base to (patrol boat codename), the boat is identified to be a tourist boat, you guys know the drill on that one
+[EnterCharacterPaulo]Concerned: Copy that base
+EndQueue
