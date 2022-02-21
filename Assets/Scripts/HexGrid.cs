@@ -344,7 +344,7 @@ public class HexGrid : MonoBehaviour
     public void RemoveWaypoint(WaypointMarker waypointMarker)
     {
         waypoints.Remove(waypointMarker);
-        Destroy(waypointMarker);
+        waypointMarker.Die();
     }
 
     public void RemoveWaypoints()

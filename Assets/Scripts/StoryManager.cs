@@ -308,6 +308,7 @@ public class StoryManager : MonoBehaviour
         {
             storyUI.SetActive(false);
             mainUI.DisplayTutorialObjective("Research the RADAR.");
+            mainUI.GetSpawner().DestroyWaypoints();
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -353,6 +354,7 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.GetSpawner().DestroyWaypoints();
             }
         }
     }

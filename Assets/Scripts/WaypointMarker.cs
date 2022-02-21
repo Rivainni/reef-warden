@@ -46,4 +46,9 @@ public class WaypointMarker : MonoBehaviour
         // Update the marker's position
         img.transform.position = pos;
     }
+
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
 }
