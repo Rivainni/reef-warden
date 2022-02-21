@@ -1485,6 +1485,36 @@ MonoBehaviour:
   TextFileAsset: {fileID: 4900000, guid: a42503f95aeca3f45972fd10a501cc1c, type: 3}
   id: 3
   mainUI: {fileID: 2078076715}
+--- !u!1 &842104298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 842104299}
+  m_Layer: 0
+  m_Name: Main
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &842104299
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842104298}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 258.09515, y: 214.69485, z: 28.386368}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &883978068
 GameObject:
   m_ObjectHideFlags: 0
@@ -3295,6 +3325,36 @@ MonoBehaviour:
   TextFileAsset: {fileID: 4900000, guid: a42503f95aeca3f45972fd10a501cc1c, type: 3}
   id: 4
   mainUI: {fileID: 2078076715}
+--- !u!1 &1898122666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1898122667}
+  m_Layer: 0
+  m_Name: ChaseGame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1898122667
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898122666}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1969912867
 GameObject:
   m_ObjectHideFlags: 0
@@ -3681,6 +3741,7 @@ MonoBehaviour:
   timeController: {fileID: 2015350036}
   radarButton: {fileID: 89648778}
   objectivesDisplay: {fileID: 1375062249}
+  cameraController: {fileID: 576616952}
 --- !u!1 &2107274078
 GameObject:
   m_ObjectHideFlags: 0

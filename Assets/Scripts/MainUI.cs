@@ -30,6 +30,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
     [SerializeField] ObjectivesDisplay objectivesDisplay;
+    [SerializeField] CameraController cameraController;
 
     void Start()
     {
@@ -1051,5 +1052,10 @@ public class MainUI : MonoBehaviour
     {
         yield return new WaitUntil(() => currentState != null);
         UpdateUIElements();
+    }
+
+    public CameraController GetCameraController()
+    {
+        return cameraController;
     }
 }

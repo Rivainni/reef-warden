@@ -76,7 +76,11 @@ public class HexUnit : MonoBehaviour
             }
             location = value;
             value.Unit = this;
-            value.IncreaseVisibility();
+
+            if (IsDayBoat())
+            {
+                value.IncreaseVisibility();
+            }
 
             transform.localPosition = value.Position;
         }
@@ -106,7 +110,7 @@ public class HexUnit : MonoBehaviour
     const float travelSpeed = 2f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
-    Renderer renderer;
+    Renderer unitRenderer;
 
     // methods beyond this point
     void Start()
@@ -122,7 +126,7 @@ public class HexUnit : MonoBehaviour
         busy = false;
         interacted = false;
 
-        renderer = GetComponentInChildren<Renderer>();
+        unitRenderer = GetComponentInChildren<Renderer>();
     }
 
     public void ValidateLocation()
@@ -282,12 +286,12 @@ public class HexUnit : MonoBehaviour
         if (IsVisible)
         {
             IsVisible = false;
-            renderer.enabled = false;
+            unitRenderer.enabled = false;
         }
         else
         {
             IsVisible = true;
-            renderer.enabled = true;
+            unitRenderer.enabled = true;
         }
     }
 
@@ -311,6 +315,11 @@ public class HexUnit : MonoBehaviour
     public bool IsPatrolBoat()
     {
         return UnitType.Contains("Patrol Boat");
+    }
+
+    public bool IsDayBoat()
+    {
+        return IsPlayerControlled() || UnitType.Contains("Tourist Boat");
     }
 
     public AIBehaviour GetAIBehaviour()

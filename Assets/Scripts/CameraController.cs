@@ -17,9 +17,6 @@ public class CameraController : MonoBehaviour
     Vector3 newPosition;
     Quaternion newRotation;
     Vector3 newZoom;
-
-    Vector3 dragStartPosition;
-    Vector3 dragCurrentPosition;
     Vector3 rotateStartPosition;
     Vector3 rotateCurrentPosition;
 
@@ -32,21 +29,26 @@ public class CameraController : MonoBehaviour
     float maxZoomZ;
     float maxZ;
     bool edgeToggle;
+    bool freeze;
 
     void Start()
     {
+        freeze = false;
         SetClamps();
         newPosition = transform.position;
         newRotation = transform.rotation;
-        // newZoom = new Vector3(cameraTransform.localPosition.x, cameraTransform.localPosition.y + 20.0f, cameraTransform.localPosition.z);
         newZoom = cameraTransform.localPosition;
         edgeToggle = true;
     }
 
     void Update()
     {
-        HandleMouseButtons();
-        HandleMovementInput();
+        // allows us to disable the camera movement when needed
+        if (!freeze)
+        {
+            HandleMouseButtons();
+            HandleMovementInput();
+        }
     }
 
     void HandleMouseButtons()
@@ -178,5 +180,10 @@ public class CameraController : MonoBehaviour
         maxZoomY = 35.0f;
         maxZoomZ = 80.0f;
         maxZ = 836f;
+    }
+
+    public void FreezeCamera(bool toggle)
+    {
+        freeze = toggle;
     }
 }

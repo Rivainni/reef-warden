@@ -28,6 +28,7 @@ public class StoryManager : MonoBehaviour
 
     public void StartDialogue(Queue<string> dialogue)
     {
+        mainUI.GetCameraController().FreezeCamera(true); // freeze input
         storyUI.SetActive(true); // open the dialogue box
         inputStream = dialogue; // store the dialogue from dialogue trigger
         PrintDialogue(); // Prints out the first line of dialogue
@@ -83,16 +84,6 @@ public class StoryManager : MonoBehaviour
                 Tutorial(action);
             }
 
-            // if (SceneManager.GetActiveScene().name == "Main Game")
-            // {
-            //     mainUI.GetPlayerState().StartTutorial();
-            //     if (mainUI.GetPlayerState().CheckTutorial())
-            //     {
-            //         Debug.Log("WTF");
-            //         Tutorial(action);
-            //     }
-            // }
-
             PrintDialogue();
         }
         else if (inputStream.Peek().Contains("{0}"))
@@ -137,6 +128,7 @@ public class StoryManager : MonoBehaviour
 
     public void EndDialogue()
     {
+        mainUI.GetCameraController().FreezeCamera(false);
         storyText.text = "";
         characterName.text = "";
         inputStream.Clear();
@@ -190,6 +182,7 @@ public class StoryManager : MonoBehaviour
     // separated tutorial because it's built different
     void Tutorial(string action)
     {
+        mainUI.GetCameraController().FreezeCamera(false);
         // TUTORIAL STUFF
         if (action == "WASD")
         {
@@ -201,6 +194,7 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S));
                 yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "QE")
@@ -213,6 +207,7 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E));
                 yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "RF")
@@ -225,6 +220,7 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.R) || Input.GetKey(KeyCode.F) || Input.mouseScrollDelta.y != 0);
                 yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "Patrol")
@@ -236,17 +232,20 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetSecurity() > 50);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "CheckReefHealth")
         {
             storyUI.SetActive(false);
             mainUI.DisplayTutorialObjective("Check the reef health.");
+
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "InspectTourist1")
@@ -261,6 +260,7 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(15.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "InspectTourist2")
@@ -272,6 +272,7 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "MoveBack")
@@ -283,6 +284,7 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "Research")
@@ -294,6 +296,7 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().CheckResearched("RADAR"));
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "Build")
@@ -305,6 +308,7 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "UseRADAR")
@@ -316,6 +320,7 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetRadarState());
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "CatchFisherman")
@@ -329,6 +334,7 @@ public class StoryManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
     }

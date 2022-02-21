@@ -94,15 +94,16 @@ public class HexGrid : MonoBehaviour
             }
         }
 
+        // for adding the images
         for (int i = 0; i < cells.Length; i++)
         {
             switch (GlobalCellCheck.IsAdjacentToBuoy(cells[i]))
             {
                 case 1:
-                    cells[i].adjacency = 1;
+                    cells[i].Adjacency = 1;
                     break;
                 case 2:
-                    cells[i].adjacency = 2;
+                    cells[i].Adjacency = 2;
                     break;
             }
         }
