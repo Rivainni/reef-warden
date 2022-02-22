@@ -296,6 +296,7 @@ public class StoryManager : MonoBehaviour
             mainUI.GetSpawner().TutorialSpawn("Tourist Boat");
             mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[300]);
             mainUI.GetPlayerState().AddTourists(1);
+            mainUI.GetPlayerState().ToggleDaySpawn();
             mainUI.UpdateUIElements();
             mainUI.DisplayTutorialObjective("Look for the tourist.");
             StartCoroutine(WaitForPlayer());
@@ -389,6 +390,7 @@ public class StoryManager : MonoBehaviour
             mainUI.GetSpawner().TutorialSpawn("Fishing Boat");
             mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[299]);
             mainUI.GetPlayerState().AddFisherman(1);
+            mainUI.GetPlayerState().ToggleNightSpawn();
             mainUI.DisplayTutorialObjective("Catch the Fishing Boat.");
             IEnumerator WaitForPlayer()
             {

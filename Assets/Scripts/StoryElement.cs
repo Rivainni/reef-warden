@@ -19,7 +19,7 @@ public class StoryElement : MonoBehaviour
     }
 
     /* Called when you want to start dialogue */
-    void TriggerDialogue()
+    public void TriggerDialogue()
     {
         ReadTextFile(); // loads in the text file
         FindObjectOfType<StoryManager>().StartDialogue(dialogue); // Accesses Dialogue Manager and Starts Dialogue

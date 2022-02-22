@@ -356,6 +356,18 @@ public class HexGrid : MonoBehaviour
         waypoints.Clear();
     }
 
+    public WaypointMarker FindWaypoint(HexUnit unit)
+    {
+        for (int i = 0; i < waypoints.Count; i++)
+        {
+            if (waypoints[i].target == unit.transform)
+            {
+                return waypoints[i];
+            }
+        }
+        return null;
+    }
+
     public void ResetPoints()
     {
         for (int i = 0; i < units.Count; i++)

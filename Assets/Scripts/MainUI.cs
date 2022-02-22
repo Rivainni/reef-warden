@@ -30,6 +30,8 @@ public class MainUI : MonoBehaviour
     [SerializeField] Button radarButton;
     [SerializeField] ObjectivesDisplay objectivesDisplay;
     [SerializeField] CameraController cameraController;
+    // allows us to access the dialogue stuff
+    [SerializeField] StoryElement[] storyTriggers;
     bool freeze;
 
     void Start()
@@ -396,6 +398,18 @@ public class MainUI : MonoBehaviour
     void CheckHealth(HexCell destination, GameObject remove, int reefStructure)
     {
         currentState.incrementLevelCounters("health");
+        if (!currentState.CheckTutorial())
+        {
+            if (currentState.ReefDamaged())
+            {
+                storyTriggers[5].TriggerDialogue();
+            }
+            else
+            {
+                storyTriggers[6].TriggerDialogue();
+            }
+        }
+
         currentState.UpdateHealth();
         currentState.AddResearch(250);
         currentState.ResetCD("CH" + reefStructure);
@@ -730,7 +744,131 @@ public class MainUI : MonoBehaviour
         timeController.ForwardTime();
         StartCoroutine(Movement(clicked));
 
-        // makes everything visible again
+        foreach (HexUnit unit in grid.GetUnits())
+        {
+            if (unit.UnitType == "Tourist Boat" || unit.UnitType == "Fishing Boat")
+            {
+                AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
+                currentBehaviour.Execute();
+            }
+        }
+        SpawnUnits();
+        spawner.DestroyUnits();
+        UpdateUIElements();
+
+        if (currentState.GetHealth() <= 0)
+        {
+            GenerateEndScreen("Defeat.");
+            storyTriggers[2].TriggerDialogue();
+        }
+        else if (currentState.CheckResearched("Total Protection"))
+        {
+            GenerateEndScreen("Victory!");
+            storyTriggers[1].TriggerDialogue();
+        }
+    }
+
+    void GenerateEndScreen(string text)
+    {
+        // add reasoning behind victory/defeat
+        GameObject end = Instantiate(endPrefab, transform.position, Quaternion.identity, transform);
+        Button button = end.transform.GetChild(1).gameObject.GetComponent<Button>();
+        Text curr = button.GetComponentInChildren<Text>();
+
+        curr.text = text;
+    }
+
+    void SpawnUnits()
+    {
+        if (!currentState.CheckTutorial())
+        {
+            int max;
+            if (currentState.GetLevel() == 1)
+            {
+                max = 1;
+            }
+            else
+            {
+                max = currentState.GetLevel() / 2;
+            }
+
+            if (currentState.SpawnedDay())
+            {
+                currentState.AddDaySpawn();
+            }
+            if (currentState.SpawnedNight())
+            {
+                currentState.AddNightSpawn();
+            }
+
+            if (currentState.daySpawnCounter() >= 5)
+            {
+                currentState.ToggleDaySpawn();
+                currentState.ResetDaySpawn();
+            }
+
+            if (currentState.nightSpawnCounter() >= 5)
+            {
+                currentState.ToggleNightSpawn();
+                currentState.ResetNightSpawn();
+            }
+
+            if (timeController.IsDay() && !currentState.SpawnedDay())
+            {
+                currentState.ResetFisherman();
+                // foreach (HexUnit unit in grid.GetUnits())
+                // {
+                //     if (unit.UnitType == "Fishing Boat")
+                //     {
+                //         spawner.DestroyUnit(unit);
+                //     }
+                // }
+
+                if (currentState.GetTourists() == 0)
+                {
+                    currentState.SetTourists(max);
+                }
+
+                for (int i = 0; i < max; i++)
+                {
+                    spawner.RandomSpawn("Tourist Boat");
+                }
+
+                if (currentState.GetLevel() == 5 && currentState.FetchCD("R") == 0)
+                {
+                    spawner.RandomSpawn("Research Boat");
+                    currentState.ResetCD("R");
+                }
+
+                currentState.ToggleDaySpawn();
+                currentState.ResetDaySpawn();
+                storyTriggers[4].TriggerDialogue();
+            }
+            else if (!timeController.IsDay() && !currentState.SpawnedNight())
+            {
+                // int random = Random.Range(0, max * ((int)currentState.GetSecurity() / 100));
+
+                for (int i = 0; i < max; i++)
+                {
+                    spawner.RandomSpawn("Fishing Boat");
+                    currentState.AddFisherman(1);
+                }
+
+                currentState.ToggleNightSpawn();
+                currentState.ResetNightSpawn();
+                storyTriggers[3].TriggerDialogue();
+            }
+        }
+    }
+
+    IEnumerator Movement(Button clicked)
+    {
+        clicked.interactable = false;
+        yield return new WaitUntil(() => CheckMovement() == false);
+        yield return new WaitUntil(() => timeController.CheckPause());
+        clicked.interactable = true;
+
+        // makes everything visible again during daytime
         if (timeController.IsDay())
         {
             for (int i = 0; i < grid.GetUnits().Count; i++)
@@ -751,93 +889,6 @@ public class MainUI : MonoBehaviour
                 }
             }
         }
-
-        foreach (HexUnit unit in grid.GetUnits())
-        {
-            if (unit.UnitType == "Tourist Boat" || unit.UnitType == "Fishing Boat")
-            {
-                AIBehaviour currentBehaviour = unit.gameObject.GetComponent<AIBehaviour>();
-                currentBehaviour.Execute();
-            }
-        }
-        SpawnUnits();
-        spawner.DestroyUnits();
-        UpdateUIElements();
-
-        if (currentState.GetHealth() <= 0)
-        {
-            GenerateEndScreen("Defeat.");
-        }
-        else if (currentState.CheckResearched("Total Protection"))
-        {
-            GenerateEndScreen("Victory!");
-        }
-    }
-
-    void GenerateEndScreen(string text)
-    {
-        GameObject end = Instantiate(endPrefab, transform.position, Quaternion.identity, transform);
-        Button button = end.transform.GetChild(1).gameObject.GetComponent<Button>();
-        Text curr = button.GetComponentInChildren<Text>();
-
-        curr.text = text;
-    }
-
-    void SpawnUnits()
-    {
-        if (!currentState.CheckTutorial())
-        {
-            if (timeController.IsDay() && !currentState.SpawnedDay())
-            {
-                currentState.ResetFisherman();
-                foreach (HexUnit unit in grid.GetUnits())
-                {
-                    if (unit.UnitType == "Fishing Boat")
-                    {
-                        spawner.DestroyUnit(unit);
-                    }
-                }
-                int max = currentState.GetLevel();
-                if (currentState.GetTourists() == 0)
-                {
-                    currentState.SetTourists(max);
-                }
-
-                for (int i = 0; i < max; i++)
-                {
-                    spawner.RandomSpawn("Tourist Boat");
-                }
-
-                if (currentState.GetLevel() == 5 && currentState.FetchCD("R") == 0)
-                {
-                    spawner.RandomSpawn("Research Boat");
-                    currentState.ResetCD("R");
-                }
-
-                currentState.ToggleDaySpawn();
-            }
-            else if (!timeController.IsDay() && !currentState.SpawnedNight())
-            {
-                int max = currentState.GetLevel();
-                // int random = Random.Range(0, max * ((int)currentState.GetSecurity() / 100));
-
-                for (int i = 0; i < max; i++)
-                {
-                    spawner.RandomSpawn("Fishing Boat");
-                    currentState.AddFisherman(1);
-                }
-
-                currentState.ToggleNightSpawn();
-            }
-        }
-    }
-
-    IEnumerator Movement(Button clicked)
-    {
-        clicked.interactable = false;
-        yield return new WaitUntil(() => CheckMovement() == false);
-        yield return new WaitUntil(() => timeController.CheckPause());
-        clicked.interactable = true;
     }
 
     bool CheckMovement()

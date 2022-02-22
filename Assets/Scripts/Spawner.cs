@@ -61,6 +61,12 @@ public class Spawner : MonoBehaviour
     public void DestroyUnit(HexUnit unit)
     {
         destructionQueue.Enqueue(unit);
+        WaypointMarker activeWaypoint = hexGrid.FindWaypoint(unit);
+
+        if (activeWaypoint != null)
+        {
+            DestroyWaypoint(activeWaypoint);
+        }
     }
 
     public void DestroyUnits()
@@ -97,6 +103,11 @@ public class Spawner : MonoBehaviour
         }
 
         Debug.Log("Spawned " + unitType);
+
+        if (unitType == "Tourist Boat")
+        {
+            AddUnitWaypoint(cell);
+        }
     }
 
     public void TutorialSpawn(string unitType)

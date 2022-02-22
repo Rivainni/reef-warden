@@ -80,6 +80,7 @@ public class HexUnit : MonoBehaviour
             if (IsDayBoat())
             {
                 value.IncreaseVisibility();
+                // Grid.IncreaseVisibility(value, visionRange);
             }
 
             transform.localPosition = value.Position;

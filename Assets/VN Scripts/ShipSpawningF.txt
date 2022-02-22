@@ -1,6 +1,6 @@
 [NAME=Diana]Idle: Base to (patrol boat codename), there’s a boat entering our Area of Jurisdiction over
 [CONDITIONAL=UpgradeAIS]Idle: Base to (patrol boat codename), it seems the boat is a (type of ship) over
 [CONDITIONAL=Spotted] Got a visual on the fishermen.
-[EnterCharacterPaulo]Concerned: They’re going for the reef!
-[EnterCharacterJulia]Concerned: Let’s get those guys!!
+[ACTION=EnterCharacterPaulo]Concerned: They’re going for the reef!
+[ACTION=EnterCharacterJulia]Concerned: Let’s get those guys!!
 EndQueue

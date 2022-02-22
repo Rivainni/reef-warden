@@ -49,6 +49,8 @@ public class PlayerState : ScriptableObject
     bool SS = false;
     bool daySpawn = false;
     bool nightSpawn = false;
+    int sinceDaySpawn = 0;
+    int sinceNightSpawn = 0;
 
     // counters for objectives
     int levelTurns = 0;
@@ -115,6 +117,11 @@ public class PlayerState : ScriptableObject
     public float GetHealth()
     {
         return seenReefHealth;
+    }
+
+    public bool ReefDamaged()
+    {
+        return seenReefHealth > trueReefHealth;
     }
 
     public int GetTurn()
@@ -806,6 +813,16 @@ public class PlayerState : ScriptableObject
         return nightSpawn;
     }
 
+    public int daySpawnCounter()
+    {
+        return sinceDaySpawn;
+    }
+
+    public int nightSpawnCounter()
+    {
+        return sinceNightSpawn;
+    }
+
     public void ToggleDaySpawn()
     {
         if (daySpawn)
@@ -828,5 +845,24 @@ public class PlayerState : ScriptableObject
         {
             nightSpawn = true;
         }
+    }
+
+    public void ResetDaySpawn()
+    {
+        sinceDaySpawn = 0;
+    }
+    public void ResetNightSpawn()
+    {
+        sinceNightSpawn = 0;
+    }
+
+    public void AddDaySpawn()
+    {
+        sinceDaySpawn++;
+    }
+
+    public void AddNightSpawn()
+    {
+        sinceNightSpawn++;
     }
 }
