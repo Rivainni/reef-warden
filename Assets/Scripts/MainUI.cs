@@ -758,24 +758,25 @@ public class MainUI : MonoBehaviour
 
         if (currentState.GetHealth() <= 0)
         {
-            GenerateEndScreen("Defeat.");
+            GenerateEndScreen("Defeat.", "The reef has been irreparably damaged.");
             storyTriggers[2].TriggerDialogue();
         }
         else if (currentState.CheckResearched("Total Protection"))
         {
-            GenerateEndScreen("Victory!");
+            GenerateEndScreen("Victory!", "You have managed to defend the reef.");
             storyTriggers[1].TriggerDialogue();
         }
     }
 
-    void GenerateEndScreen(string text)
+    void GenerateEndScreen(string state, string reason)
     {
         // add reasoning behind victory/defeat
         GameObject end = Instantiate(endPrefab, transform.position, Quaternion.identity, transform);
-        Button button = end.transform.GetChild(1).gameObject.GetComponent<Button>();
-        Text curr = button.GetComponentInChildren<Text>();
+        Text textA = end.transform.GetChild(0).gameObject.GetComponent<Text>();
+        Text textB = end.transform.GetChild(1).gameObject.GetComponent<Text>();
 
-        curr.text = text;
+        textA.text = state;
+        textB.text = reason;
     }
 
     void SpawnUnits()
