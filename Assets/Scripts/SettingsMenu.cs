@@ -14,7 +14,7 @@ public class SettingsMenu : MonoBehaviour
     float currentScale;
     Resolution[] resolutions;
 
-    async void Start()
+    void Start()
     {
         resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
