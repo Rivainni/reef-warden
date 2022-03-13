@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject settingsPrefab;
     void Start()
     {
-
+        TextRW.ReadSettings();
     }
 
     public void StartGame()
@@ -19,12 +19,6 @@ public class MainMenu : MonoBehaviour
     public void Skip()
     {
         SceneManager.LoadScene("Testing");
-    }
-
-
-    public void Settings()
-    {
-
     }
 
     public void Exit()

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public static class TextRW
 {
@@ -25,6 +26,7 @@ public static class TextRW
     static List<string> level3Objectives = new List<string>();
     static List<string> level4Objectives = new List<string>();
     static List<string> level5Objectives = new List<string>();
+    static int[] currentSettings = { 1920, 1080, 1, 100, 100 };
 
     public static List<string> GetObjectives(int level)
     {
@@ -156,6 +158,78 @@ public static class TextRW
                     {
                         level5Objectives.Add(line);
                     }
+                }
+            }
+        }
+    }
+
+    public static int[] GetSettings()
+    {
+        return currentSettings;
+    }
+
+    public static void WriteSettings(int resolutionW, int resolutionH, int fullscreen, int scale, int volume)
+    {
+        currentSettings[0] = resolutionW;
+        currentSettings[1] = resolutionH;
+        currentSettings[2] = fullscreen;
+        currentSettings[3] = scale;
+        currentSettings[4] = volume;
+
+        string path = Path.Combine(Application.persistentDataPath, "settings.txt");
+        using (StreamWriter writer = new StreamWriter(File.Open(path, FileMode.Create)))
+        {
+            writer.WriteLine("[ResolutionW]");
+            writer.WriteLine(currentSettings[0]);
+            writer.WriteLine("[ResolutionH]");
+            writer.WriteLine(currentSettings[1]);
+            writer.WriteLine("[Fullscreen]");
+            writer.WriteLine(currentSettings[2]);
+            writer.WriteLine("[Scale]");
+            writer.WriteLine(currentSettings[3]);
+            writer.WriteLine("[Volume]");
+            writer.WriteLine(currentSettings[4]);
+        }
+    }
+
+    public static void ReadSettings()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "settings.txt");
+        string txt;
+        using (StreamReader reader = new StreamReader(File.OpenRead(path)))
+        {
+            txt = reader.ReadToEnd();
+        }
+        string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());
+
+        string currentSetting = "";
+        foreach (string line in lines)
+        {
+            if (line.StartsWith("["))
+            {
+                currentSetting = line.Substring(1, line.IndexOf(']') - 1);
+            }
+            else
+            {
+                if (currentSetting == "ResolutionW")
+                {
+                    currentSettings[0] = Int32.Parse(line);
+                }
+                else if (currentSetting == "ResolutionH")
+                {
+                    currentSettings[1] = Int32.Parse(line);
+                }
+                else if (currentSetting == "Fullscreen")
+                {
+                    currentSettings[2] = Int32.Parse(line);
+                }
+                else if (currentSetting == "Scale")
+                {
+                    currentSettings[3] = Int32.Parse(line);
+                }
+                else if (currentSetting == "Volume")
+                {
+                    currentSettings[4] = Int32.Parse(line);
                 }
             }
         }

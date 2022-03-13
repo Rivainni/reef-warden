@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
@@ -12,8 +13,10 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] Dropdown resolutionDropdown;
     float currentVolume;
     float currentScale;
+    bool currentFullscreen;
+    Resolution currentResolution;
     Resolution[] resolutions;
-
+    int[] currentSettings;
     void Start()
     {
         resolutions = Screen.resolutions;
@@ -53,18 +56,20 @@ public class SettingsMenu : MonoBehaviour
 
     public void SetFullScreen(bool isFullscreen)
     {
-        Screen.fullScreen = isFullscreen;
+        currentFullscreen = isFullscreen;
     }
 
     public void SetResolution(int resolutionIndex)
     {
-        Resolution resolution = resolutions[resolutionIndex];
-        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
+        currentResolution = resolutions[resolutionIndex];
     }
 
     public void Save()
     {
+        Screen.SetResolution(currentResolution.width, currentResolution.height, Screen.fullScreen);
+        Screen.fullScreen = currentFullscreen;
         audioMixer.SetFloat("volume", currentVolume);
+        TextRW.WriteSettings(currentResolution.width, currentResolution.height, Convert.ToInt32(currentFullscreen), (int)currentScale, (int)currentVolume);
     }
 
     public void Cancel()
