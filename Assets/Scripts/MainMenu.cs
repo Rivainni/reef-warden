@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] GameObject settingsPrefab;
     void Start()
     {
-        TextRW.ReadSettings();
+
     }
 
     public void StartGame()
@@ -19,6 +19,11 @@ public class MainMenu : MonoBehaviour
     public void Skip()
     {
         SceneManager.LoadScene("Testing");
+    }
+
+    public void Settings()
+    {
+        TextRW.ReadSettings();
     }
 
     public void Exit()

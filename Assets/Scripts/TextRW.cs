@@ -168,6 +168,11 @@ public static class TextRW
         return currentSettings;
     }
 
+    public static int GetUIScale()
+    {
+        return currentSettings[3];
+    }
+
     public static void WriteSettings(int resolutionW, int resolutionH, int fullscreen, int scale, int volume)
     {
         currentSettings[0] = resolutionW;
@@ -176,7 +181,7 @@ public static class TextRW
         currentSettings[3] = scale;
         currentSettings[4] = volume;
 
-        string path = Path.Combine(Application.persistentDataPath, "settings.txt");
+        string path = Path.Combine(Application.dataPath, "settings.txt");
         using (StreamWriter writer = new StreamWriter(File.Open(path, FileMode.Create)))
         {
             writer.WriteLine("[ResolutionW]");
@@ -192,16 +197,31 @@ public static class TextRW
         }
     }
 
-    public static void ReadSettings()
+    public static async void ReadSettings()
     {
-        string path = Path.Combine(Application.persistentDataPath, "settings.txt");
-        string txt;
-        using (StreamReader reader = new StreamReader(File.OpenRead(path)))
+        string path = Path.Combine(Application.dataPath, "settings.txt");
+        string txt = "";
+        try
         {
-            txt = reader.ReadToEnd();
+            using (StreamReader reader = new StreamReader(File.OpenRead(path)))
+            {
+                txt = reader.ReadToEnd();
+            }
         }
-        string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());
+        catch (FileNotFoundException e)
+        {
+            TextRW.WriteSettings(Screen.currentResolution.width, Screen.currentResolution.height, 1, 100, 100);
+        }
 
+        string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());
+        if (lines.Length > 1)
+        {
+            ReadSettings(lines);
+        }
+    }
+
+    static void ReadSettings(string[] lines)
+    {
         string currentSetting = "";
         foreach (string line in lines)
         {
@@ -211,25 +231,30 @@ public static class TextRW
             }
             else
             {
-                if (currentSetting == "ResolutionW")
+                int parsed = 0;
+                if (Int32.TryParse(line, out parsed))
                 {
-                    currentSettings[0] = Int32.Parse(line);
-                }
-                else if (currentSetting == "ResolutionH")
-                {
-                    currentSettings[1] = Int32.Parse(line);
-                }
-                else if (currentSetting == "Fullscreen")
-                {
-                    currentSettings[2] = Int32.Parse(line);
-                }
-                else if (currentSetting == "Scale")
-                {
-                    currentSettings[3] = Int32.Parse(line);
-                }
-                else if (currentSetting == "Volume")
-                {
-                    currentSettings[4] = Int32.Parse(line);
+                    if (currentSetting == "ResolutionW")
+                    {
+                        currentSettings[0] = parsed;
+                    }
+                    else if (currentSetting == "ResolutionH")
+                    {
+                        currentSettings[1] = parsed;
+                    }
+                    else if (currentSetting == "Fullscreen")
+                    {
+                        currentSettings[2] = parsed;
+                    }
+                    else if (currentSetting == "Scale")
+                    {
+                        currentSettings[3] = parsed;
+                        Debug.Log(parsed);
+                    }
+                    else if (currentSetting == "Volume")
+                    {
+                        currentSettings[4] = parsed;
+                    }
                 }
             }
         }

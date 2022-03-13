@@ -1,0 +1,10 @@
+[ResolutionW]
+1920
+[ResolutionH]
+1080
+[Fullscreen]
+0
+[Scale]
+143
+[Volume]
+42
