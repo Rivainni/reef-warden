@@ -80,7 +80,7 @@ public class HexUnit : MonoBehaviour
             if (IsDayBoat())
             {
                 value.IncreaseVisibility();
-                // Grid.IncreaseVisibility(value, visionRange);
+                Grid.IncreaseVisibility(value, visionRange);
             }
 
             transform.localPosition = value.Position;
@@ -113,7 +113,11 @@ public class HexUnit : MonoBehaviour
     List<HexCell> pathToTravel;
     Renderer unitRenderer;
 
-    // methods beyond this point
+    void Awake()
+    {
+        unitRenderer = GetComponentInChildren<Renderer>();
+    }
+
     void Start()
     {
         maxActionPoints = actionPoints;
@@ -126,8 +130,6 @@ public class HexUnit : MonoBehaviour
         IsVisible = true;
         busy = false;
         interacted = false;
-
-        unitRenderer = GetComponentInChildren<Renderer>();
     }
 
     public void ValidateLocation()
