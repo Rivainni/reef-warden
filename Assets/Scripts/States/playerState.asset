@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88ff1478f94882c498ecb045ff8c18a0, type: 3}
-  m_Name: initPlayer
+  m_Name: playerState
   m_EditorClassIdentifier: 
   username: 
   money: 60000

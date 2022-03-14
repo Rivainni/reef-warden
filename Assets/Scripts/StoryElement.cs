@@ -12,9 +12,13 @@ public class StoryElement : MonoBehaviour
 
     void Start()
     {
-        if (name == "Tutorial" || SceneManager.GetActiveScene().name == "Cutscene")
+        if (SceneManager.GetActiveScene().name == "Cutscene")
         {
             TriggerDialogue();
+        }
+        else if (SceneManager.GetActiveScene().name == "Main Game")
+        {
+            StartCoroutine(WaitForState());
         }
     }
 
@@ -50,5 +54,14 @@ public class StoryElement : MonoBehaviour
             }
         }
         dialogue.Enqueue("EndQueue");
+    }
+
+    IEnumerator WaitForState()
+    {
+        yield return new WaitUntil(() => mainUI.GetPlayerState() != null);
+        if (name == "Tutorial" && mainUI.GetPlayerState().CheckTutorial())
+        {
+            TriggerDialogue();
+        }
     }
 }

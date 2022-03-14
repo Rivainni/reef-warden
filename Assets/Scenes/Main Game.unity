@@ -787,12 +787,20 @@ MonoBehaviour:
   - Ranger Station
   - Buoy
   upgradeTypes:
+  - Upgrade
+  - AIS
+  - Basketball Court
   - RADAR
+  - Satellite Internet
   structurePrefabs:
   - {fileID: -7004922079092598185, guid: c5e298bea1d79974ab29c48130044abf, type: 3}
   - {fileID: 4681984382541474508, guid: b1fb8dc7bedb1364fb8cc7f77b0c48e1, type: 3}
   upgradePrefabs:
   - {fileID: 588401262421919019, guid: 946f04025eb07954c90f9aa2a6d6cc44, type: 3}
+  - {fileID: 588401262421919019, guid: 00c6b228ead9ed0498444d1243ca96fc, type: 3}
+  - {fileID: 588401262421919019, guid: b68d1e295e413e341bd720d95f2d0cb5, type: 3}
+  - {fileID: 588401262421919019, guid: 578bf7ef688d3cf459833de6efee9817, type: 3}
+  - {fileID: 588401262421919019, guid: 3b10566d1be359747a3b5d9f8d6f3419, type: 3}
 --- !u!4 &356808184
 Transform:
   m_ObjectHideFlags: 0

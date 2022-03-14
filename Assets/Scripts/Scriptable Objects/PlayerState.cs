@@ -43,7 +43,7 @@ public class PlayerState : ScriptableObject
     const float moraleLambda = 0.01f;
     const float securityLambda = 0.04f;
     bool radarActive = false;
-    bool inTutorial;
+    bool inTutorial = false;
     bool AIS = false;
     bool SAT = false;
     bool SS = false;
@@ -530,7 +530,11 @@ public class PlayerState : ScriptableObject
 
     public void Clean()
     {
-        inTutorial = true;
+        if (username == "")
+        {
+            username = "Juan";
+        }
+
         money = 10000;
         income = 0;
         research = 250;
@@ -542,7 +546,16 @@ public class PlayerState : ScriptableObject
         trueReefHealth = 100;
         seenReefHealth = 50;
         turn = 1;
-        level = 0;
+
+        if (inTutorial)
+        {
+            level = 0;
+        }
+        else
+        {
+            level = 1;
+        }
+
         checkHealthCD1 = 0;
         checkHealthCD2 = 0;
         checkHealthCD3 = 0;

@@ -37,8 +37,8 @@ public class MainUI : MonoBehaviour
     void Start()
     {
         freeze = false;
+        initState.Clean();
         currentState = initState;
-        currentState.Clean();
 
         if (!currentState.CheckTutorial())
         {

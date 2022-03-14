@@ -197,7 +197,7 @@ public static class TextRW
         }
     }
 
-    public static async void ReadSettings()
+    public static void ReadSettings()
     {
         string path = Path.Combine(Application.dataPath, "settings.txt");
         string txt = "";
