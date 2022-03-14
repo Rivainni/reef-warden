@@ -184,6 +184,14 @@ public class CameraController : MonoBehaviour
 
     public void FreezeCamera(bool toggle)
     {
+        if (toggle)
+        {
+            Debug.Log("Frozen!");
+        }
+        else
+        {
+            Debug.Log("Unfrozen.");
+        }
         freeze = toggle;
     }
 }
