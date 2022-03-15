@@ -340,6 +340,11 @@ public class HexUnit : MonoBehaviour
         interacted = true;
     }
 
+    public void FailedInteraction()
+    {
+        interacted = false;
+    }
+
     public bool HasInteracted()
     {
         return interacted;

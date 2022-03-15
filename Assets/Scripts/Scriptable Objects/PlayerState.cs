@@ -51,6 +51,7 @@ public class PlayerState : ScriptableObject
     bool nightSpawn = false;
     int sinceDaySpawn = 0;
     int sinceNightSpawn = 0;
+    int sinceLastHealthCheck = 0;
 
     // counters for objectives
     int levelTurns = 0;
@@ -176,7 +177,7 @@ public class PlayerState : ScriptableObject
 
     public void AdjustMoney(int factor)
     {
-        money += Mathf.RoundToInt(factor * (2 * morale));
+        money += Mathf.RoundToInt(factor + factor * morale);
     }
 
     public void AddResearch(int RP)
@@ -589,6 +590,7 @@ public class PlayerState : ScriptableObject
         turn++;
         incrementLevelCounters("level");
         money += income;
+        sinceLastHealthCheck++;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
 
@@ -836,6 +838,11 @@ public class PlayerState : ScriptableObject
         return sinceNightSpawn;
     }
 
+    public int GetLastHealthCheck()
+    {
+        return sinceLastHealthCheck;
+    }
+
     public void ToggleDaySpawn()
     {
         if (daySpawn)
@@ -877,5 +884,10 @@ public class PlayerState : ScriptableObject
     public void AddNightSpawn()
     {
         sinceNightSpawn++;
+    }
+
+    public void ResetHealthWarning()
+    {
+        sinceLastHealthCheck = 0;
     }
 }

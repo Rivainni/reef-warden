@@ -26,8 +26,11 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject valuesContainer;
     [SerializeField] GameObject queueDisplay;
     [SerializeField] GameObject endPrefab;
+    [SerializeField] GameObject pause;
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
+    [SerializeField] Button researchButton;
+    [SerializeField] Button endTurnButton;
     [SerializeField] ObjectivesDisplay objectivesDisplay;
     [SerializeField] CameraController cameraController;
     // allows us to access the dialogue stuff
@@ -85,9 +88,21 @@ public class MainUI : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            SceneManager.LoadScene("Main Menu");
+            if (pause.activeInHierarchy)
+            {
+                FreezeInput(false);
+                cameraController.FreezeCamera(false);
+                pause.SetActive(false);
+            }
+            else
+            {
+                FreezeInput(true);
+                cameraController.FreezeCamera(true);
+                pause.SetActive(true);
+            }
+            // SceneManager.LoadScene("Main Menu");
         }
     }
 
@@ -267,7 +282,10 @@ public class MainUI : MonoBehaviour
 
         if (contextMenuContent.Count > 0)
         {
+            contextMenuContent.Add("Close");
             GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+            FreezeInput(true);
+            cameraController.FreezeCamera(true);
 
             foreach (string item in contextMenuContent)
             {
@@ -330,12 +348,18 @@ public class MainUI : MonoBehaviour
                 {
                     currentButton.onClick.AddListener(() => DemolishUpgrade(contextMenu, cell));
                 }
+                else if (item == "Close")
+                {
+                    currentButton.onClick.AddListener(() => Close(contextMenu));
+                }
             }
         }
     }
 
     void AfterAction(GameObject remove)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Next", 0);
         DoMove();
         if (selectedUnit.IsPatrolBoat())
@@ -348,6 +372,8 @@ public class MainUI : MonoBehaviour
 
     void Inspect(HexCell target, GameObject remove)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         string message = "";
         if (target.Unit)
         {
@@ -397,6 +423,7 @@ public class MainUI : MonoBehaviour
 
     void CheckHealth(HexCell destination, GameObject remove, int reefStructure)
     {
+        currentState.ResetHealthWarning();
         currentState.incrementLevelCounters("health");
         if (!currentState.CheckTutorial())
         {
@@ -549,15 +576,43 @@ public class MainUI : MonoBehaviour
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
     {
-        spawner.DestroyUnit(target);
-        currentState.AddSecurity(2);
-        AfterAction(remove);
-        currentState.AddCatchScore();
+        if (currentState.GetSecurity() >= 35.0f)
+        {
+            spawner.DestroyUnit(target);
+            currentState.AddSecurity(2);
+            AfterAction(remove);
+            currentState.AddCatchScore();
+        }
+        else if (currentState.GetSecurity() >= 0.0f && currentState.GetSecurity() < 35.0f)
+        {
+            int random = Random.Range(0, 1);
+            switch (random)
+            {
+                case 0:
+                    currentState.SetMessage("Catch failed. They got away!");
+                    int current = currentState.GetTurn();
+                    IEnumerator WaitNextTurn()
+                    {
+                        yield return new WaitUntil(() => currentState.GetTurn() > current);
+                        target.FailedInteraction();
+                    }
+                    StartCoroutine(WaitNextTurn());
+                    break;
+                case 1:
+                    spawner.DestroyUnit(target);
+                    currentState.AddSecurity(2);
+                    AfterAction(remove);
+                    currentState.AddCatchScore();
+                    break;
+            }
+        }
         target.SetInteracted();
     }
 
     void DemolishUpgrade(GameObject remove, HexCell target)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         Destroy(remove);
         if (target.Upgrade.UpgradeType == "AIS")
         {
@@ -575,6 +630,8 @@ public class MainUI : MonoBehaviour
     }
     void DoUpgrade(GameObject remove)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         Destroy(remove);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
@@ -963,6 +1020,8 @@ public class MainUI : MonoBehaviour
 
     void Close(GameObject toRemove)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Prev", 0);
         Destroy(toRemove);
     }
@@ -1083,6 +1142,16 @@ public class MainUI : MonoBehaviour
     public void FreezeInput(bool toggle)
     {
         freeze = toggle;
+        if (freeze)
+        {
+            endTurnButton.interactable = false;
+            researchButton.interactable = false;
+        }
+        else
+        {
+            endTurnButton.interactable = true;
+            researchButton.interactable = true;
+        }
     }
 
     public Spawner GetSpawner()
