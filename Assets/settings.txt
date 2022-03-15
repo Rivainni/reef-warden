@@ -5,6 +5,6 @@
 [Fullscreen]
 0
 [Scale]
-143
+100
 [Volume]
-42
+100

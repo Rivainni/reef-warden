@@ -176,7 +176,7 @@ public class PlayerState : ScriptableObject
 
     public void AdjustMoney(int factor)
     {
-        money += factor;
+        money += Mathf.RoundToInt(factor * (2 * morale));
     }
 
     public void AddResearch(int RP)

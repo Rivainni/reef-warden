@@ -1,8 +1,9 @@
 [ACTION=BG] Oh no.
 [ACTION=EnterCharacterPaulo]Concerned: Whoa, why are you guys packing your stuff?
 [NAME=Diana]Angry: Don’t you remember what happens when we don’t do our jobs?
-[ACTION=EnterCharacterJulio]Concerned: Based on the reports we had to send to Office about the reef’s condition, they said that we had to be replaced by another team.
-Since we weren’t doing our jobs well enough to maintain the reef’s condition
-[NAME=Diana]So, we’re fired, we’ll get our last paychecks and our benefits as soon as we return to the mainland and that’s it. We go our separate ways, bye bye to the team.
+[ACTION=EnterCharacterJulio]Concerned: Based on the reports we had to send to the Tubbataha Management Office about the reef’s condition, they said that we had to be replaced by another team.
+Angry: The whole Tubbataha Protected Area Management Board said it themselves-
+Angry: Since we weren’t doing our jobs well enough to maintain the reef’s condition...
+[NAME=Diana]We’re fired. We’ll get our last paychecks and our benefits as soon as we return to the mainland and that’s it. We go our separate ways, bye bye to the team.
 [ACTION=EnterCharacterCarla]We couldn’t do our jobs properly, so there’s no reason for them to keep us
 EndQueue

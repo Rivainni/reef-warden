@@ -15,7 +15,10 @@ Happy: Speaking of tourists, we just got word that there is an unidentified ship
 Happy: Probably tourists, but we’re still not sure cause we still don’t have an AIS a.k.a. the Automatic Identification System.
 Happy: We really need to get that thing as soon as we can, Manuel keeps on bugging us about that.
 [ACTION=InspectTourist1]Happy: There they are. Yeah they're tourists, you can see that they know the protocol to head towards marked buoys to indicate safe areas that they can go to.
-Concerned: Ok, we need to do an inspection. Move next to them, then right click on them and click ‘Inspect Tourists’. Check their permits.
+Concerned: Ok, we need to do an inspection. Move next to them, then right click on them and click ‘Inspect Tourists’.
+Concerned: These tourists are directed by dive companies that the Tubbataha Management Office and the Tubbataha Protected Area Management Board have accredited.
+Idle: Now see if their information slip matches the correct one.
+Happy: The accredited companies should know the rules and therefore would have slips that exactly match.
 Concerned: If these hold up then we can let them go, but if it not, they need to pay a fine.
 Concerned: We also need to report to the Management Office in the mainland about our inspections if ever we might face up against violators in court.
 [ACTION=InspectTourist2]Idle: We then need to follow it to its destination buoy. They need our help with mooring.

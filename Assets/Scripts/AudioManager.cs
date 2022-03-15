@@ -7,7 +7,7 @@ public class AudioManager : MonoBehaviour
 {
     public Sound[] sounds;
     [SerializeField] HexGrid grid;
-    // Start is called before the first frame update
+
     void Start()
     {
         foreach (Sound s in sounds)
