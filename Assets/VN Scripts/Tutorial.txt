@@ -25,19 +25,19 @@ Concerned: We also need to report to the Management Office in the mainland about
 Happy: Like last time, move up to them and right-click and select 'Moor'. Wait for their tile to glow red.
 [ACTION=InspectTourist3]Idle: As soon as we’re done, we need to get back to the station.
 Concerned: Manuel said on the radio that we need to setup the planned Radar before it gets dark.
-[ACTION=MoveBack]3: Ok now we’re here, go to the build menu to start building the Radar--!
+[ACTION=MoveBack]Idle: Ok now we’re here, go to the build menu to start building the Radar--!
 Concerned: Ohh right! We need research, we can’t build it without knowing anything about it.
 Happy: Click on the Research button, the magnifying glass, then click on the Radar icon to start on researching it.
-[ACTION=Research]3: Now that it’s ready, try building it. Select one of the tiles adjacent to the station and right-click.
+[ACTION=Research]Idle: Now that it’s ready, try building it. Select one of the tiles adjacent to the station and right-click.
 [ACTION=Build]3: Click on the Radar button near the Research button.
-[ACTION=UseRADAR]4: It looks like we spotted some unidentified ships with the radar, a good thing too since those pesky illegal fishermen mostly come at night when it’s hard to spot them.
+[ACTION=UseRADAR]Concerned: It looks like we spotted some unidentified ships with the radar, a good thing too since those pesky illegal fishermen mostly come at night when it’s hard to spot them.
 Idle: So I’m going to send the report to the Office about this possible confrontation with violators.
 Concerned: This is going to be a hassle in court and for Julio haha, since he is the Protocol Officer.
 Happy: Go on and hurry to the boat! We need to get to them before they start damaging the marine life.
 Idle: Go on and hurry to the boat! We need to get to them before they start damaging the marine life.
-[ACTION=CatchFisherman]3: Now we’ve caught them, we have to check on the reef if they did any damage.
+[ACTION=CatchFisherman]Idle: Now we’ve caught them, we have to check on the reef if they did any damage.
 Concerned: Go to the reefs and check their health.
-[ACTION=CheckReefHealth2]3: No damage? That’s good to hear, imagine if these guys actually planned on doing dangerous stuff rather than just catching fishes.
+[ACTION=CheckReefHealth2]Happy: No damage? That’s good to hear, imagine if these guys actually planned on doing dangerous stuff rather than just catching fishes.
 Idle: We gotta go back to the station and detain these violators there until Management sends someone to pick them up.
 Idle: And we need to make another report detailing everything that happened and what we found about these guys.
 Concerned: Julio might also have to go to the Mainland for a while to testify as a witness during the trial of these guys.
