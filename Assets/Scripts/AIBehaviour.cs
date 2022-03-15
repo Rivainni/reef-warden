@@ -103,11 +103,11 @@ public class AIBehaviour : MonoBehaviour
     IEnumerator TurnMove()
     {
         DoMove();
-        grid.ShowUI(false);
+        // grid.ShowUI(false);
         yield return new WaitUntil(() => currentUnit.Location == currentDestination);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
         yield return new WaitUntil(() => currentUnit.movement == false);
-        grid.ShowUI(true);
+        // grid.ShowUI(true);
 
         if (currentUnit.Location == finalDestination)
         {

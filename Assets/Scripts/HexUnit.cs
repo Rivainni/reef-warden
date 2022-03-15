@@ -77,7 +77,7 @@ public class HexUnit : MonoBehaviour
             location = value;
             value.Unit = this;
 
-            if (IsDayBoat())
+            if (IsPlayerControlled())
             {
                 value.IncreaseVisibility();
                 Grid.IncreaseVisibility(value, visionRange);

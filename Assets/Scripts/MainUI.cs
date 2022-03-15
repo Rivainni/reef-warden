@@ -964,6 +964,8 @@ public class MainUI : MonoBehaviour
 
     public void Research(Button clicked)
     {
+        FreezeInput(true);
+        cameraController.FreezeCamera(true);
         grid.GetAudioManager().Play("Next", 0);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject researchPanel = Instantiate(researchPrefab, spawnAt, Quaternion.identity, transform);
@@ -976,16 +978,28 @@ public class MainUI : MonoBehaviour
             {
                 button.interactable = false;
             }
+            else if (button.GetComponentInChildren<Text>().text == "X")
+            {
+                button.onClick.AddListener(() => Close(researchPanel));
+            }
             else
             {
                 button.interactable = true;
                 button.onClick.AddListener(() => ResearchUpgrade(button));
             }
         }
+
+        researchButton.interactable = false;
+        endTurnButton.interactable = false;
     }
 
     void ResearchUpgrade(Button clicked)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
+        researchButton.interactable = true;
+        endTurnButton.interactable = true;
+
         grid.GetAudioManager().Play("Next", 0);
         string name = clicked.GetComponentInChildren<Text>().text;
         GameObject window = clicked.transform.parent.parent.gameObject;
@@ -1020,6 +1034,9 @@ public class MainUI : MonoBehaviour
 
     void Close(GameObject toRemove)
     {
+        researchButton.interactable = true;
+        endTurnButton.interactable = true;
+
         FreezeInput(false);
         cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Prev", 0);

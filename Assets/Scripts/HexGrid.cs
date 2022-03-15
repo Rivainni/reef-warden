@@ -278,7 +278,7 @@ public class HexGrid : MonoBehaviour
 
         // Should only matter for players
         unit.Grid = this;
-        unit.VisionRange = 5; // This is just default vision range; it's only for players
+        unit.VisionRange = 10; // This is just default vision range; it's only for players
 
         unit.UnitType = unitType;
         unit.Location = location;
@@ -397,35 +397,6 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    // public void Save(BinaryWriter writer)
-    // {
-    //     writer.Write(cellCountX);
-    //     writer.Write(cellCountZ);
-
-    //     writer.Write(units.Count);
-    //     for (int i = 0; i < cells.Length; i++)
-    //     {
-    //         cells[i].Save(writer);
-    //     }
-    // }
-
-    // public void Load(BinaryReader reader)
-    // {
-    //     ClearPath();
-    //     ClearUnits();
-    //     for (int i = 0; i < cells.Length; i++)
-    //     {
-    //         cells[i].Load(reader);
-    //     }
-
-    //     int unitCount = reader.ReadInt32();
-    //     for (int i = 0; i < unitCount; i++)
-    //     {
-    //         HexUnit.Load(reader, this);
-    //     }
-    // }
-
-
     List<HexCell> GetVisibleCells(HexCell fromCell, int range)
     {
         for (int i = 0; i < cells.Length; i++)
@@ -447,7 +418,11 @@ public class HexGrid : MonoBehaviour
             {
                 HexCell neighbor = current.GetNeighbor(d);
 
-                if (neighbor == null)
+                if (neighbor == null || neighbor.Distance != int.MaxValue)
+                {
+                    continue;
+                }
+                if (GlobalCellCheck.IsImpassable(neighbor))
                 {
                     continue;
                 }

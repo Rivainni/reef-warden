@@ -44,8 +44,8 @@ public class PlayerBehaviour : MonoBehaviour
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
-                // We didn't plan to have variable move costs (e.g. certain parts of the map have you move faster), but we do have variable "speeds"
                 int moveCost = 1;
+
                 if (neighbor == null || neighbor.Distance != int.MaxValue)
                 {
                     continue;

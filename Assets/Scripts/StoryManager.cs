@@ -19,6 +19,7 @@ public class StoryManager : MonoBehaviour
     [SerializeField] bool cutscene = true;
     [SerializeField] PlayerState initState;
     Queue<string> inputStream = new Queue<string>();
+    bool pause = false;
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +40,10 @@ public class StoryManager : MonoBehaviour
 
     public void AdvanceDialogue() // call when a player presses a button in Dialogue Trigger
     {
-        PrintDialogue();
+        if (!pause)
+        {
+            PrintDialogue();
+        }
     }
 
     void PrintDialogue()
@@ -72,6 +76,7 @@ public class StoryManager : MonoBehaviour
                 confirmButton.GetComponentInChildren<Text>().text = "CONFIRM";
 
                 confirmButton.onClick.AddListener(() => SetName(input.GetComponent<InputField>(), panel));
+                pause = true;
             }
             else if (action.Contains("EnterCharacter"))
             {
@@ -173,11 +178,7 @@ public class StoryManager : MonoBehaviour
         {
             SceneManager.LoadSceneAsync("Main Game");
             cutscene = false;
-            IEnumerator loaded()
-            {
-                yield return new WaitUntil(() => mainUI != null);
-                mainUI.GetPlayerState().StartTutorial();
-            }
+            initState.StartTutorial();
         }
         else if (mainUI.GetPlayerState().CheckTutorial())
         {
@@ -190,6 +191,7 @@ public class StoryManager : MonoBehaviour
     {
         initState.SetName(input.text);
         Destroy(toRemove);
+        pause = false;
         PrintDialogue();
     }
 
