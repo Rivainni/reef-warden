@@ -6,6 +6,7 @@ using System.Collections;
 public class AudioManager : MonoBehaviour
 {
     public Sound[] sounds;
+    public AudioMixerGroup master;
     [SerializeField] HexGrid grid;
 
     void Start()
@@ -19,6 +20,7 @@ public class AudioManager : MonoBehaviour
                 s.source.volume = s.volume;
                 s.source.pitch = s.pitch;
                 s.source.loop = s.loop;
+                s.source.outputAudioMixerGroup = master;
             }
             else if (s.name == "Waves")
             {
@@ -27,6 +29,7 @@ public class AudioManager : MonoBehaviour
                 s.source.volume = s.volume;
                 s.source.pitch = s.pitch;
                 s.source.loop = s.loop;
+                s.source.outputAudioMixerGroup = master;
                 Play("Waves", 0);
             }
             else if (s.name == "Seagulls")
@@ -36,6 +39,7 @@ public class AudioManager : MonoBehaviour
                 s.source.volume = s.volume;
                 s.source.pitch = s.pitch;
                 s.source.loop = s.loop;
+                s.source.outputAudioMixerGroup = master;
                 Play("Seagulls", 300);
             }
             else
@@ -45,6 +49,7 @@ public class AudioManager : MonoBehaviour
                 s.source.volume = s.volume;
                 s.source.pitch = s.pitch;
                 s.source.loop = s.loop;
+                s.source.outputAudioMixerGroup = master;
             }
         }
     }

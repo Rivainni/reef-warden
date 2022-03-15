@@ -2767,6 +2767,7 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  master: {fileID: 24300002, guid: 7dd1e74e34d213b49ba1fff3eb3c0ec8, type: 2}
   grid: {fileID: 306096920}
 --- !u!4 &1504880704
 Transform:
