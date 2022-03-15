@@ -40,6 +40,11 @@ public class AIBehaviour : MonoBehaviour
         {
             StartCoroutine(TurnMove());
             SetMovementTarget(finalDestination);
+
+            if (currentUnit.Location == finalDestination)
+            {
+                currentUnit.Location.EnableHeavyHighlight();
+            }
         }
         else if (!stateChanged)
         {
@@ -53,13 +58,22 @@ public class AIBehaviour : MonoBehaviour
                 if (currentUnit.UnitType == "Tourist Boat")
                 {
                     currentUnit.Location.EnableHeavyHighlight();
+                    turnStopped++;
                 }
             }
 
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
-                mainUI.GetPlayerState().DecreaseHealth(2);
+                mainUI.GetPlayerState().DecreaseHealth(2 + (1 * mainUI.GetPlayerState().GetLevel()));
+
+                if (chaseState || mainUI.GetTimeController().IsDay())
+                {
+                    currentUnit.Location.ResetColor();
+                    ChooseEscape();
+                    StartCoroutine(TurnMove());
+                    stateChanged = true;
+                }
             }
             else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 3)
             {
@@ -72,15 +86,10 @@ public class AIBehaviour : MonoBehaviour
                     }
                     mainUI.UpdateUIElements();
                 }
+                currentUnit.Location.ResetColor();
                 ChooseEscape();
                 StartCoroutine(TurnMove());
                 stateChanged = true;
-            }
-
-            if (chaseState)
-            {
-                ChooseEscape();
-                StartCoroutine(TurnMove());
             }
         }
         else if (stateChanged && currentUnit.Location == finalDestination)

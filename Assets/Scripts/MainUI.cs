@@ -57,7 +57,7 @@ public class MainUI : MonoBehaviour
 
     void Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject() && currentState.GetHealth() > 0 && !freeze)
+        if (!EventSystem.current.IsPointerOverGameObject() && currentState.GetTrueHealth() > 0 && !freeze)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -500,6 +500,10 @@ public class MainUI : MonoBehaviour
 
     IEnumerator InspectTouristGame(HexUnit target)
     {
+        if (!currentState.CheckTutorial())
+        {
+            storyTriggers[7].TriggerDialogue();
+        }
         yield return new WaitForSeconds(0.5f);
         yield return new WaitUntil(() => selectedUnit.movement == false);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
@@ -546,6 +550,10 @@ public class MainUI : MonoBehaviour
             currentState.AddSecurity(5);
             currentState.SetMessage("Inspection correct.");
             UpdateUIElements();
+            if (!currentState.CheckTutorial())
+            {
+                storyTriggers[8].TriggerDialogue();
+            }
         }
         currentState.AddTouristScore();
         target.SetInteracted();
@@ -558,6 +566,10 @@ public class MainUI : MonoBehaviour
             currentState.AddSecurity(5);
             currentState.SetMessage("Inspection correct.");
             UpdateUIElements();
+            if (!currentState.CheckTutorial())
+            {
+                storyTriggers[9].TriggerDialogue();
+            }
         }
         Destroy(toRemove);
         currentState.AddTouristScore();
@@ -813,7 +825,7 @@ public class MainUI : MonoBehaviour
         spawner.DestroyUnits();
         UpdateUIElements();
 
-        if (currentState.GetHealth() <= 0)
+        if (currentState.GetTrueHealth() <= 0)
         {
             GenerateEndScreen("Defeat.", "The reef has been irreparably damaged.");
             storyTriggers[2].TriggerDialogue();
@@ -859,19 +871,19 @@ public class MainUI : MonoBehaviour
                 currentState.AddNightSpawn();
             }
 
-            if (currentState.daySpawnCounter() >= 5)
+            if (currentState.daySpawnCounter() >= 6)
             {
                 currentState.ToggleDaySpawn();
                 currentState.ResetDaySpawn();
             }
 
-            if (currentState.nightSpawnCounter() >= 5)
+            if (currentState.nightSpawnCounter() >= 6)
             {
                 currentState.ToggleNightSpawn();
                 currentState.ResetNightSpawn();
             }
 
-            if (timeController.IsDay() && !currentState.SpawnedDay())
+            if (timeController.IsDay() && !currentState.SpawnedDay() && currentState.GetTourists() <= 2)
             {
                 currentState.ResetFisherman();
                 // foreach (HexUnit unit in grid.GetUnits())
@@ -902,7 +914,7 @@ public class MainUI : MonoBehaviour
                 currentState.ResetDaySpawn();
                 storyTriggers[4].TriggerDialogue();
             }
-            else if (!timeController.IsDay() && !currentState.SpawnedNight())
+            else if (!timeController.IsDay() && !currentState.SpawnedNight() && currentState.GetFishermen() <= 2)
             {
                 // int random = Random.Range(0, max * ((int)currentState.GetSecurity() / 100));
 
@@ -927,26 +939,26 @@ public class MainUI : MonoBehaviour
         clicked.interactable = true;
 
         // makes everything visible again during daytime
-        if (timeController.IsDay())
-        {
-            for (int i = 0; i < grid.GetUnits().Count; i++)
-            {
-                HexUnit currentUnit = grid.GetUnits()[i];
+        // if (timeController.IsDay() && currentState.GetTurn() % 8 == 0)
+        // {
+        //     for (int i = 0; i < grid.GetUnits().Count; i++)
+        //     {
+        //         HexUnit currentUnit = grid.GetUnits()[i];
 
-                if (!currentUnit.IsVisible)
-                {
-                    grid.GetUnits()[i].ToggleVisibility();
-                }
-            }
+        //         if (!currentUnit.IsVisible)
+        //         {
+        //             grid.GetUnits()[i].IsVisible = true;
+        //         }
+        //     }
 
-            foreach (HexCell cell in grid.GetCells())
-            {
-                if (!cell.Structure)
-                {
-                    cell.IncreaseVisibility();
-                }
-            }
-        }
+        //     foreach (HexCell cell in grid.GetCells())
+        //     {
+        //         if (!cell.Structure)
+        //         {
+        //             cell.IncreaseVisibility();
+        //         }
+        //     }
+        // }
     }
 
     bool CheckMovement()
@@ -1136,7 +1148,7 @@ public class MainUI : MonoBehaviour
             if (!currentUnit.IsVisible)
             {
                 affectedUnits.Push(currentUnit);
-                grid.GetUnits()[i].ToggleVisibility();
+                grid.GetUnits()[i].IsVisible = true;
             }
         }
 
@@ -1144,7 +1156,7 @@ public class MainUI : MonoBehaviour
 
         while (affectedUnits.Count > 0)
         {
-            affectedUnits.Pop().ToggleVisibility();
+            affectedUnits.Pop().IsVisible = false;
         }
 
         currentState.DeactivateRadar();
@@ -1196,6 +1208,11 @@ public class MainUI : MonoBehaviour
     public CameraController GetCameraController()
     {
         return cameraController;
+    }
+
+    public TimeController GetTimeController()
+    {
+        return timeController;
     }
 
     public HexGrid GetHexGrid()

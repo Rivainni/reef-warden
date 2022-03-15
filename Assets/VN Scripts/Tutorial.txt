@@ -37,7 +37,7 @@ Happy: Go on and hurry to the boat! We need to get to them before they start dam
 Idle: Go on and hurry to the boat! We need to get to them before they start damaging the marine life.
 [ACTION=CatchFisherman]3: Now we’ve caught them, we have to check on the reef if they did any damage.
 Concerned: Go to the reefs and check their health.
-[ACTION=CheckReefHealth]3: No damage? That’s good to hear, imagine if these guys actually planned on doing dangerous stuff rather than just catching fishes.
+[ACTION=CheckReefHealth2]3: No damage? That’s good to hear, imagine if these guys actually planned on doing dangerous stuff rather than just catching fishes.
 Idle: We gotta go back to the station and detain these violators there until Management sends someone to pick them up.
 Idle: And we need to make another report detailing everything that happened and what we found about these guys.
 Concerned: Julio might also have to go to the Mainland for a while to testify as a witness during the trial of these guys.

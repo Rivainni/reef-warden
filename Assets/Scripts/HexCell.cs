@@ -181,6 +181,11 @@ public class HexCell : MonoBehaviour
         cellRenderer.material.color = Color.red;
     }
 
+    public void EnableHeavyHighlight(Color color)
+    {
+        cellRenderer.material.color = color;
+    }
+
     public void ResetColor()
     {
         cellRenderer.material.color = defaultColor;

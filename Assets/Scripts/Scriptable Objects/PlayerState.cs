@@ -120,6 +120,11 @@ public class PlayerState : ScriptableObject
         return seenReefHealth;
     }
 
+    public float GetTrueHealth()
+    {
+        return trueReefHealth;
+    }
+
     public bool ReefDamaged()
     {
         return seenReefHealth > trueReefHealth;
@@ -517,6 +522,11 @@ public class PlayerState : ScriptableObject
     public void ResetFisherman()
     {
         fishermen = 0;
+    }
+
+    public int GetFishermen()
+    {
+        return fishermen;
     }
 
     public int GetTouristScore()

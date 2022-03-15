@@ -402,5 +402,19 @@ public class StoryManager : MonoBehaviour
                 mainUI.GetSpawner().DestroyWaypoints();
             }
         }
+        else if (action == "CheckReefHealth2")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Check the reef health.");
+
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+            }
+            mainUI.GetPlayerState().RemoveObjective("Check the reef health.");
+        }
     }
 }

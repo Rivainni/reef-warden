@@ -278,7 +278,7 @@ public class HexGrid : MonoBehaviour
 
         // Should only matter for players
         unit.Grid = this;
-        unit.VisionRange = 10; // This is just default vision range; it's only for players
+        unit.VisionRange = 5; // This is just default vision range; it's only for players
 
         unit.UnitType = unitType;
         unit.Location = location;
@@ -292,6 +292,8 @@ public class HexGrid : MonoBehaviour
             currentBehaviour.grid = this;
             currentBehaviour.mainUI = mainUI;
             currentBehaviour.spawner = spawner;
+
+            unit.IsVisible = location.IsVisible;
         }
     }
 
@@ -399,11 +401,6 @@ public class HexGrid : MonoBehaviour
 
     List<HexCell> GetVisibleCells(HexCell fromCell, int range)
     {
-        for (int i = 0; i < cells.Length; i++)
-        {
-            cells[i].Distance = int.MaxValue;
-        }
-
         List<HexCell> frontier = new List<HexCell>();
         List<HexCell> visibleCells = new List<HexCell>();
         fromCell.Distance = 0;
@@ -418,11 +415,7 @@ public class HexGrid : MonoBehaviour
             {
                 HexCell neighbor = current.GetNeighbor(d);
 
-                if (neighbor == null || neighbor.Distance != int.MaxValue)
-                {
-                    continue;
-                }
-                if (GlobalCellCheck.IsImpassable(neighbor))
+                if (neighbor == null)
                 {
                     continue;
                 }
@@ -448,12 +441,11 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < curr.Count; i++)
         {
             cells[i].IncreaseVisibility();
+            // cells[i].ResetColor();
+            Debug.Log("vis");
             if (cells[i].Unit)
             {
-                if (!cells[i].Unit.IsVisible)
-                {
-                    cells[i].Unit.ToggleVisibility();
-                }
+                cells[i].Unit.IsVisible = cells[i].IsVisible;
             }
         }
     }
@@ -464,13 +456,11 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < curr.Count; i++)
         {
             cells[i].DecreaseVisibility();
-
+            // cells[i].EnableHeavyHighlight();
+            Debug.Log("inv");
             if (cells[i].Unit)
             {
-                if (cells[i].Unit.IsVisible)
-                {
-                    cells[i].Unit.ToggleVisibility();
-                }
+                cells[i].Unit.IsVisible = cells[i].IsVisible;
             }
         }
     }

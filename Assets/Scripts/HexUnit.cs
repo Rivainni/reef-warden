@@ -74,6 +74,11 @@ public class HexUnit : MonoBehaviour
                 Grid.DecreaseVisibility(location, visionRange);
                 location.Unit = null;
             }
+            else if (location)
+            {
+                location.Unit = null;
+            }
+
             location = value;
             value.Unit = this;
 
@@ -101,7 +106,23 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    public bool IsVisible { get; set; }
+    public bool IsVisible
+    {
+        get
+        {
+            return isVisible;
+        }
+        set
+        {
+            isVisible = value;
+            // foreach (Renderer item in unitRenderers)
+            // {
+            //     item.enabled = value;
+            // }
+            Debug.Log(unitType + " is currently visible: " + value);
+        }
+    }
+    bool isVisible;
 
     public HexGrid Grid { get; set; }
 
@@ -111,11 +132,11 @@ public class HexUnit : MonoBehaviour
     const float travelSpeed = 2f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
-    Renderer unitRenderer;
+    Renderer[] unitRenderers;
 
     void Awake()
     {
-        unitRenderer = GetComponentInChildren<Renderer>();
+        unitRenderers = GetComponentsInChildren<Renderer>();
     }
 
     void Start()
@@ -127,7 +148,6 @@ public class HexUnit : MonoBehaviour
             HP = 100;
             healthBar.SetMaxHealth(HP);
         }
-        IsVisible = true;
         busy = false;
         interacted = false;
     }
@@ -281,20 +301,6 @@ public class HexUnit : MonoBehaviour
         else
         {
             ActionPoints = reducedActionPoints;
-        }
-    }
-
-    public void ToggleVisibility()
-    {
-        if (IsVisible)
-        {
-            IsVisible = false;
-            unitRenderer.enabled = false;
-        }
-        else
-        {
-            IsVisible = true;
-            unitRenderer.enabled = true;
         }
     }
 

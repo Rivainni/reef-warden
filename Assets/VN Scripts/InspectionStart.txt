@@ -1,4 +1,4 @@
-[EnterCharacterPaulo]Concerned: Ok. Now we check their permits and do an Impact Assessment, make sure they don’t have stuff for fishing and if they already took something from the reefs.
+[ACTION=EnterCharacterPaulo]Concerned: Ok. Now we check their permits and do an Impact Assessment, make sure they don’t have stuff for fishing and if they already took something from the reefs.
 Idle: Also verify with base if this specific ship has the same credentials and have payed the conservation fees already
 [NAME=Julia]Happy: Affirmative Capitan!
 [NAME=Paulo]Concerned: Stop.
