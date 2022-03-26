@@ -46,7 +46,7 @@ public class Spawner : MonoBehaviour
 
     public void SpawnUpgrade(HexCell cell, string upgradeType, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
-        int upgradeIndex = System.Array.IndexOf(structureTypes, upgradeType);
+        int upgradeIndex = System.Array.IndexOf(upgradeTypes, upgradeType);
         if (cell && !cell.Structure)
         {
             if (upgradeIndex != -1)
