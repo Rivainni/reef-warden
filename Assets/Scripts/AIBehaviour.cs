@@ -40,10 +40,9 @@ public class AIBehaviour : MonoBehaviour
         {
             StartCoroutine(TurnMove());
             SetMovementTarget(finalDestination);
-        }
-        else if (!stateChanged)
-        {
-            if (turnStopped == 0)
+
+            // this may look stupid, but this is for when the unit has no more final destinations
+            if (turnStopped == 0 && currentUnit.Location == finalDestination)
             {
                 turnStopped = mainUI.GetPlayerState().GetTurn();
                 if (currentPathExists)
@@ -56,7 +55,9 @@ public class AIBehaviour : MonoBehaviour
                     turnStopped++;
                 }
             }
-
+        }
+        else if (!stateChanged)
+        {
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
