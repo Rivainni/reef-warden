@@ -180,9 +180,17 @@ public class PlayerState : ScriptableObject
         income += factor;
     }
 
+    // when earning money, take morale into account. since the idea is that there might be additional pay for performance.
     public void AdjustMoney(int factor)
     {
-        money += Mathf.RoundToInt(factor + factor * morale);
+        if (factor < 0)
+        {
+            money += factor;
+        }
+        else
+        {
+            money += Mathf.RoundToInt(factor + factor * morale);
+        }
     }
 
     public void AddResearch(int RP)

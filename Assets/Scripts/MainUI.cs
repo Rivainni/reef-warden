@@ -691,6 +691,7 @@ public class MainUI : MonoBehaviour
         Destroy(remove);
         currentState.AdjustMoney(-buildCost);
         currentState.AddManpower(-1);
+        Debug.Log("Built " + upgrade + " for " + buildCost);
         UpdateUIElements();
         UpdateUIQueue(upgrade, 1, constructionTime);
         StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost, upkeep, target));
