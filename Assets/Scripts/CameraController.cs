@@ -17,9 +17,6 @@ public class CameraController : MonoBehaviour
     Vector3 newPosition;
     Quaternion newRotation;
     Vector3 newZoom;
-
-    Vector3 dragStartPosition;
-    Vector3 dragCurrentPosition;
     Vector3 rotateStartPosition;
     Vector3 rotateCurrentPosition;
 
@@ -32,58 +29,34 @@ public class CameraController : MonoBehaviour
     float maxZoomZ;
     float maxZ;
     bool edgeToggle;
+    bool freeze;
 
     void Start()
     {
+        freeze = false;
         SetClamps();
         newPosition = transform.position;
         newRotation = transform.rotation;
-        // newZoom = new Vector3(cameraTransform.localPosition.x, cameraTransform.localPosition.y + 20.0f, cameraTransform.localPosition.z);
         newZoom = cameraTransform.localPosition;
         edgeToggle = true;
     }
 
     void Update()
     {
-        HandleMouseInput();
-        HandleMovementInput();
+        // allows us to disable the camera movement when needed
+        if (!freeze)
+        {
+            HandleMouseButtons();
+            HandleMovementInput();
+        }
     }
 
-    void HandleMouseInput()
+    void HandleMouseButtons()
     {
         if (Input.mouseScrollDelta.y != 0)
         {
             newZoom += Input.mouseScrollDelta.y * zoomAmount;
         }
-
-        // if (Input.GetMouseButtonDown(1))
-        // {
-        //     Plane plane = new Plane(Vector3.up, Vector3.zero);
-
-        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        //     float entry;
-
-        //     if (plane.Raycast(ray, out entry))
-        //     {
-        //         dragStartPosition = ray.GetPoint(entry);
-        //     }
-        // }
-        // if (Input.GetMouseButton(1))
-        // {
-        //     Plane plane = new Plane(Vector3.up, Vector3.zero);
-
-        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        //     float entry;
-
-        //     if (plane.Raycast(ray, out entry))
-        //     {
-        //         dragCurrentPosition = ray.GetPoint(entry);
-
-        //         newPosition = transform.position + dragStartPosition - dragCurrentPosition;
-        //     }
-        // }
 
         if (Input.GetMouseButtonDown(2))
         {
@@ -102,6 +75,7 @@ public class CameraController : MonoBehaviour
 
     void HandleMovementInput()
     {
+        bool locked = false;
         // fast movement
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -116,22 +90,25 @@ public class CameraController : MonoBehaviour
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             newPosition += transform.forward * movementSpeed;
+            locked = true;
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             newPosition += transform.forward * -movementSpeed;
+            locked = true;
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             newPosition += transform.right * -movementSpeed;
+            locked = true;
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             newPosition += transform.right * movementSpeed;
+            locked = true;
         }
 
-        // edge movement. if you hold spacebar it temporarily suspends the thingo.
-
+        // edge movement. if you press spacebar it temporarily suspends the thingo.
         if (Input.GetKey(KeyCode.Space))
         {
             if (edgeToggle)
@@ -144,7 +121,7 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        if (edgeToggle)
+        if (edgeToggle && !locked)
         {
             if (Input.mousePosition.y > Screen.height - edgeSize)
             {
@@ -183,8 +160,6 @@ public class CameraController : MonoBehaviour
             newZoom -= zoomAmount;
         }
 
-        // Debug.Log("X: " + newPosition.x + " Y: " + newZoom.y + " Z: " + newPosition.z + "\n");
-        // Debug.Log("Y: " + newZoom.y + " Z: " + newZoom.z + "\n");
         newPosition = new Vector3(Mathf.Clamp(newPosition.x, minX, maxX), newPosition.y, Mathf.Clamp(newPosition.z, minZ, maxZ));
         newZoom = new Vector3(newZoom.x, Mathf.Clamp(newZoom.y, minZoomY, maxZoomY), Mathf.Clamp(newZoom.z, minZoomZ, maxZoomZ));
 
@@ -205,5 +180,10 @@ public class CameraController : MonoBehaviour
         maxZoomY = 35.0f;
         maxZoomZ = 80.0f;
         maxZ = 836f;
+    }
+
+    public void FreezeCamera(bool toggle)
+    {
+        freeze = toggle;
     }
 }

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ff1478f94882c498ecb045ff8c18a0, type: 3}
+  m_Name: playerState
+  m_EditorClassIdentifier: 
+  username: 
+  money: 60000
+  research: 250
+  manpower: 6
+  tourists: 0
+  fishermen: 0
+  morale: 40.93654
+  security: 56.32907
+  trueReefHealth: 100
+  turn: 6
+  checkHealthCD1: 0
+  checkHealthCD2: 0
+  checkHealthCD3: 0
+  birdCD: 0
+  clamCD: 0
+  turtleCD: 0
+  researchCD: 0
+  radarCD: 0
+  income: 10000
+  possibleActions: []
+  unlockedUpgrades:
+  - Basketball Court, Radio, Service Boat
+  - RADAR
+  builtUpgrades: []
+  touristsInspected: 1
+  fishermenCaught: 0

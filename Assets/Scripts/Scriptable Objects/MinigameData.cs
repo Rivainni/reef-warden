@@ -6,9 +6,9 @@ using UnityEngine;
 public class MinigameData : ScriptableObject
 {
     [SerializeField] TextAsset inspection;
-    List<string> shipName;
-    List<string> shipID;
-    List<string> crew;
+    [SerializeField] List<string> shipName;
+    [SerializeField] List<string> shipID;
+    [SerializeField] List<string> crew;
 
     public string GenerateSet(int factor, int randomisation)
     {

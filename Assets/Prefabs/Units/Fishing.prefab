@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9294cadc8c4213e408909d0d988ddc96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 0
+  healthBar: {fileID: 0}
   takenTurn: 0
   movement: 0
 --- !u!114 &8416211315164398714
@@ -60,6 +60,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd6fbc97a82f64444be31e6bf4ca8ddd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grid: {fileID: 0}
+  mainUI: {fileID: 0}
+  spawner: {fileID: 0}
 --- !u!1 &8190028993175435654
 GameObject:
   m_ObjectHideFlags: 0

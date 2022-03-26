@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 5810be15d1cfefd4b9f88cf489d6ae8f, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -179,7 +179,6 @@ MonoBehaviour:
   buttonPrefab: {fileID: 938404568772974516, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
   cutscene: 1
   initState: {fileID: 11400000, guid: a429a786ca9053e4ebebb97060993ff9, type: 2}
-  objectives: {fileID: 0}
 --- !u!114 &79575446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,6 +192,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: ff55d7a26c3ae4a448929ed8d1dce461, type: 3}
+  name: 
+  mainUI: {fileID: 0}
 --- !u!1 &115944446
 GameObject:
   m_ObjectHideFlags: 0
@@ -605,6 +606,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2758738053579390289, guid: 76b3b0087e8763446b9c2c44411edf78, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 33043cb2f47019044ab36326606ef62f, type: 3}
     - target: {fileID: 2758738054055895648, guid: 76b3b0087e8763446b9c2c44411edf78, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -653,5 +658,21 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 79575445}
+    - target: {fileID: 7769835852245932695, guid: 76b3b0087e8763446b9c2c44411edf78, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7769835852245932695, guid: 76b3b0087e8763446b9c2c44411edf78, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7769835852245932695, guid: 76b3b0087e8763446b9c2c44411edf78, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7769835852245932695, guid: 76b3b0087e8763446b9c2c44411edf78, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 841
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76b3b0087e8763446b9c2c44411edf78, type: 3}

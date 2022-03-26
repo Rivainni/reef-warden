@@ -18,8 +18,8 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] bool cutscene = true;
     [SerializeField] PlayerState initState;
-    [SerializeField] Text objectives;
     Queue<string> inputStream = new Queue<string>();
+    bool pause = false;
 
     // Start is called before the first frame update
     void Start()
@@ -29,15 +29,21 @@ public class StoryManager : MonoBehaviour
 
     public void StartDialogue(Queue<string> dialogue)
     {
+        if (!cutscene)
+        {
+            mainUI.GetCameraController().FreezeCamera(true); // freeze input
+        }
         storyUI.SetActive(true); // open the dialogue box
-        // isOpen = true;
         inputStream = dialogue; // store the dialogue from dialogue trigger
         PrintDialogue(); // Prints out the first line of dialogue
     }
 
     public void AdvanceDialogue() // call when a player presses a button in Dialogue Trigger
     {
-        PrintDialogue();
+        if (!pause)
+        {
+            PrintDialogue();
+        }
     }
 
     void PrintDialogue()
@@ -70,31 +76,49 @@ public class StoryManager : MonoBehaviour
                 confirmButton.GetComponentInChildren<Text>().text = "CONFIRM";
 
                 confirmButton.onClick.AddListener(() => SetName(input.GetComponent<InputField>(), panel));
+                pause = true;
             }
             else if (action.Contains("EnterCharacter"))
             {
                 string newCharacter = action.Substring(14);
+                if (!cutscene)
+                {
+                    characterName.text = newCharacter;
+                }
                 AddSprite(newCharacter);
             }
             else if (action == "ExitCharacter")
             {
                 secondarySprite.enabled = false;
             }
-            else
+            else if (action == "BG")
             {
-                mainUI.GetPlayerState().StartTutorial();
+                Image bg1 = storyUI.transform.GetChild(1).GetComponent<Image>();
+                bg1.enabled = true;
+
+                Image bg0 = storyUI.transform.GetChild(0).GetComponent<Image>();
+                bg0.enabled = false;
+            }
+            else if (mainUI.GetPlayerState().CheckTutorial())
+            {
                 Tutorial(action);
             }
 
-            // if (SceneManager.GetActiveScene().name == "Main Game")
-            // {
-            //     mainUI.GetPlayerState().StartTutorial();
-            //     if (mainUI.GetPlayerState().CheckTutorial())
-            //     {
-            //         Debug.Log("WTF");
-            //         Tutorial(action);
-            //     }
-            // }
+            PrintDialogue();
+        }
+        else if (inputStream.Peek().Contains("[CONDITIONAL="))
+        {
+            string condition = inputStream.Peek();
+            condition = inputStream.Dequeue().Substring(condition.IndexOf('=') + 1, condition.IndexOf(']') - (condition.IndexOf('=') + 1));
+
+            if (condition == "UpgradeAIS" && mainUI.GetPlayerState().CheckBuilt("AIS"))
+            {
+
+            }
+            else if (condition == "Spotted")
+            {
+
+            }
 
             PrintDialogue();
         }
@@ -140,16 +164,23 @@ public class StoryManager : MonoBehaviour
 
     public void EndDialogue()
     {
+        if (!cutscene)
+        {
+            mainUI.GetCameraController().FreezeCamera(false);
+        }
+
         storyText.text = "";
         characterName.text = "";
         inputStream.Clear();
         storyUI.SetActive(false);
-        // isOpen = false;
+
         if (cutscene)
         {
-            SceneManager.LoadScene("Main Game");
+            SceneManager.LoadSceneAsync("Main Game");
+            cutscene = false;
+            initState.StartTutorial();
         }
-        else
+        else if (mainUI.GetPlayerState().CheckTutorial())
         {
             mainUI.GetPlayerState().EndTutorial();
             mainUI.GetPlayerState().AddLevel();
@@ -160,6 +191,7 @@ public class StoryManager : MonoBehaviour
     {
         initState.SetName(input.text);
         Destroy(toRemove);
+        pause = false;
         PrintDialogue();
     }
 
@@ -192,146 +224,197 @@ public class StoryManager : MonoBehaviour
     // separated tutorial because it's built different
     void Tutorial(string action)
     {
+        mainUI.GetCameraController().FreezeCamera(false);
         // TUTORIAL STUFF
         if (action == "WASD")
         {
+            mainUI.FreezeInput(true);
             storyUI.SetActive(false);
-            objectives.text = "Move the camera with WASD.";
+            mainUI.DisplayTutorialObjective("Move the camera with WASD.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S));
-                yield return new WaitForSeconds(6.0f);
+                yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "QE")
         {
             storyUI.SetActive(false);
-            objectives.text = "Rotate the camera with Q or E.";
+            mainUI.DisplayTutorialObjective("Rotate the camera with Q or E.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E));
-                yield return new WaitForSeconds(6.0f);
+                yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "RF")
         {
             storyUI.SetActive(false);
-            objectives.text = "Zoom in using the Mousewheel, R, or F.";
+            mainUI.DisplayTutorialObjective("Zoom in using the Mousewheel, R, or F.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => Input.GetKey(KeyCode.R) || Input.GetKey(KeyCode.F) || Input.mouseScrollDelta.y != 0);
-                yield return new WaitForSeconds(6.0f);
+                yield return new WaitForSeconds(3.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.FreezeInput(false);
             }
         }
         else if (action == "Patrol")
         {
             storyUI.SetActive(false);
-            objectives.text = "Patrol to any location.";
+            mainUI.DisplayTutorialObjective("Patrol to any location.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetSecurity() > 50);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "CheckReefHealth")
         {
             storyUI.SetActive(false);
-            objectives.text = "Check the reef health.";
+            mainUI.DisplayTutorialObjective("Check the reef health.");
+
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "InspectTourist1")
         {
             storyUI.SetActive(false);
-            mainUI.GetSpawner().RandomSpawn("Tourist Boat");
+            mainUI.GetSpawner().TutorialSpawn("Tourist Boat");
+            mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[300]);
             mainUI.GetPlayerState().AddTourists(1);
+            mainUI.GetPlayerState().ToggleDaySpawn();
             mainUI.UpdateUIElements();
-            objectives.text = "Look for the tourist.";
+            mainUI.DisplayTutorialObjective("Look for the tourist.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitForSeconds(15.0f);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "InspectTourist2")
         {
             storyUI.SetActive(false);
-            objectives.text = "Do a random inspection on the tourist.";
+            mainUI.DisplayTutorialObjective("Do a random inspection on the tourist.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.GetSpawner().DestroyWaypoints();
+            }
+        }
+        else if (action == "InspectTourist3")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Help the tourist with mooring.");
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 1);
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.GetSpawner().DestroyWaypoints();
             }
         }
         else if (action == "MoveBack")
         {
             storyUI.SetActive(false);
-            objectives.text = "Return to the ranger station (next to the boat).";
+            mainUI.DisplayTutorialObjective("Return to the ranger station (next to the boat).");
+            mainUI.GetSpawner().AddCellWaypoint(mainUI.GetHexGrid().GetCells()[261]);
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "Research")
         {
             storyUI.SetActive(false);
-            objectives.text = "Research the RADAR.";
+            mainUI.DisplayTutorialObjective("Research the RADAR.");
+            mainUI.GetSpawner().DestroyWaypoints();
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().CheckResearched("RADAR"));
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "Build")
         {
             storyUI.SetActive(false);
-            objectives.text = "Build a RADAR.";
+            mainUI.DisplayTutorialObjective("Build a RADAR.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "UseRADAR")
         {
             storyUI.SetActive(false);
-            objectives.text = "Use the RADAR.";
+            mainUI.DisplayTutorialObjective("Use the RADAR.");
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetRadarState());
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "CatchFisherman")
         {
             storyUI.SetActive(false);
             StartCoroutine(WaitForPlayer());
-            mainUI.GetSpawner().RandomSpawn("Fishing Boat");
+            mainUI.GetSpawner().TutorialSpawn("Fishing Boat");
+            mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[299]);
             mainUI.GetPlayerState().AddFisherman(1);
-            objectives.text = "Catch the Fishing Boat.";
+            mainUI.GetPlayerState().ToggleNightSpawn();
+            mainUI.DisplayTutorialObjective("Catch the Fishing Boat.");
             IEnumerator WaitForPlayer()
             {
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
                 storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.GetSpawner().DestroyWaypoints();
             }
+        }
+        else if (action == "CheckReefHealth2")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Check the reef health.");
+
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+            }
+            mainUI.GetPlayerState().RemoveObjective("Check the reef health.");
         }
     }
 }

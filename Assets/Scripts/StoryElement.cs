@@ -1,19 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StoryElement : MonoBehaviour
 {
     [SerializeField] TextAsset TextFileAsset; // your imported text file for your NPC
+    [SerializeField] string name;
+    [SerializeField] MainUI mainUI; // need to access the player state to determine whether to start dialogue or nah.
     Queue<string> dialogue = new Queue<string>(); // stores the dialogue (Great Performance!)
 
     void Start()
     {
-        TriggerDialogue();
+        if (SceneManager.GetActiveScene().name == "Cutscene")
+        {
+            TriggerDialogue();
+        }
+        else if (SceneManager.GetActiveScene().name == "Main Game")
+        {
+            StartCoroutine(WaitForState());
+        }
     }
 
     /* Called when you want to start dialogue */
-    void TriggerDialogue()
+    public void TriggerDialogue()
     {
         ReadTextFile(); // loads in the text file
         FindObjectOfType<StoryManager>().StartDialogue(dialogue); // Accesses Dialogue Manager and Starts Dialogue
@@ -44,5 +54,14 @@ public class StoryElement : MonoBehaviour
             }
         }
         dialogue.Enqueue("EndQueue");
+    }
+
+    IEnumerator WaitForState()
+    {
+        yield return new WaitUntil(() => mainUI.GetPlayerState() != null);
+        if (name == "Tutorial" && mainUI.GetPlayerState().CheckTutorial())
+        {
+            TriggerDialogue();
+        }
     }
 }

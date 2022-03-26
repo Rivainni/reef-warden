@@ -28,6 +28,18 @@ https://assetstore.unity.com/packages/2d/gui/icons/white-black-gui-by-gamertose-
 Boats
 https://www.kenney.nl/assets/watercraft-pack
 
+Boat (Type 1)
+https://sketchfab.com/3d-models/small-boat-lowpoly-031d7f217eec437bb658e1298521c631
+
+Basketball Court
+https://sketchfab.com/3d-models/basketball-hoop-b1c66721f837407c9afb305ad7099ff0
+
+Satellite Internet
+https://sketchfab.com/3d-models/old-scifi-satellite-dish-f01a91e9773e4622b25c4d27903e85c6
+
+AIS
+https://sketchfab.com/3d-models/radarmachine-bf7670feaceb47b5a381a16bd6bf655d
+
 Tiles
 https://assetstore.unity.com/packages/3d/environments/low-poly-hexagon-tiles-and-objects-132355
 
@@ -48,6 +60,10 @@ https://www.kenney.nl/assets/ui-audio
 https://soundbible.com/2193-Flock-Seagulls.html
 https://soundbible.com/890-Boat.html
 https://cdn.pixabay.com/download/audio/2021/10/12/audio_688d6a3071.mp3?filename=gentle-ocean-waves-breaking-on-beach-d-9333.mp3
+
+Highlight audio
+https://youtu.be/oBkfujKPZw8
+https://youtu.be/oBkfujKPZw8
 ```
 
 ## Important Links

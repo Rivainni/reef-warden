@@ -7,7 +7,7 @@ public class ObjectivesDisplay : MonoBehaviour
     public PlayerState currentState;
     [SerializeField] Text textPrefab;
     List<Text> objectives;
-    // Start is called before the first frame update
+
     void Start()
     {
         objectives = new List<Text>();

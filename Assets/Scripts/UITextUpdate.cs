@@ -45,7 +45,14 @@ public class UITextUpdate : MonoBehaviour
         }
         else if (current.text.Contains("HP: "))
         {
-            current.text = "HP: " + Mathf.Round(currentState.GetHealth());
+            if (currentState.GetLastHealthCheck() >= 5)
+            {
+                current.text = "HP: " + "!!!";
+            }
+            else
+            {
+                current.text = "HP: " + Mathf.Round(currentState.GetHealth());
+            }
         }
         else if (current.text.Contains(":"))
         {

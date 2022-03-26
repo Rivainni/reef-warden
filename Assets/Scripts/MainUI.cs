@@ -25,27 +25,40 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject researchPrefab;
     [SerializeField] GameObject valuesContainer;
     [SerializeField] GameObject queueDisplay;
-    [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject endPrefab;
+    [SerializeField] GameObject pause;
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
+    [SerializeField] Button researchButton;
+    [SerializeField] Button endTurnButton;
     [SerializeField] ObjectivesDisplay objectivesDisplay;
+    [SerializeField] CameraController cameraController;
+    // allows us to access the dialogue stuff
+    [SerializeField] StoryElement[] storyTriggers;
+    bool freeze;
 
     void Start()
     {
+        freeze = false;
+        // initState.Clean();
         currentState = initState;
         currentState.Clean();
-        currentState.SetObjectives(TextRW.GetObjectives(1));
+
+        if (!currentState.CheckTutorial())
+        {
+            currentState.SetObjectives(TextRW.GetObjectives(1));
+        }
+
         objectivesDisplay.currentState = currentState;
         objectivesDisplay.DisplayObjectives();
-        UpdateUIElements();
         // PointToObject(grid.GetUnits()[0].gameObject);
         minigameData.SetInspection();
+        StartCoroutine(UIUpdateDelay());
     }
 
     void Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject() && currentState.GetHealth() > 0)
+        if (!EventSystem.current.IsPointerOverGameObject() && currentState.GetTrueHealth() > 0 && !freeze)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -69,15 +82,31 @@ public class MainUI : MonoBehaviour
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                HexAction();
+                if (grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition)) != null || currentCell)
+                {
+                    HexAction();
+                }
             }
         }
 
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            SceneManager.LoadScene("Main Menu");
+            if (pause.activeInHierarchy)
+            {
+                FreezeInput(false);
+                cameraController.FreezeCamera(false);
+                pause.SetActive(false);
+            }
+            else
+            {
+                FreezeInput(true);
+                cameraController.FreezeCamera(true);
+                pause.SetActive(true);
+            }
+            // SceneManager.LoadScene("Main Menu");
         }
     }
+
     bool UpdateCurrentCell()
     {
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
@@ -97,10 +126,10 @@ public class MainUI : MonoBehaviour
     {
         grid.GetPlayerBehaviour().ClearPath();
         UpdateCurrentCell();
-        Debug.Log("This is cell index " + currentCell.Index);
 
         if (currentCell)
         {
+            Debug.Log("This is cell index " + currentCell.Index);
             if (!currentCell.Unit || selectedUnit == currentCell.Unit)
             {
                 selectedUnit = null;
@@ -141,7 +170,7 @@ public class MainUI : MonoBehaviour
     void HexAction()
     {
         Vector3 spawnAt = Input.mousePosition;
-        HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition)) == null ? currentCell : grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         HexCell tempA = null;
         HexCell tempB = null;
         HexUnit targetA = null;
@@ -191,11 +220,10 @@ public class MainUI : MonoBehaviour
                         }
                         else if (toCheckCell != null)
                         {
-                            // add level checks in a bit
-                            if (GlobalCellCheck.IsAdjacentToShore(toCheckCell) > 0)
+                            if (GlobalCellCheck.GetIsland(toCheckCell) > 0)
                             {
-                                Debug.Log("reef structure" + GlobalCellCheck.IsAdjacentToShore(toCheckCell));
-                                if (currentState.FetchCD("CH" + GlobalCellCheck.IsAdjacentToShore(toCheckCell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
+                                Debug.Log("reef structure" + GlobalCellCheck.GetIsland(toCheckCell));
+                                if (currentState.FetchCD("CH" + GlobalCellCheck.GetIsland(toCheckCell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
                                 {
                                     contextMenuContent.Add("Check Reef Health");
                                 }
@@ -203,7 +231,7 @@ public class MainUI : MonoBehaviour
                                 {
                                     contextMenuContent.Add("Count Birds");
                                 }
-                                if (currentState.FetchCD("C" + GlobalCellCheck.IsAdjacentToShore(toCheckCell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
+                                if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(toCheckCell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
                                 {
                                     contextMenuContent.Add("Monitor Clams");
                                 }
@@ -211,7 +239,7 @@ public class MainUI : MonoBehaviour
                                 {
                                     contextMenuContent.Add("Tag Turtles");
                                 }
-                                reefStructure = GlobalCellCheck.IsAdjacentToShore(toCheckCell);
+                                reefStructure = GlobalCellCheck.GetIsland(toCheckCell);
                             }
                         }
                     }
@@ -255,7 +283,10 @@ public class MainUI : MonoBehaviour
 
         if (contextMenuContent.Count > 0)
         {
+            contextMenuContent.Add("Close");
             GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+            FreezeInput(true);
+            cameraController.FreezeCamera(true);
 
             foreach (string item in contextMenuContent)
             {
@@ -318,12 +349,18 @@ public class MainUI : MonoBehaviour
                 {
                     currentButton.onClick.AddListener(() => DemolishUpgrade(contextMenu, cell));
                 }
+                else if (item == "Close")
+                {
+                    currentButton.onClick.AddListener(() => Close(contextMenu));
+                }
             }
         }
     }
 
     void AfterAction(GameObject remove)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Next", 0);
         DoMove();
         if (selectedUnit.IsPatrolBoat())
@@ -336,6 +373,8 @@ public class MainUI : MonoBehaviour
 
     void Inspect(HexCell target, GameObject remove)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         string message = "";
         if (target.Unit)
         {
@@ -385,7 +424,20 @@ public class MainUI : MonoBehaviour
 
     void CheckHealth(HexCell destination, GameObject remove, int reefStructure)
     {
+        currentState.ResetHealthWarning();
         currentState.incrementLevelCounters("health");
+        if (!currentState.CheckTutorial())
+        {
+            if (currentState.ReefDamaged())
+            {
+                storyTriggers[5].TriggerDialogue();
+            }
+            else
+            {
+                storyTriggers[6].TriggerDialogue();
+            }
+        }
+
         currentState.UpdateHealth();
         currentState.AddResearch(250);
         currentState.ResetCD("CH" + reefStructure);
@@ -449,6 +501,10 @@ public class MainUI : MonoBehaviour
 
     IEnumerator InspectTouristGame(HexUnit target)
     {
+        if (!currentState.CheckTutorial())
+        {
+            storyTriggers[7].TriggerDialogue();
+        }
         yield return new WaitForSeconds(0.5f);
         yield return new WaitUntil(() => selectedUnit.movement == false);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
@@ -495,6 +551,10 @@ public class MainUI : MonoBehaviour
             currentState.AddSecurity(5);
             currentState.SetMessage("Inspection correct.");
             UpdateUIElements();
+            if (!currentState.CheckTutorial())
+            {
+                storyTriggers[8].TriggerDialogue();
+            }
         }
         currentState.AddTouristScore();
         target.SetInteracted();
@@ -507,6 +567,10 @@ public class MainUI : MonoBehaviour
             currentState.AddSecurity(5);
             currentState.SetMessage("Inspection correct.");
             UpdateUIElements();
+            if (!currentState.CheckTutorial())
+            {
+                storyTriggers[9].TriggerDialogue();
+            }
         }
         Destroy(toRemove);
         currentState.AddTouristScore();
@@ -518,21 +582,50 @@ public class MainUI : MonoBehaviour
         // probably a minigame
         AIBehaviour current = target.GetComponent<AIBehaviour>();
         current.Moor();
+        currentState.AddTouristScore();
         target.Location.ResetColor();
         AfterAction(remove);
     }
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
     {
-        spawner.DestroyUnit(target);
-        currentState.AddSecurity(2);
-        AfterAction(remove);
-        currentState.AddCatchScore();
+        if (currentState.GetSecurity() >= 35.0f)
+        {
+            spawner.DestroyUnit(target);
+            currentState.AddSecurity(2);
+            AfterAction(remove);
+            currentState.AddCatchScore();
+        }
+        else if (currentState.GetSecurity() >= 0.0f && currentState.GetSecurity() < 35.0f)
+        {
+            int random = Random.Range(0, 1);
+            switch (random)
+            {
+                case 0:
+                    currentState.SetMessage("Catch failed. They got away!");
+                    int current = currentState.GetTurn();
+                    IEnumerator WaitNextTurn()
+                    {
+                        yield return new WaitUntil(() => currentState.GetTurn() > current);
+                        target.FailedInteraction();
+                    }
+                    StartCoroutine(WaitNextTurn());
+                    break;
+                case 1:
+                    spawner.DestroyUnit(target);
+                    currentState.AddSecurity(2);
+                    AfterAction(remove);
+                    currentState.AddCatchScore();
+                    break;
+            }
+        }
         target.SetInteracted();
     }
 
     void DemolishUpgrade(GameObject remove, HexCell target)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         Destroy(remove);
         if (target.Upgrade.UpgradeType == "AIS")
         {
@@ -550,6 +643,8 @@ public class MainUI : MonoBehaviour
     }
     void DoUpgrade(GameObject remove)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         Destroy(remove);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
@@ -719,28 +814,6 @@ public class MainUI : MonoBehaviour
         timeController.ForwardTime();
         StartCoroutine(Movement(clicked));
 
-        // makes everything visible again
-        if (timeController.IsDay() && (currentState.GetTurn() % 4 == 0))
-        {
-            for (int i = 0; i < grid.GetUnits().Count; i++)
-            {
-                HexUnit currentUnit = grid.GetUnits()[i];
-
-                if (!currentUnit.IsVisible)
-                {
-                    grid.GetUnits()[i].ToggleVisibility();
-                }
-            }
-
-            foreach (HexCell cell in grid.GetCells())
-            {
-                if (!cell.Structure)
-                {
-                    cell.IncreaseVisibility();
-                }
-            }
-        }
-
         foreach (HexUnit unit in grid.GetUnits())
         {
             if (unit.UnitType == "Tourist Boat" || unit.UnitType == "Fishing Boat")
@@ -753,40 +826,75 @@ public class MainUI : MonoBehaviour
         spawner.DestroyUnits();
         UpdateUIElements();
 
-        if (currentState.GetHealth() <= 0)
+        if (currentState.GetTrueHealth() <= 0)
         {
-            GenerateEndScreen("Defeat.");
+            GenerateEndScreen("Defeat.", "The reef has been irreparably damaged.");
+            storyTriggers[2].TriggerDialogue();
         }
         else if (currentState.CheckResearched("Total Protection"))
         {
-            GenerateEndScreen("Victory!");
+            GenerateEndScreen("Victory!", "You have managed to defend the reef.");
+            storyTriggers[1].TriggerDialogue();
         }
     }
 
-    void GenerateEndScreen(string text)
+    void GenerateEndScreen(string state, string reason)
     {
+        // add reasoning behind victory/defeat
         GameObject end = Instantiate(endPrefab, transform.position, Quaternion.identity, transform);
-        Button button = end.transform.GetChild(1).gameObject.GetComponent<Button>();
-        Text curr = button.GetComponentInChildren<Text>();
+        Text textA = end.transform.GetChild(0).gameObject.GetComponent<Text>();
+        Text textB = end.transform.GetChild(1).gameObject.GetComponent<Text>();
 
-        curr.text = text;
+        textA.text = state;
+        textB.text = reason;
     }
 
     void SpawnUnits()
     {
         if (!currentState.CheckTutorial())
         {
-            if (timeController.IsDay() && !currentState.SpawnedDay())
+            int max;
+            if (currentState.GetLevel() == 1)
+            {
+                max = 1;
+            }
+            else
+            {
+                max = currentState.GetLevel() / 2;
+            }
+
+            if (currentState.SpawnedDay())
+            {
+                currentState.AddDaySpawn();
+            }
+            if (currentState.SpawnedNight())
+            {
+                currentState.AddNightSpawn();
+            }
+
+            if (currentState.daySpawnCounter() >= 6)
+            {
+                currentState.ToggleDaySpawn();
+                currentState.ResetDaySpawn();
+            }
+
+            if (currentState.nightSpawnCounter() >= 6)
+            {
+                currentState.ToggleNightSpawn();
+                currentState.ResetNightSpawn();
+            }
+
+            if (timeController.IsDay() && !currentState.SpawnedDay() && currentState.GetTourists() <= 2)
             {
                 currentState.ResetFisherman();
-                foreach (HexUnit unit in grid.GetUnits())
-                {
-                    if (unit.UnitType == "Fishing Boat")
-                    {
-                        spawner.DestroyUnit(unit);
-                    }
-                }
-                int max = currentState.GetLevel();
+                // foreach (HexUnit unit in grid.GetUnits())
+                // {
+                //     if (unit.UnitType == "Fishing Boat")
+                //     {
+                //         spawner.DestroyUnit(unit);
+                //     }
+                // }
+
                 if (currentState.GetTourists() == 0)
                 {
                     currentState.SetTourists(max);
@@ -804,10 +912,11 @@ public class MainUI : MonoBehaviour
                 }
 
                 currentState.ToggleDaySpawn();
+                currentState.ResetDaySpawn();
+                storyTriggers[4].TriggerDialogue();
             }
-            else if (!timeController.IsDay() && !currentState.SpawnedNight())
+            else if (!timeController.IsDay() && !currentState.SpawnedNight() && currentState.GetFishermen() <= 2)
             {
-                int max = currentState.GetLevel();
                 // int random = Random.Range(0, max * ((int)currentState.GetSecurity() / 100));
 
                 for (int i = 0; i < max; i++)
@@ -817,6 +926,8 @@ public class MainUI : MonoBehaviour
                 }
 
                 currentState.ToggleNightSpawn();
+                currentState.ResetNightSpawn();
+                storyTriggers[3].TriggerDialogue();
             }
         }
     }
@@ -827,6 +938,28 @@ public class MainUI : MonoBehaviour
         yield return new WaitUntil(() => CheckMovement() == false);
         yield return new WaitUntil(() => timeController.CheckPause());
         clicked.interactable = true;
+
+        // makes everything visible again during daytime
+        // if (timeController.IsDay() && currentState.GetTurn() % 8 == 0)
+        // {
+        //     for (int i = 0; i < grid.GetUnits().Count; i++)
+        //     {
+        //         HexUnit currentUnit = grid.GetUnits()[i];
+
+        //         if (!currentUnit.IsVisible)
+        //         {
+        //             grid.GetUnits()[i].IsVisible = true;
+        //         }
+        //     }
+
+        //     foreach (HexCell cell in grid.GetCells())
+        //     {
+        //         if (!cell.Structure)
+        //         {
+        //             cell.IncreaseVisibility();
+        //         }
+        //     }
+        // }
     }
 
     bool CheckMovement()
@@ -844,6 +977,8 @@ public class MainUI : MonoBehaviour
 
     public void Research(Button clicked)
     {
+        FreezeInput(true);
+        cameraController.FreezeCamera(true);
         grid.GetAudioManager().Play("Next", 0);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject researchPanel = Instantiate(researchPrefab, spawnAt, Quaternion.identity, transform);
@@ -856,16 +991,28 @@ public class MainUI : MonoBehaviour
             {
                 button.interactable = false;
             }
+            else if (button.GetComponentInChildren<Text>().text == "X")
+            {
+                button.onClick.AddListener(() => Close(researchPanel));
+            }
             else
             {
                 button.interactable = true;
                 button.onClick.AddListener(() => ResearchUpgrade(button));
             }
         }
+
+        researchButton.interactable = false;
+        endTurnButton.interactable = false;
     }
 
     void ResearchUpgrade(Button clicked)
     {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
+        researchButton.interactable = true;
+        endTurnButton.interactable = true;
+
         grid.GetAudioManager().Play("Next", 0);
         string name = clicked.GetComponentInChildren<Text>().text;
         GameObject window = clicked.transform.parent.parent.gameObject;
@@ -900,6 +1047,11 @@ public class MainUI : MonoBehaviour
 
     void Close(GameObject toRemove)
     {
+        researchButton.interactable = true;
+        endTurnButton.interactable = true;
+
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Prev", 0);
         Destroy(toRemove);
     }
@@ -997,7 +1149,7 @@ public class MainUI : MonoBehaviour
             if (!currentUnit.IsVisible)
             {
                 affectedUnits.Push(currentUnit);
-                grid.GetUnits()[i].ToggleVisibility();
+                grid.GetUnits()[i].IsVisible = true;
             }
         }
 
@@ -1005,7 +1157,7 @@ public class MainUI : MonoBehaviour
 
         while (affectedUnits.Count > 0)
         {
-            affectedUnits.Pop().ToggleVisibility();
+            affectedUnits.Pop().IsVisible = false;
         }
 
         currentState.DeactivateRadar();
@@ -1015,6 +1167,21 @@ public class MainUI : MonoBehaviour
     {
         yield return new WaitUntil(() => currentState.FetchCD("RADAR") == 0);
         radarButton.interactable = true;
+    }
+
+    public void FreezeInput(bool toggle)
+    {
+        freeze = toggle;
+        if (freeze)
+        {
+            endTurnButton.interactable = false;
+            researchButton.interactable = false;
+        }
+        else
+        {
+            endTurnButton.interactable = true;
+            researchButton.interactable = true;
+        }
     }
 
     public Spawner GetSpawner()
@@ -1027,10 +1194,30 @@ public class MainUI : MonoBehaviour
         return playerLocation;
     }
 
-    public void PointToObject(GameObject gameObject)
+    public void DisplayTutorialObjective(string objective)
     {
-        GameObject temp = Instantiate(arrowPrefab, transform.position, Quaternion.identity, transform);
-        ObjectiveArrow objectiveArrow = temp.GetComponent<ObjectiveArrow>();
-        objectiveArrow.targetTransform = gameObject.transform;
+        GetPlayerState().SetObjectives(objective);
+        objectivesDisplay.DisplayObjectives();
+    }
+
+    IEnumerator UIUpdateDelay()
+    {
+        yield return new WaitUntil(() => currentState != null);
+        UpdateUIElements();
+    }
+
+    public CameraController GetCameraController()
+    {
+        return cameraController;
+    }
+
+    public TimeController GetTimeController()
+    {
+        return timeController;
+    }
+
+    public HexGrid GetHexGrid()
+    {
+        return grid;
     }
 }

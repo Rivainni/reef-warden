@@ -1,0 +1,2 @@
+[NAME=Julia]Idle: Ok so they are under an accredited dive company and the information matches.
+[ACTION=EnterCharacterPaulo]Idle: I also checked and they didn’t have any contraband, so they can proceed.

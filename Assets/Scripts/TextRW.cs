@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public static class TextRW
 {
@@ -25,6 +26,7 @@ public static class TextRW
     static List<string> level3Objectives = new List<string>();
     static List<string> level4Objectives = new List<string>();
     static List<string> level5Objectives = new List<string>();
+    static int[] currentSettings = { 1920, 1080, 1, 100, 100 };
 
     public static List<string> GetObjectives(int level)
     {
@@ -155,6 +157,103 @@ public static class TextRW
                     else if (currentLevel == "Level5")
                     {
                         level5Objectives.Add(line);
+                    }
+                }
+            }
+        }
+    }
+
+    public static int[] GetSettings()
+    {
+        return currentSettings;
+    }
+
+    public static int GetUIScale()
+    {
+        return currentSettings[3];
+    }
+
+    public static void WriteSettings(int resolutionW, int resolutionH, int fullscreen, int scale, int volume)
+    {
+        currentSettings[0] = resolutionW;
+        currentSettings[1] = resolutionH;
+        currentSettings[2] = fullscreen;
+        currentSettings[3] = scale;
+        currentSettings[4] = volume;
+
+        string path = Path.Combine(Application.dataPath, "settings.txt");
+        using (StreamWriter writer = new StreamWriter(File.Open(path, FileMode.Create)))
+        {
+            writer.WriteLine("[ResolutionW]");
+            writer.WriteLine(currentSettings[0]);
+            writer.WriteLine("[ResolutionH]");
+            writer.WriteLine(currentSettings[1]);
+            writer.WriteLine("[Fullscreen]");
+            writer.WriteLine(currentSettings[2]);
+            writer.WriteLine("[Scale]");
+            writer.WriteLine(currentSettings[3]);
+            writer.WriteLine("[Volume]");
+            writer.WriteLine(currentSettings[4]);
+        }
+    }
+
+    public static void ReadSettings()
+    {
+        string path = Path.Combine(Application.dataPath, "settings.txt");
+        string txt = "";
+        try
+        {
+            using (StreamReader reader = new StreamReader(File.OpenRead(path)))
+            {
+                txt = reader.ReadToEnd();
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            TextRW.WriteSettings(Screen.currentResolution.width, Screen.currentResolution.height, 1, 100, 100);
+        }
+
+        string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());
+        if (lines.Length > 1)
+        {
+            ReadSettings(lines);
+        }
+    }
+
+    static void ReadSettings(string[] lines)
+    {
+        string currentSetting = "";
+        foreach (string line in lines)
+        {
+            if (line.StartsWith("["))
+            {
+                currentSetting = line.Substring(1, line.IndexOf(']') - 1);
+            }
+            else
+            {
+                int parsed = 0;
+                if (Int32.TryParse(line, out parsed))
+                {
+                    if (currentSetting == "ResolutionW")
+                    {
+                        currentSettings[0] = parsed;
+                    }
+                    else if (currentSetting == "ResolutionH")
+                    {
+                        currentSettings[1] = parsed;
+                    }
+                    else if (currentSetting == "Fullscreen")
+                    {
+                        currentSettings[2] = parsed;
+                    }
+                    else if (currentSetting == "Scale")
+                    {
+                        currentSettings[3] = parsed;
+                        Debug.Log(parsed);
+                    }
+                    else if (currentSetting == "Volume")
+                    {
+                        currentSettings[4] = parsed;
                     }
                 }
             }

@@ -46,9 +46,17 @@ public class Spawner : MonoBehaviour
 
     public void SpawnUpgrade(HexCell cell, string upgradeType, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
+        int upgradeIndex = System.Array.IndexOf(structureTypes, upgradeType);
         if (cell && !cell.Structure)
         {
-            hexGrid.AddUpgrade(Instantiate(upgradePrefabs[0]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
+            if (upgradeIndex != -1)
+            {
+                hexGrid.AddUpgrade(Instantiate(upgradePrefabs[upgradeIndex]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
+            }
+            else
+            {
+                hexGrid.AddUpgrade(Instantiate(upgradePrefabs[0]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
+            }
         }
     }
 
@@ -61,6 +69,12 @@ public class Spawner : MonoBehaviour
     public void DestroyUnit(HexUnit unit)
     {
         destructionQueue.Enqueue(unit);
+        WaypointMarker activeWaypoint = hexGrid.FindWaypoint(unit);
+
+        if (activeWaypoint != null)
+        {
+            DestroyWaypoint(activeWaypoint);
+        }
     }
 
     public void DestroyUnits()
@@ -97,5 +111,45 @@ public class Spawner : MonoBehaviour
         }
 
         Debug.Log("Spawned " + unitType);
+
+        if (unitType == "Tourist Boat")
+        {
+            AddUnitWaypoint(cell);
+        }
+    }
+
+    public void TutorialSpawn(string unitType)
+    {
+        int random = unitType == "Tourist Boat" ? 300 : 299;
+        HexCell cell = hexGrid.GetCells()[random];
+
+        int unitIndex = System.Array.IndexOf(unitTypes, unitType);
+        if (cell && !cell.Unit)
+        {
+            hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
+        }
+
+        Debug.Log("Spawned " + unitType);
+    }
+
+    public void AddUnitWaypoint(HexCell cell)
+    {
+        hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.Unit.transform);
+        Debug.Log("waypoint added");
+    }
+
+    public void AddCellWaypoint(HexCell cell)
+    {
+        hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.transform);
+    }
+
+    public void DestroyWaypoint(WaypointMarker waypointMarker)
+    {
+        hexGrid.RemoveWaypoint(waypointMarker);
+    }
+
+    public void DestroyWaypoints()
+    {
+        hexGrid.RemoveWaypoints();
     }
 }

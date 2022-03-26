@@ -74,11 +74,17 @@ public class HexUnit : MonoBehaviour
                 Grid.DecreaseVisibility(location, visionRange);
                 location.Unit = null;
             }
+            else if (location)
+            {
+                location.Unit = null;
+            }
+
             location = value;
             value.Unit = this;
 
-            if (IsPatrolBoat())
+            if (IsPlayerControlled())
             {
+                value.IncreaseVisibility();
                 Grid.IncreaseVisibility(value, visionRange);
             }
 
@@ -100,7 +106,23 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    public bool IsVisible { get; set; }
+    public bool IsVisible
+    {
+        get
+        {
+            return isVisible;
+        }
+        set
+        {
+            isVisible = value;
+            // foreach (Renderer item in unitRenderers)
+            // {
+            //     item.enabled = value;
+            // }
+            Debug.Log(unitType + " is currently visible: " + value);
+        }
+    }
+    bool isVisible;
 
     public HexGrid Grid { get; set; }
 
@@ -110,8 +132,13 @@ public class HexUnit : MonoBehaviour
     const float travelSpeed = 2f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
+    Renderer[] unitRenderers;
 
-    // methods beyond this point
+    void Awake()
+    {
+        unitRenderers = GetComponentsInChildren<Renderer>();
+    }
+
     void Start()
     {
         maxActionPoints = actionPoints;
@@ -121,7 +148,6 @@ public class HexUnit : MonoBehaviour
             HP = 100;
             healthBar.SetMaxHealth(HP);
         }
-        IsVisible = true;
         busy = false;
         interacted = false;
     }
@@ -278,21 +304,6 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    public void ToggleVisibility()
-    {
-        if (IsVisible)
-        {
-            IsVisible = false;
-            // this basically just moves the unit off-screen
-            gameObject.transform.Translate(Vector3.down * 10);
-        }
-        else
-        {
-            IsVisible = true;
-            gameObject.transform.Translate(Vector3.up * 10);
-        }
-    }
-
     public void ToggleBusy()
     {
         if (busy)
@@ -315,6 +326,11 @@ public class HexUnit : MonoBehaviour
         return UnitType.Contains("Patrol Boat");
     }
 
+    public bool IsDayBoat()
+    {
+        return IsPlayerControlled() || UnitType.Contains("Tourist Boat");
+    }
+
     public AIBehaviour GetAIBehaviour()
     {
         return GetComponent<AIBehaviour>();
@@ -328,6 +344,11 @@ public class HexUnit : MonoBehaviour
     public void SetInteracted()
     {
         interacted = true;
+    }
+
+    public void FailedInteraction()
+    {
+        interacted = false;
     }
 
     public bool HasInteracted()

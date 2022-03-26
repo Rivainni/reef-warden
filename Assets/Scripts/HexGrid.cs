@@ -15,6 +15,7 @@ public class HexGrid : MonoBehaviour
     public HexCell water;
     public HexCell landA;
     public HexCell landB;
+    public WaypointMarker waypointMarker;
     public Spawner spawner;
     public MainUI mainUI;
     public Text cellLabelPrefab;
@@ -45,6 +46,7 @@ public class HexGrid : MonoBehaviour
     List<HexStructure> structures = new List<HexStructure>();
     List<HexCell> upgradeCells = new List<HexCell>();
     List<HexCell> buoyCells = new List<HexCell>();
+    List<WaypointMarker> waypoints = new List<WaypointMarker>();
     HexCell rangerStation;
     PlayerBehaviour playerBehaviour;
     int patrolBoatSpawn, serviceBoatSpawn;
@@ -91,6 +93,20 @@ public class HexGrid : MonoBehaviour
             for (int x = 0; x < cellCountX; x++)
             {
                 CreateCell(x, z, i++);
+            }
+        }
+
+        // for adding the images
+        for (int i = 0; i < cells.Length; i++)
+        {
+            switch (GlobalCellCheck.IsAdjacentToBuoy(cells[i]))
+            {
+                case 1:
+                    cells[i].Adjacency = 1;
+                    break;
+                case 2:
+                    cells[i].Adjacency = 2;
+                    break;
             }
         }
     }
@@ -276,6 +292,8 @@ public class HexGrid : MonoBehaviour
             currentBehaviour.grid = this;
             currentBehaviour.mainUI = mainUI;
             currentBehaviour.spawner = spawner;
+
+            unit.IsVisible = location.IsVisible;
         }
     }
 
@@ -318,6 +336,40 @@ public class HexGrid : MonoBehaviour
         upgrade.Die();
     }
 
+    public void AddWaypoint(WaypointMarker waypointMarker, Transform target)
+    {
+        waypoints.Add(waypointMarker);
+        waypointMarker.target = target;
+        waypointMarker.transform.SetParent(mainUI.transform);
+    }
+
+    public void RemoveWaypoint(WaypointMarker waypointMarker)
+    {
+        waypoints.Remove(waypointMarker);
+        waypointMarker.Die();
+    }
+
+    public void RemoveWaypoints()
+    {
+        for (int i = 0; i < waypoints.Count; i++)
+        {
+            RemoveWaypoint(waypoints[i]);
+        }
+        waypoints.Clear();
+    }
+
+    public WaypointMarker FindWaypoint(HexUnit unit)
+    {
+        for (int i = 0; i < waypoints.Count; i++)
+        {
+            if (waypoints[i].target == unit.transform)
+            {
+                return waypoints[i];
+            }
+        }
+        return null;
+    }
+
     public void ResetPoints()
     {
         for (int i = 0; i < units.Count; i++)
@@ -347,42 +399,8 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    // public void Save(BinaryWriter writer)
-    // {
-    //     writer.Write(cellCountX);
-    //     writer.Write(cellCountZ);
-
-    //     writer.Write(units.Count);
-    //     for (int i = 0; i < cells.Length; i++)
-    //     {
-    //         cells[i].Save(writer);
-    //     }
-    // }
-
-    // public void Load(BinaryReader reader)
-    // {
-    //     ClearPath();
-    //     ClearUnits();
-    //     for (int i = 0; i < cells.Length; i++)
-    //     {
-    //         cells[i].Load(reader);
-    //     }
-
-    //     int unitCount = reader.ReadInt32();
-    //     for (int i = 0; i < unitCount; i++)
-    //     {
-    //         HexUnit.Load(reader, this);
-    //     }
-    // }
-
-
     List<HexCell> GetVisibleCells(HexCell fromCell, int range)
     {
-        for (int i = 0; i < cells.Length; i++)
-        {
-            cells[i].Distance = int.MaxValue;
-        }
-
         List<HexCell> frontier = new List<HexCell>();
         List<HexCell> visibleCells = new List<HexCell>();
         fromCell.Distance = 0;
@@ -423,12 +441,11 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < curr.Count; i++)
         {
             cells[i].IncreaseVisibility();
+            // cells[i].ResetColor();
+            Debug.Log("vis");
             if (cells[i].Unit)
             {
-                if (!cells[i].Unit.IsVisible)
-                {
-                    cells[i].Unit.ToggleVisibility();
-                }
+                cells[i].Unit.IsVisible = cells[i].IsVisible;
             }
         }
     }
@@ -439,13 +456,11 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < curr.Count; i++)
         {
             cells[i].DecreaseVisibility();
-
+            // cells[i].EnableHeavyHighlight();
+            Debug.Log("inv");
             if (cells[i].Unit)
             {
-                if (cells[i].Unit.IsVisible)
-                {
-                    cells[i].Unit.ToggleVisibility();
-                }
+                cells[i].Unit.IsVisible = cells[i].IsVisible;
             }
         }
     }
@@ -483,5 +498,10 @@ public class HexGrid : MonoBehaviour
     public AudioManager GetAudioManager()
     {
         return audioManager;
+    }
+
+    public WaypointMarker GetWaypointMarker()
+    {
+        return waypointMarker;
     }
 }

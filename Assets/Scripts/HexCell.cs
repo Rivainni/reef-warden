@@ -92,14 +92,31 @@ public class HexCell : MonoBehaviour
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
     public Upgrade Upgrade { get; set; }
+    public int Adjacency
+    {
+        get
+        {
+            return adjacency;
+        }
+        set
+        {
+            adjacency = value;
+            if (adjacency > 0)
+            {
+                Image highlight = uiRect.GetChild(1).GetComponent<Image>();
+                highlight.enabled = true;
+            }
+        }
+    }
+    int adjacency;
 
-    Renderer renderer;
+    Renderer cellRenderer;
     Color defaultColor;
 
     void Awake()
     {
-        renderer = GetComponent<Renderer>();
-        defaultColor = renderer.material.color;
+        cellRenderer = GetComponent<Renderer>();
+        defaultColor = cellRenderer.material.color;
     }
 
     public HexCell GetNeighbor(HexDirection direction)
@@ -131,14 +148,47 @@ public class HexCell : MonoBehaviour
         highlight.enabled = true;
     }
 
+    void ClearFeature()
+    {
+        Image highlight = uiRect.GetChild(2).GetComponent<Image>();
+        highlight.enabled = false;
+    }
+
+    void EnableFeature()
+    {
+        Image highlight = uiRect.GetChild(2).GetComponent<Image>();
+        highlight.enabled = true;
+    }
+
+    void OnMouseOver()
+    {
+        if (Adjacency > 0)
+        {
+            EnableFeature();
+        }
+    }
+
+    void OnMouseExit()
+    {
+        if (Adjacency > 0)
+        {
+            ClearFeature();
+        }
+    }
+
     public void EnableHeavyHighlight()
     {
-        renderer.material.color = Color.red;
+        cellRenderer.material.color = Color.red;
+    }
+
+    public void EnableHeavyHighlight(Color color)
+    {
+        cellRenderer.material.color = color;
     }
 
     public void ResetColor()
     {
-        renderer.material.color = defaultColor;
+        cellRenderer.material.color = defaultColor;
     }
 
     public void IncreaseVisibility()

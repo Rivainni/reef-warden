@@ -43,12 +43,15 @@ public class PlayerState : ScriptableObject
     const float moraleLambda = 0.01f;
     const float securityLambda = 0.04f;
     bool radarActive = false;
-    bool inTutorial;
+    bool inTutorial = false;
     bool AIS = false;
     bool SAT = false;
     bool SS = false;
     bool daySpawn = false;
     bool nightSpawn = false;
+    int sinceDaySpawn = 0;
+    int sinceNightSpawn = 0;
+    int sinceLastHealthCheck = 0;
 
     // counters for objectives
     int levelTurns = 0;
@@ -117,6 +120,16 @@ public class PlayerState : ScriptableObject
         return seenReefHealth;
     }
 
+    public float GetTrueHealth()
+    {
+        return trueReefHealth;
+    }
+
+    public bool ReefDamaged()
+    {
+        return seenReefHealth > trueReefHealth;
+    }
+
     public int GetTurn()
     {
         return turn;
@@ -169,7 +182,7 @@ public class PlayerState : ScriptableObject
 
     public void AdjustMoney(int factor)
     {
-        money += factor;
+        money += Mathf.RoundToInt(factor + factor * morale);
     }
 
     public void AddResearch(int RP)
@@ -511,6 +524,11 @@ public class PlayerState : ScriptableObject
         fishermen = 0;
     }
 
+    public int GetFishermen()
+    {
+        return fishermen;
+    }
+
     public int GetTouristScore()
     {
         return touristsInspected;
@@ -523,6 +541,11 @@ public class PlayerState : ScriptableObject
 
     public void Clean()
     {
+        if (username == "")
+        {
+            username = "Juan";
+        }
+
         money = 10000;
         income = 0;
         research = 250;
@@ -534,7 +557,16 @@ public class PlayerState : ScriptableObject
         trueReefHealth = 100;
         seenReefHealth = 50;
         turn = 1;
-        level = 1;
+
+        if (inTutorial)
+        {
+            level = 0;
+        }
+        else
+        {
+            level = 1;
+        }
+
         checkHealthCD1 = 0;
         checkHealthCD2 = 0;
         checkHealthCD3 = 0;
@@ -568,6 +600,7 @@ public class PlayerState : ScriptableObject
         turn++;
         incrementLevelCounters("level");
         money += income;
+        sinceLastHealthCheck++;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);
 
@@ -590,7 +623,7 @@ public class PlayerState : ScriptableObject
 
         ReduceCD();
         UpdateObjectives();
-        if (currentObjectives.Count == 0)
+        if (currentObjectives.Count == 0 && !CheckTutorial())
         {
             AddLevel();
             SetObjectives(TextRW.GetObjectives(level));
@@ -620,6 +653,11 @@ public class PlayerState : ScriptableObject
     public void SetObjectives(List<string> replace)
     {
         currentObjectives = replace;
+    }
+    public void SetObjectives(string replace)
+    {
+        currentObjectives.Clear();
+        currentObjectives.Add(replace);
     }
 
     public void RemoveObjective(string objective)
@@ -800,6 +838,21 @@ public class PlayerState : ScriptableObject
         return nightSpawn;
     }
 
+    public int daySpawnCounter()
+    {
+        return sinceDaySpawn;
+    }
+
+    public int nightSpawnCounter()
+    {
+        return sinceNightSpawn;
+    }
+
+    public int GetLastHealthCheck()
+    {
+        return sinceLastHealthCheck;
+    }
+
     public void ToggleDaySpawn()
     {
         if (daySpawn)
@@ -822,5 +875,29 @@ public class PlayerState : ScriptableObject
         {
             nightSpawn = true;
         }
+    }
+
+    public void ResetDaySpawn()
+    {
+        sinceDaySpawn = 0;
+    }
+    public void ResetNightSpawn()
+    {
+        sinceNightSpawn = 0;
+    }
+
+    public void AddDaySpawn()
+    {
+        sinceDaySpawn++;
+    }
+
+    public void AddNightSpawn()
+    {
+        sinceNightSpawn++;
+    }
+
+    public void ResetHealthWarning()
+    {
+        sinceLastHealthCheck = 0;
     }
 }
