@@ -40,11 +40,6 @@ public class AIBehaviour : MonoBehaviour
         {
             StartCoroutine(TurnMove());
             SetMovementTarget(finalDestination);
-
-            if (currentUnit.Location == finalDestination)
-            {
-                currentUnit.Location.EnableHeavyHighlight();
-            }
         }
         else if (!stateChanged)
         {
