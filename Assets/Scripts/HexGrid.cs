@@ -442,7 +442,6 @@ public class HexGrid : MonoBehaviour
         {
             cells[i].IncreaseVisibility();
             // cells[i].ResetColor();
-            Debug.Log("vis");
             if (cells[i].Unit)
             {
                 cells[i].Unit.IsVisible = cells[i].IsVisible;
@@ -457,7 +456,6 @@ public class HexGrid : MonoBehaviour
         {
             cells[i].DecreaseVisibility();
             // cells[i].EnableHeavyHighlight();
-            Debug.Log("inv");
             if (cells[i].Unit)
             {
                 cells[i].Unit.IsVisible = cells[i].IsVisible;

@@ -54,6 +54,7 @@ public class MainUI : MonoBehaviour
 
         objectivesDisplay.currentState = currentState;
         objectivesDisplay.DisplayObjectives();
+
         minigameData.SetInspection();
         StartCoroutine(UIUpdateDelay());
     }
@@ -117,6 +118,7 @@ public class MainUI : MonoBehaviour
             if (cell != currentCell)
             {
                 Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
+                Debug.Log("reef structure" + GlobalCellCheck.GetIsland(cell));
                 currentCell = cell;
                 return true;
             }
@@ -220,30 +222,30 @@ public class MainUI : MonoBehaviour
                                 targetB = toCheckCell.Unit;
                             }
                         }
-                        else if (toCheckCell != null)
+                    }
+
+                    if (GlobalCellCheck.GetIsland(cell) > 0)
+                    {
+                        if (cell.Adjacency == 1)
                         {
-                            if (GlobalCellCheck.GetIsland(toCheckCell) > 0)
+                            if (currentState.FetchCD("CH" + GlobalCellCheck.GetIsland(cell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
                             {
-                                Debug.Log("reef structure" + GlobalCellCheck.GetIsland(toCheckCell));
-                                if (currentState.FetchCD("CH" + GlobalCellCheck.GetIsland(toCheckCell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
-                                {
-                                    contextMenuContent.Add("Check Reef Health");
-                                }
-                                if (currentState.FetchCD("B") == 0 && toCheckCell.Type == "Land" && toCheckCell.Index == 465 && !contextMenuContent.Contains("Count Birds"))
-                                {
-                                    contextMenuContent.Add("Count Birds");
-                                }
-                                if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(toCheckCell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
-                                {
-                                    contextMenuContent.Add("Monitor Clams");
-                                }
-                                if (currentState.FetchCD("T") == 0 && !contextMenuContent.Contains("Tag Turtles") && currentState.CheckResearched("Species Tagging"))
-                                {
-                                    contextMenuContent.Add("Tag Turtles");
-                                }
-                                reefStructure = GlobalCellCheck.GetIsland(toCheckCell);
+                                contextMenuContent.Add("Check Reef Health");
                             }
                         }
+                        if (currentState.FetchCD("B") == 0 && cell.Type == "Land" && cell.Index == 465 && !contextMenuContent.Contains("Count Birds"))
+                        {
+                            contextMenuContent.Add("Count Birds");
+                        }
+                        if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(cell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
+                        {
+                            contextMenuContent.Add("Monitor Clams");
+                        }
+                        if (currentState.FetchCD("T") == 0 && !contextMenuContent.Contains("Tag Turtles") && currentState.CheckResearched("Species Tagging"))
+                        {
+                            contextMenuContent.Add("Tag Turtles");
+                        }
+                        reefStructure = GlobalCellCheck.GetIsland(cell);
                     }
                 }
             }

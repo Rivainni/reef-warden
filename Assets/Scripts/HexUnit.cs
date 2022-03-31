@@ -119,7 +119,6 @@ public class HexUnit : MonoBehaviour
             // {
             //     item.enabled = value;
             // }
-            Debug.Log(unitType + " is currently visible: " + value);
         }
     }
     bool isVisible;
