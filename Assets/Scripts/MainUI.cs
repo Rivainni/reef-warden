@@ -40,9 +40,12 @@ public class MainUI : MonoBehaviour
     void Start()
     {
         freeze = false;
-        // initState.Clean();
-        currentState = initState;
-        currentState.Clean();
+
+        if (!currentState)
+        {
+            currentState = initState;
+            currentState.Clean();
+        }
 
         if (!currentState.CheckTutorial())
         {
@@ -51,7 +54,6 @@ public class MainUI : MonoBehaviour
 
         objectivesDisplay.currentState = currentState;
         objectivesDisplay.DisplayObjectives();
-        // PointToObject(grid.GetUnits()[0].gameObject);
         minigameData.SetInspection();
         StartCoroutine(UIUpdateDelay());
     }
