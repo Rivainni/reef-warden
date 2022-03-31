@@ -29,13 +29,12 @@ public class WaypointMarker : MonoBehaviour
             // Check if the target is on the left side of the screen
             if (pos.x < Screen.width / 2)
             {
-                // Place it on the right (Since it's behind the player, it's the opposite)
-                pos.x = maxX;
+                pos.x = minX;
             }
             else
             {
                 // Place it on the left side
-                pos.x = minX;
+                pos.x = maxX;
             }
         }
 
