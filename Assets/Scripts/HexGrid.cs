@@ -216,7 +216,6 @@ public class HexGrid : MonoBehaviour
             case 1:
                 spawner.SpawnStructure(cell, "Buoy");
                 buoyCells.Add(cell);
-                cell.EnableHighlight(Color.green);
                 break;
         }
 
