@@ -686,13 +686,16 @@ public class MainUI : MonoBehaviour
                     currentText.text = "Select an available upgrade to get started!";
                 }
             }
+
+            FreezeInput(true);
+            cameraController.FreezeCamera(true);
         }
     }
 
     void BuildUpgrade(string upgrade, int constructionTime, int researchCost, int buildCost, int upkeep, GameObject remove, HexCell target)
     {
         currentState.QueueUpgrade(upgrade, constructionTime);
-        Destroy(remove);
+        Close(remove);
         currentState.AdjustMoney(-buildCost);
         currentState.AddManpower(-1);
         Debug.Log("Built " + upgrade + " for " + buildCost);
@@ -1075,7 +1078,7 @@ public class MainUI : MonoBehaviour
                 currentState.AddMorale(currentState.GetLevel() * 5);
             }
         }
-        Destroy(toRemove);
+        Close(toRemove);
     }
 
     void UpdateUIQueue(string name, int choice, int time)
