@@ -240,19 +240,6 @@ public class StoryManager : MonoBehaviour
                 mainUI.GetCameraController().FreezeCamera(true);
             }
         }
-        else if (action == "QE")
-        {
-            storyUI.SetActive(false);
-            mainUI.DisplayTutorialObjective("Rotate the camera with Q or E.");
-            StartCoroutine(WaitForPlayer());
-            IEnumerator WaitForPlayer()
-            {
-                yield return new WaitUntil(() => Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E));
-                yield return new WaitForSeconds(3.0f);
-                storyUI.SetActive(true);
-                mainUI.GetCameraController().FreezeCamera(true);
-            }
-        }
         else if (action == "RF")
         {
             storyUI.SetActive(false);

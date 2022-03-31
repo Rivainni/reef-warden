@@ -1,8 +1,7 @@
 [NAME=Diana]Happy: Ok, so now that you’re here, we could start with our daily patrol.
 Happy: First off, let’s teach you how to adjust your view.
 Happy: Use the W, A, S, D keyboard buttons or move the mouse to the corner of the screen to move the camera from side to side.
-[ACTION=WASD]Happy: Use the Q, or E buttons to rotate the camera.
-[ACTION=QE]Lastly to zoom in, use the Mousewheel, R, or F.
+[ACTION=WASD]Happy: Lastly to zoom in, use the Mousewheel, R, or F.
 [ACTION=RF]Happy: There we go, now let's move on to the patrol
 Happy: Click on the boat and right click on the spot you want to go to.
 Happy: Then, click on the prompt ‘Patrol’.
