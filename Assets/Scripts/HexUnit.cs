@@ -163,6 +163,7 @@ public class HexUnit : MonoBehaviour
             Grid.DecreaseVisibility(location, visionRange);
         }
         location.Unit = null;
+        Grid.GetAudioManager().Stop("Boat");
         Destroy(gameObject);
     }
 
