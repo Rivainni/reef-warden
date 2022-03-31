@@ -323,10 +323,7 @@ public class AIBehaviour : MonoBehaviour
                 currentIndex = current.Index;
                 int turn = (distances[currentIndex] - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
-                if (!current.Structure)
-                {
-                    current.EnableHighlight(Color.green);
-                }
+                current.EnableHighlight(Color.green);
                 current.HasOverlap = true;
                 current = current.PathFrom;
             }
@@ -383,10 +380,7 @@ public class AIBehaviour : MonoBehaviour
             {
                 current.HasOverlap = false;
                 current.SetLabel(null);
-                if (!current.Structure)
-                {
-                    current.DisableHighlight();
-                }
+                current.DisableHighlight();
                 current = current.PathFrom;
             }
             current.HasOverlap = false;
