@@ -29,7 +29,10 @@ public class AIBehaviour : MonoBehaviour
         heuristics = new int[grid.GetCells().Length];
         currentUnit = this.gameObject.GetComponent<HexUnit>();
         ChooseTarget();
-        Debug.Log("First target of " + currentUnit.UnitType + " is " + finalDestination.Index);
+        if (currentUnit.UnitType == "Tourist Boat")
+        {
+            finalDestination.EnableHighlight(Color.green);
+        }
         turnStopped = 0;
         satisfied = false;
     }
@@ -38,8 +41,8 @@ public class AIBehaviour : MonoBehaviour
     {
         if (currentUnit.Location != finalDestination)
         {
-            StartCoroutine(TurnMove());
             SetMovementTarget(finalDestination);
+            StartCoroutine(TurnMove());
 
             // this may look stupid, but this is for when the unit has no more final destinations
             if (turnStopped == 0 && currentUnit.Location == finalDestination)
@@ -108,16 +111,10 @@ public class AIBehaviour : MonoBehaviour
     IEnumerator TurnMove()
     {
         DoMove();
-        // grid.ShowUI(false);
         yield return new WaitUntil(() => currentUnit.Location == currentDestination);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
         yield return new WaitUntil(() => currentUnit.movement == false);
-        // grid.ShowUI(true);
-
-        if (currentUnit.Location == finalDestination)
-        {
-            ClearPath();
-        }
+        ClearPath();
     }
 
     // we want the ability to set a target destination
@@ -168,8 +165,6 @@ public class AIBehaviour : MonoBehaviour
         {
             ChooseBuoy();
         }
-
-        SetMovementTarget(finalDestination);
     }
 
     void ChooseBuoy()
