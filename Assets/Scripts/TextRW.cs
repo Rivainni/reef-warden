@@ -211,6 +211,7 @@ public static class TextRW
         catch (FileNotFoundException e)
         {
             TextRW.WriteSettings(Screen.currentResolution.width, Screen.currentResolution.height, 1, 100, 100);
+            Debug.Log(e);
         }
 
         string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());

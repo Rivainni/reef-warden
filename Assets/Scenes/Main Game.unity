@@ -651,7 +651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 677df54b1db8ac54caaac3d2f0eaba6c, type: 3}
-  name: Checking Reef
+  title: Inspection (Yes)
   mainUI: {fileID: 2078076715}
 --- !u!1 &306096919
 GameObject:
@@ -1938,7 +1938,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 0ca6c68bcc923ca46b46f7ee9d21f253, type: 3}
-  name: Ship Spawning
+  title: Ship Spawning (F)
   mainUI: {fileID: 2078076715}
 --- !u!1001 &822783102
 PrefabInstance:
@@ -2754,7 +2754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 62fb57ff8301404478a376a6ff41a8e6, type: 3}
-  name: Ship Spawning
+  title: Ship Spawning (T)
   mainUI: {fileID: 2078076715}
 --- !u!1 &1296624401
 GameObject:
@@ -2800,7 +2800,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 11a943b506931ae4a9487a1a5c9b5560, type: 3}
-  name: Bad End
+  title: Bad End
   mainUI: {fileID: 2078076715}
 --- !u!1 &1327331566
 GameObject:
@@ -3238,7 +3238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 6d2ec685821e4424a8f47bf575f0c01f, type: 3}
-  name: Checking Reef
+  title: Inspection (No)
   mainUI: {fileID: 2078076715}
 --- !u!1 &1504880702
 GameObject:
@@ -3556,7 +3556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 5bb17eaba0ea4d9459bb3b72dd339a85, type: 3}
-  name: Tutorial
+  title: Tutorial
   mainUI: {fileID: 2078076715}
 --- !u!1 &1613907800
 GameObject:
@@ -3602,7 +3602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 99614fbcb71dc3a46934a26aa84e1fae, type: 3}
-  name: Checking Reef
+  title: Inspection (Start)
   mainUI: {fileID: 2078076715}
 --- !u!1 &1622912344
 GameObject:
@@ -4194,7 +4194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 0d2942c50b9d67a44b4bf4070ffaff63, type: 3}
-  name: Checking Reef
+  title: Checking Reef (Damaged)
   mainUI: {fileID: 2078076715}
 --- !u!1 &1892904163
 GameObject:
@@ -4240,7 +4240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 5965036558017e64186f5b5b9a314a56, type: 3}
-  name: Checking Reef
+  title: Checking Reef (Undamaged)
   mainUI: {fileID: 2078076715}
 --- !u!1 &1898122666
 GameObject:
@@ -4434,7 +4434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextFileAsset: {fileID: 4900000, guid: 62e4c3f905c8b7a498a0855bbdd5713f, type: 3}
-  name: Good End
+  title: Good End
   mainUI: {fileID: 2078076715}
 --- !u!1 &2015350035
 GameObject:

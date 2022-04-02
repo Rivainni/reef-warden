@@ -41,7 +41,7 @@ public class MainUI : MonoBehaviour
     {
         freeze = false;
 
-        if (!currentState)
+        if (currentState == null)
         {
             currentState = initState;
             currentState.Clean();
@@ -51,9 +51,6 @@ public class MainUI : MonoBehaviour
         {
             currentState.SetObjectives(TextRW.GetObjectives(1));
         }
-
-        objectivesDisplay.currentState = currentState;
-        objectivesDisplay.DisplayObjectives();
 
         minigameData.SetInspection();
         StartCoroutine(UIUpdateDelay());
@@ -658,7 +655,14 @@ public class MainUI : MonoBehaviour
 
         foreach (TextRW.UpgradeItem item in TextRW.GetUpgrades())
         {
-            if (item.BuildCost > 0)
+            if (currentState.CheckTutorial())
+            {
+                if (item.Name == "RADAR")
+                {
+                    contextMenuContent.Add(item.Name);
+                }
+            }
+            else if (item.BuildCost > 0)
             {
                 contextMenuContent.Add(item.Name);
             }
@@ -995,7 +999,11 @@ public class MainUI : MonoBehaviour
 
         foreach (Button button in buttons)
         {
-            if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) || TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch())
+            if (currentState.CheckTutorial() && (button.GetComponentInChildren<Text>().text != "RADAR" || button.GetComponentInChildren<Text>().text != "X"))
+            {
+                button.interactable = false;
+            }
+            else if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) || TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch())
             {
                 button.interactable = false;
             }
@@ -1211,6 +1219,8 @@ public class MainUI : MonoBehaviour
     IEnumerator UIUpdateDelay()
     {
         yield return new WaitUntil(() => currentState != null);
+        objectivesDisplay.currentState = currentState;
+        objectivesDisplay.DisplayObjectives();
         UpdateUIElements();
     }
 
