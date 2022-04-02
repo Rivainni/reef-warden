@@ -49,6 +49,7 @@ public class TimeController : MonoBehaviour
         {
             targetTime = currentTime;
             pause = true;
+            timeIndicator.text = currentTime.ToString("HH:mm");
         }
     }
 

@@ -275,6 +275,7 @@ public class StoryManager : MonoBehaviour
         else if (action == "CheckReefHealth")
         {
             storyUI.SetActive(false);
+            mainUI.FreezeTurnUI(true);
             mainUI.DisplayTutorialObjective("Check the reef health.");
             mainUI.GetSpawner().AddCellWaypoint(mainUI.GetHexGrid().GetCells()[259]);
             StartCoroutine(WaitForPlayer());
@@ -286,6 +287,7 @@ public class StoryManager : MonoBehaviour
                 mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[259]));
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.FreezeTurnUI(false);
             }
         }
         else if (action == "InspectTourist1")
