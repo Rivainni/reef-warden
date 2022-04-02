@@ -257,24 +257,33 @@ public class StoryManager : MonoBehaviour
         else if (action == "Patrol")
         {
             storyUI.SetActive(false);
-            mainUI.DisplayTutorialObjective("Patrol to any location.");
+            mainUI.DisplayTutorialObjective("Patrol to the indicated location.");
+            mainUI.FreezeTurnUI(true);
+            mainUI.GetSpawner().AddCellWaypoint(mainUI.GetHexGrid().GetCells()[260]);
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.GetPlayerState().GetSecurity() > 50);
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                mainUI.RailroadContextMenu("Patrol");
+                yield return new WaitUntil(() => mainUI.GetHexGrid().GetUnits()[0].Location == mainUI.GetHexGrid().GetCells()[260]);
+                mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[260]));
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
+                mainUI.FreezeTurnUI(false);
             }
         }
         else if (action == "CheckReefHealth")
         {
             storyUI.SetActive(false);
             mainUI.DisplayTutorialObjective("Check the reef health.");
-
+            mainUI.GetSpawner().AddCellWaypoint(mainUI.GetHexGrid().GetCells()[259]);
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                mainUI.RailroadContextMenu("Check Reef Health");
+                yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded() && mainUI.GetHexGrid().GetUnits()[0].Location == mainUI.GetHexGrid().GetCells()[259]);
+                mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[259]));
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
             }
@@ -291,7 +300,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitForSeconds(15.0f);
+                yield return new WaitForSeconds(2.5f);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
             }
@@ -303,6 +312,8 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                mainUI.RailroadContextMenu("Inspect Tourist");
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
@@ -316,6 +327,8 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                mainUI.RailroadContextMenu("Assist Mooring");
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 1);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
@@ -330,7 +343,10 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                mainUI.RailroadContextMenu("Patrol");
                 yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
+                mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[261]));
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
             }
@@ -355,6 +371,8 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                mainUI.RailroadContextMenu("Build Upgrade");
                 yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
@@ -397,7 +415,9 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                mainUI.RailroadContextMenu("Check Reef Health");
+                yield return new WaitUntil(() => !mainUI.HasActiveContextMenu());
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
             }

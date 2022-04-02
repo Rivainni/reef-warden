@@ -35,11 +35,13 @@ public class MainUI : MonoBehaviour
     [SerializeField] CameraController cameraController;
     // allows us to access the dialogue stuff
     [SerializeField] StoryElement[] storyTriggers;
+    GameObject activeContextMenu;
     bool freeze;
 
     void Start()
     {
         freeze = false;
+        activeContextMenu = null;
 
         if (currentState == null)
         {
@@ -286,6 +288,7 @@ public class MainUI : MonoBehaviour
         {
             contextMenuContent.Add("Close");
             GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
+            activeContextMenu = contextMenu;
             FreezeInput(true);
             cameraController.FreezeCamera(true);
 
@@ -369,7 +372,7 @@ public class MainUI : MonoBehaviour
             selectedUnit.DecreaseHP();
         }
         UpdateUIElements();
-        Destroy(remove);
+        Close(remove);
     }
 
     void Inspect(HexCell target, GameObject remove)
@@ -1001,7 +1004,7 @@ public class MainUI : MonoBehaviour
         {
             if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) ||
             TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch() ||
-            (currentState.CheckTutorial() && (button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "X")))
+            (currentState.CheckTutorial() && button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "X"))
             {
                 Debug.Log("Upgrade is " + button.GetComponentInChildren<Text>().text + ". Research status: " + currentState.CheckResearched(button.GetComponentInChildren<Text>().text + "."));
                 button.interactable = false;
@@ -1062,9 +1065,7 @@ public class MainUI : MonoBehaviour
 
     void Close(GameObject toRemove)
     {
-        researchButton.interactable = true;
-        endTurnButton.interactable = true;
-
+        activeContextMenu = null;
         FreezeInput(false);
         cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Prev", 0);
@@ -1199,6 +1200,43 @@ public class MainUI : MonoBehaviour
         }
     }
 
+    public void FreezeTurnUI(bool toggle)
+    {
+        if (toggle)
+        {
+            endTurnButton.interactable = false;
+            researchButton.interactable = false;
+        }
+        else
+        {
+            endTurnButton.interactable = true;
+            researchButton.interactable = true;
+        }
+    }
+
+    public void RailroadContextMenu(string item)
+    {
+        if (activeContextMenu)
+        {
+            bool found = false;
+            Button[] buttons = activeContextMenu.GetComponentsInChildren<Button>();
+
+            foreach (Button button in buttons)
+            {
+                string toCheck = button.GetComponentInChildren<Text>().text;
+
+                if (toCheck == item)
+                {
+                    found = true;
+                }
+                else if (toCheck != "Close" || found)
+                {
+                    button.interactable = false;
+                }
+            }
+        }
+    }
+
     public Spawner GetSpawner()
     {
         return spawner;
@@ -1236,5 +1274,10 @@ public class MainUI : MonoBehaviour
     public HexGrid GetHexGrid()
     {
         return grid;
+    }
+
+    public bool HasActiveContextMenu()
+    {
+        return activeContextMenu;
     }
 }

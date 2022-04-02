@@ -135,7 +135,6 @@ public class Spawner : MonoBehaviour
     public void AddUnitWaypoint(HexCell cell)
     {
         hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.Unit.transform);
-        Debug.Log("waypoint added");
     }
 
     public void AddCellWaypoint(HexCell cell)
