@@ -307,6 +307,32 @@ public class StoryManager : MonoBehaviour
                 mainUI.GetCameraController().FreezeCamera(true);
             }
         }
+        else if (action == "MoveAttempt")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Go towards the tourist.");
+            HexCell currentLocation = mainUI.GetHexGrid().GetUnits()[0].Location;
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetHexGrid().GetUnits()[0].Location != currentLocation);
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+            }
+        }
+        else if (action == "EndTurn")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("End the turn.");
+            int currentTurn = mainUI.GetPlayerState().GetTurn();
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetPlayerState().GetTurn() > currentTurn);
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+            }
+        }
         else if (action == "InspectTourist2")
         {
             storyUI.SetActive(false);
@@ -335,6 +361,20 @@ public class StoryManager : MonoBehaviour
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
                 mainUI.GetSpawner().DestroyWaypoints();
+            }
+        }
+        else if (action == "Refuel")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Rendezvous with the Service Boat.");
+            mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetUnits()[1].Location);
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetHexGrid().GetUnits()[0].HP == 100);
+                mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetUnits()[1]));
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
             }
         }
         else if (action == "MoveBack")
