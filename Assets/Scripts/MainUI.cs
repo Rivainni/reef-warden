@@ -999,12 +999,11 @@ public class MainUI : MonoBehaviour
 
         foreach (Button button in buttons)
         {
-            if (currentState.CheckTutorial() && (button.GetComponentInChildren<Text>().text != "RADAR" || button.GetComponentInChildren<Text>().text != "X"))
+            if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) ||
+            TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch() ||
+            (currentState.CheckTutorial() && (button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "X")))
             {
-                button.interactable = false;
-            }
-            else if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) || TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch())
-            {
+                Debug.Log("Upgrade is " + button.GetComponentInChildren<Text>().text + ". Research status: " + currentState.CheckResearched(button.GetComponentInChildren<Text>().text + "."));
                 button.interactable = false;
             }
             else if (button.GetComponentInChildren<Text>().text == "X")
