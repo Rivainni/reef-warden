@@ -25,6 +25,7 @@ public class ObjectivesDisplay : MonoBehaviour
         {
             Text temp = Instantiate(textPrefab, transform.position, Quaternion.identity, transform);
             temp.text = item;
+            Debug.Log(temp.text);
             objectives.Add(temp);
         }
     }

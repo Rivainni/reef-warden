@@ -1249,7 +1249,7 @@ public class MainUI : MonoBehaviour
 
     public void DisplayTutorialObjective(string objective)
     {
-        GetPlayerState().SetObjectives(objective);
+        currentState.SetObjectives(objective);
         objectivesDisplay.DisplayObjectives();
     }
 
