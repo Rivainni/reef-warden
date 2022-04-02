@@ -50,6 +50,9 @@ Concerned: Manuel said on the radio that we need to setup the planned Radar befo
 [ACTION=MoveBack]Idle: Ok now we’re here, go to the build menu to start building the Radar--!
 Concerned: Ohh right! We need research, we can’t build it without knowing anything about it.
 Happy: Click on the Research button, the magnifying glass, then click on the Radar icon to start on researching it.
+Happy: The radar is just one of the many upgrades you can make for the station and the staff.
+Happy: Each upgrade can do unique things that will help you in your daily tasks or add boosts to the resources.
+Happy: Doing tasks like checking reef health, doing bird counts, monitoring clams and assisting research boats can give you research points.
 [ACTION=Research]Idle: Now that it’s ready, try building it. Select one of the tiles adjacent to the station and right-click.
 [ACTION=Build]3: Click on the Radar button near the Research button.
 [ACTION=UseRADAR]Concerned: It looks like we spotted some unidentified ships with the radar, a good thing too since those pesky illegal fishermen mostly come at night when it’s hard to spot them.

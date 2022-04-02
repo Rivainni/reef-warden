@@ -1,6 +1,6 @@
 [ACTION=EnterCharacterPaulo](patrol boat codename) to base, we’re going to check the reef for its condition over
-[NAME=Diana] Base to (patrol boat codename), copy that
-[ACTION=EnterCharacterJulia](patrol boat codename) to base, no change in reef condition
-[NAME=Diana]Base to (patrol boat codename), logging it, nice job guys!
-[ACTION=EnterCharacterPaulo]copy
+[NAME=Diana]Base to PB-001, copy that
+[ACTION=EnterCharacterJulia]PB-001 to base, no change in reef condition
+[NAME=Diana]Base to PB-001, logging it, nice job guys!
+[ACTION=EnterCharacterPaulo]Copy.
 EndQueue
