@@ -26,6 +26,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] GameObject valuesContainer;
     [SerializeField] GameObject queueDisplay;
     [SerializeField] GameObject endPrefab;
+    [SerializeField] GameObject reefHealthPrefab;
     [SerializeField] GameObject pause;
     [SerializeField] TimeController timeController;
     [SerializeField] Button radarButton;
@@ -440,6 +441,14 @@ public class MainUI : MonoBehaviour
         currentState.AddResearch(250);
         currentState.ResetCD("CH" + reefStructure);
         AfterAction(remove);
+
+        Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
+        GameObject healthPanel = Instantiate(reefHealthPrefab, spawnAt, Quaternion.identity, transform);
+        HealthBar bar = healthPanel.GetComponentInChildren<HealthBar>();
+        bar.SetHealth(currentState.GetHealth());
+
+        Button close = healthPanel.transform.GetChild(2).GetComponent<Button>();
+        close.onClick.AddListener(() => Close(healthPanel));
     }
 
     void CountBirds(HexCell destination, GameObject remove)

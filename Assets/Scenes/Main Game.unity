@@ -4655,6 +4655,7 @@ MonoBehaviour:
   queueDisplay: {fileID: 459767313}
   endPrefab: {fileID: 3570511537018259731, guid: 0f6acd1ea560df3499c2cb269baab8fb, type: 3}
   pause: {fileID: 402855413}
+  reefHealthPrefab: {fileID: 3570511537018259731, guid: fced3e15e0a44274fa45ba66dd09f205, type: 3}
   timeController: {fileID: 2015350036}
   radarButton: {fileID: 89648778}
   researchButton: {fileID: 316599004}
