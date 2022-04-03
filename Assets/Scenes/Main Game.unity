@@ -3445,6 +3445,24 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: BGM1
+    clip: {fileID: 8300000, guid: aa45c5c9776bb69429e16e9fbd52fed9, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: BGM2
+    clip: {fileID: 8300000, guid: 37d0aec885a029b46972b273e01bd5d3, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: MM
+    clip: {fileID: 8300000, guid: ffca9499048653440b1b2594400d2abf, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   master: {fileID: 24300002, guid: 7dd1e74e34d213b49ba1fff3eb3c0ec8, type: 2}
   grid: {fileID: 306096920}
 --- !u!4 &1504880704

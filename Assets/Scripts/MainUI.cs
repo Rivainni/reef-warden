@@ -56,6 +56,7 @@ public class MainUI : MonoBehaviour
         }
 
         minigameData.SetInspection();
+        grid.GetAudioManager().PlayMusic("BGM");
         StartCoroutine(UIUpdateDelay());
     }
 
