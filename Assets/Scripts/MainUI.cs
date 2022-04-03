@@ -734,6 +734,7 @@ public class MainUI : MonoBehaviour
         }
         currentState.AdjustIncome(-upkeep);
         currentState.AddManpower(1);
+
         if (upgrade == "RADAR")
         {
             radarButton.interactable = true;
@@ -900,6 +901,17 @@ public class MainUI : MonoBehaviour
             {
                 currentState.ToggleNightSpawn();
                 currentState.ResetNightSpawn();
+
+                if (!currentState.CheckTutorial())
+                {
+                    int random = Random.Range(0, 100);
+
+                    if (random > currentState.GetSecurity())
+                    {
+                        currentState.DecreaseHealth(2 + (1 * currentState.GetLevel()));
+                    }
+                    Debug.Log("bruh moment. some dude snuck in lmao");
+                }
             }
 
             if (timeController.IsDay() && !currentState.SpawnedDay() && currentState.GetTourists() <= 2)
@@ -935,17 +947,28 @@ public class MainUI : MonoBehaviour
             }
             else if (!timeController.IsDay() && !currentState.SpawnedNight() && currentState.GetFishermen() <= 2)
             {
-                // int random = Random.Range(0, max * ((int)currentState.GetSecurity() / 100));
-
-                for (int i = 0; i < max; i++)
+                if (currentState.GetRadarState())
                 {
-                    spawner.RandomSpawn("Fishing Boat");
-                    currentState.AddFisherman(1);
-                }
+                    int random = Random.Range(0, 100);
 
-                currentState.ToggleNightSpawn();
-                currentState.ResetNightSpawn();
-                storyTriggers[3].TriggerDialogue();
+                    if (random > currentState.GetSecurity())
+                    {
+                        for (int i = 0; i < max; i++)
+                        {
+                            spawner.RandomSpawn("Fishing Boat");
+                            currentState.AddFisherman(1);
+                        }
+                    }
+
+                    currentState.ToggleNightSpawn();
+                    currentState.ResetNightSpawn();
+                    storyTriggers[3].TriggerDialogue();
+                }
+                else
+                {
+                    currentState.ToggleNightSpawn();
+                    currentState.ResetNightSpawn();
+                }
             }
         }
     }
@@ -956,28 +979,6 @@ public class MainUI : MonoBehaviour
         yield return new WaitUntil(() => CheckMovement() == false);
         yield return new WaitUntil(() => timeController.CheckPause());
         clicked.interactable = true;
-
-        // makes everything visible again during daytime
-        // if (timeController.IsDay() && currentState.GetTurn() % 8 == 0)
-        // {
-        //     for (int i = 0; i < grid.GetUnits().Count; i++)
-        //     {
-        //         HexUnit currentUnit = grid.GetUnits()[i];
-
-        //         if (!currentUnit.IsVisible)
-        //         {
-        //             grid.GetUnits()[i].IsVisible = true;
-        //         }
-        //     }
-
-        //     foreach (HexCell cell in grid.GetCells())
-        //     {
-        //         if (!cell.Structure)
-        //         {
-        //             cell.IncreaseVisibility();
-        //         }
-        //     }
-        // }
     }
 
     bool CheckMovement()
@@ -1223,26 +1224,7 @@ public class MainUI : MonoBehaviour
 
     IEnumerator OffRadar(int startTurn)
     {
-        Stack<HexUnit> affectedUnits = new Stack<HexUnit>();
-
-        for (int i = 0; i < grid.GetUnits().Count; i++)
-        {
-            HexUnit currentUnit = grid.GetUnits()[i];
-
-            if (!currentUnit.IsVisible)
-            {
-                affectedUnits.Push(currentUnit);
-                grid.GetUnits()[i].IsVisible = true;
-            }
-        }
-
         yield return new WaitUntil(() => currentState.GetTurn() > startTurn);
-
-        while (affectedUnits.Count > 0)
-        {
-            affectedUnits.Pop().IsVisible = false;
-        }
-
         currentState.DeactivateRadar();
         StartCoroutine(UnlockRadar());
     }

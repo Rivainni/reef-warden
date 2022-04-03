@@ -56,6 +56,7 @@ public class Spawner : MonoBehaviour
             else
             {
                 hexGrid.AddUpgrade(Instantiate(upgradePrefabs[0]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
+                Debug.Log(upgradeType);
             }
         }
     }
