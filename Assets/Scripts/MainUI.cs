@@ -223,29 +223,23 @@ public class MainUI : MonoBehaviour
                         }
                     }
 
-                    if (GlobalCellCheck.GetIsland(cell) > 0)
+                    if (currentState.FetchCD("CH" + GlobalCellCheck.GetIsland(cell)) == 0 && cell.FeatureIndex == 0 && !contextMenuContent.Contains("Check Reef Health"))
                     {
-                        if (cell.Adjacency == 1)
-                        {
-                            if (currentState.FetchCD("CH" + GlobalCellCheck.GetIsland(cell)) == 0 && !contextMenuContent.Contains("Check Reef Health"))
-                            {
-                                contextMenuContent.Add("Check Reef Health");
-                            }
-                        }
-                        if (currentState.FetchCD("B") == 0 && cell.Type == "Land" && cell.Index == 465 && !contextMenuContent.Contains("Count Birds"))
-                        {
-                            contextMenuContent.Add("Count Birds");
-                        }
-                        if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(cell)) == 0 && !contextMenuContent.Contains("Monitor Clams"))
-                        {
-                            contextMenuContent.Add("Monitor Clams");
-                        }
-                        if (currentState.FetchCD("T") == 0 && !contextMenuContent.Contains("Tag Turtles") && currentState.CheckResearched("Species Tagging"))
-                        {
-                            contextMenuContent.Add("Tag Turtles");
-                        }
-                        reefStructure = GlobalCellCheck.GetIsland(cell);
+                        contextMenuContent.Add("Check Reef Health");
                     }
+                    if (currentState.FetchCD("B") == 0 && cell.FeatureIndex == 3 && !contextMenuContent.Contains("Count Birds"))
+                    {
+                        contextMenuContent.Add("Count Birds");
+                    }
+                    if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(cell)) == 0 && cell.FeatureIndex == 0 && !contextMenuContent.Contains("Monitor Clams"))
+                    {
+                        contextMenuContent.Add("Monitor Clams");
+                    }
+                    if (currentState.FetchCD("T") == 0 && cell.FeatureIndex == 0 && !contextMenuContent.Contains("Tag Turtles") && currentState.CheckResearched("Species Tagging"))
+                    {
+                        contextMenuContent.Add("Tag Turtles");
+                    }
+                    reefStructure = GlobalCellCheck.GetIsland(cell);
                 }
             }
             else if (selectedUnit.UnitType.Contains("Service Boat"))

@@ -99,14 +99,24 @@ public class HexGrid : MonoBehaviour
         // for adding the images
         for (int i = 0; i < cells.Length; i++)
         {
+            // if near buoy
             switch (GlobalCellCheck.IsAdjacentToBuoy(cells[i]))
             {
                 case 1:
-                    cells[i].Adjacency = 1;
+                    cells[i].FeatureIndex = 0;
                     break;
                 case 2:
-                    cells[i].Adjacency = 2;
+                    cells[i].FeatureIndex = 1;
                     break;
+                default:
+                    cells[i].FeatureIndex = -1;
+                    break;
+            }
+
+            // other special tiles
+            if (i == 490 || i == 491 || i == 516)
+            {
+                cells[i].FeatureIndex = 3;
             }
         }
     }
@@ -125,16 +135,6 @@ public class HexGrid : MonoBehaviour
 
         if (mapCreation.IsLand(check))
         {
-            // int treeChance = Random.Range(0, 101);
-            // if (treeChance < 85)
-            // {
-            //     cell = cells[i] = Instantiate<HexCell>(landA);
-            // }
-            // else
-            // {
-            //     cell = cells[i] = Instantiate<HexCell>(landB);
-            // }
-
             if (i == 465)
             {
                 cell = cells[i] = Instantiate<HexCell>(landB);
