@@ -95,10 +95,10 @@ public class AudioManager : MonoBehaviour
 
     IEnumerator Music(string soundName)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == soundName + 1);
+        Sound s = Array.Find(sounds, sound => sound.name == soundName + 2);
         s.source.Play();
         yield return new WaitUntil(() => !s.source.isPlaying);
-        s = Array.Find(sounds, sound => sound.name == soundName + 2);
+        s = Array.Find(sounds, sound => sound.name == soundName + 1);
         s.source.Play();
         StartCoroutine(Music(soundName));
     }
