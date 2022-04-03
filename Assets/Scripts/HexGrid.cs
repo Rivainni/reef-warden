@@ -26,6 +26,7 @@ public class HexGrid : MonoBehaviour
     [SerializeField] TextAsset adjacentChecks;
     [SerializeField] TextAsset objectives;
     [SerializeField] TextAsset upgrades;
+    [SerializeField] TextAsset duties;
     [SerializeField] AudioManager audioManager;
 
     public bool HasPath
@@ -69,6 +70,7 @@ public class HexGrid : MonoBehaviour
 
         TextRW.SetObjectives(objectives);
         TextRW.SetUpgrades(upgrades);
+        TextRW.SetDuties(duties);
     }
 
     void CreateChunks()

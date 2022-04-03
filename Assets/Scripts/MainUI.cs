@@ -993,6 +993,70 @@ public class MainUI : MonoBehaviour
         return false;
     }
 
+    public void InfoMenu()
+    {
+        FreezeInput(false);
+        cameraController.FreezeCamera(false);
+        Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
+        HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+
+        // clear the context menu
+        List<string> contextMenuContent = new List<string>();
+
+        foreach (TextRW.InfoItem item in TextRW.GetDuties())
+        {
+            contextMenuContent.Add(item.Name);
+        }
+        if (contextMenuContent.Count > 0)
+        {
+            GameObject infoPanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (i == 0)
+                {
+                    foreach (string item in contextMenuContent)
+                    {
+                        GameObject generic = Instantiate(buttonPrefab, infoPanel.transform.GetChild(i).position, Quaternion.identity, infoPanel.transform.GetChild(i));
+                        Button currentButton = generic.GetComponent<Button>();
+                        currentButton.GetComponentInChildren<Text>().text = item;
+                        currentButton.onClick.AddListener(() => InfoText(item, currentButton, infoPanel));
+                    }
+                }
+                else
+                {
+                    GameObject generic = Instantiate(textPrefab, infoPanel.transform.GetChild(i).position, Quaternion.identity, infoPanel.transform.GetChild(i));
+                    Text currentText = generic.GetComponent<Text>();
+                    currentText.text = "Click on any of the actions in the list on the left to get started!";
+                }
+            }
+
+            FreezeInput(true);
+            cameraController.FreezeCamera(true);
+        }
+    }
+
+    void InfoText(string duty, Button button, GameObject toRemove)
+    {
+        GameObject toReplace = button.transform.parent.parent.GetChild(1).GetChild(0).gameObject;
+        Button[] rem = toReplace.transform.parent.gameObject.GetComponentsInChildren<Button>();
+
+        TextRW.InfoItem curr = TextRW.GetDuty(duty);
+
+        toReplace.GetComponent<Text>().text = curr.Description;
+
+        foreach (Button trash in rem)
+        {
+            Destroy(trash.gameObject);
+        }
+
+        GameObject generic = Instantiate(buttonPrefab, toReplace.transform.parent.position, Quaternion.identity, toReplace.transform.parent);
+        Button currentButton = generic.GetComponent<Button>();
+
+        currentButton.GetComponentInChildren<Text>().text = "CLOSE";
+        currentButton.onClick.AddListener(() => Close(toRemove));
+    }
+
     public void Research(Button clicked)
     {
         FreezeInput(true);
