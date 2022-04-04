@@ -6,8 +6,8 @@ The player may do this every 2 turns per reef structure (North Atoll, South Atol
 END
 !Distance count of birds!
 Unlocks from Level 2.
-Rangers will have to stop near the bird islet and count the number of species 2 tiles away. The records are submitted to the office once the rangers head back to the station. 
-This takes one turn and gives 500 research points. This action can be taken 1-2 hexes away from the bird islet (see bird icons).
+Rangers will have to stop near the bird islet and count the number of species. The records are submitted to the office once the rangers head back to the station. 
+This takes one turn and gives 500 research points. This action can be taken 1-2 unobstructedhexes away from the bird islet (see bird icons).
 The player may do this every 5 turns.
 END
 !Monitor Clam!

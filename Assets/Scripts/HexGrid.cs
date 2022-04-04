@@ -116,7 +116,7 @@ public class HexGrid : MonoBehaviour
             }
 
             // other special tiles
-            if (i == 490 || i == 491 || i == 516)
+            if (i == 489)
             {
                 cells[i].FeatureIndex = 3;
             }
