@@ -952,7 +952,7 @@ public class MainUI : MonoBehaviour
             {
                 int random = Random.Range(0, 100);
 
-                if (random > currentState.GetSecurity())
+                if (random + 10 > currentState.GetSecurity())
                 {
                     for (int i = 0; i < max; i++)
                     {
@@ -1039,8 +1039,38 @@ public class MainUI : MonoBehaviour
         Button[] rem = toReplace.transform.parent.gameObject.GetComponentsInChildren<Button>();
 
         TextRW.InfoItem curr = TextRW.GetDuty(duty);
+        string cd = "";
+        if (duty == "Check Reef Health")
+        {
+            cd += "\nCooldown(s): ";
+            cd += currentState.FetchCD("CH1") + ", ";
+            cd += currentState.FetchCD("CH2") + ", ";
+            cd += currentState.FetchCD("CH3");
+        }
+        else if (duty == "Count Birds")
+        {
+            cd += "\nCooldown(s): ";
+            cd += currentState.FetchCD("B");
+        }
+        else if (duty == "Monitor Clam")
+        {
+            cd += "\nCooldown(s): ";
+            cd += currentState.FetchCD("C1") + ", ";
+            cd += currentState.FetchCD("C2") + ", ";
+            cd += currentState.FetchCD("C3");
+        }
+        else if (duty == "Tag Turtles")
+        {
+            cd += "\nCooldown(s): ";
+            cd += currentState.FetchCD("T");
+        }
+        else if (duty == "Assist Researcher")
+        {
+            cd += "\nCooldown(s): ";
+            cd += currentState.FetchCD("R");
+        }
 
-        toReplace.GetComponent<Text>().text = curr.Description;
+        toReplace.GetComponent<Text>().text = curr.Description + cd;
 
         foreach (Button trash in rem)
         {
