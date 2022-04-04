@@ -495,6 +495,7 @@ public class MainUI : MonoBehaviour
             unit.ToggleBusy();
             currentState.AddResearch(1000);
             currentState.ResetCD("T");
+            currentState.incrementLevelCounters("tag");
         }
     }
 

@@ -815,7 +815,7 @@ public class PlayerState : ScriptableObject
                     {
                         toRemove.Add(item);
                     }
-                    else if (tagCount >= 2 && item.Contains("turtle"))
+                    else if (tagCount >= 2 && item.Contains("turtles"))
                     {
                         toRemove.Add(item);
                     }
