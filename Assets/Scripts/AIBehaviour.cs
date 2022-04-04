@@ -125,7 +125,10 @@ public class AIBehaviour : MonoBehaviour
         yield return new WaitUntil(() => currentUnit.Location == currentDestination);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
         yield return new WaitUntil(() => currentUnit.movement == false);
-        // ClearPath();
+        if (!mainUI.GetPlayerState().CheckAIS() || currentUnit.UnitType == "Fishing Boat")
+        {
+            ClearPath();
+        }
     }
 
     // we want the ability to set a target destination
@@ -426,33 +429,10 @@ public class AIBehaviour : MonoBehaviour
 
     void CheckForPatrolBoat()
     {
-        for (HexDirection i = HexDirection.NE; i <= HexDirection.NW; i++)
+        if (currentUnit.ScanFor("Patrol Boat"))
         {
-            HexCell currentA = currentUnit.Location.GetNeighbor(i);
-            if (currentA != null)
-            {
-                for (HexDirection j = HexDirection.NE; j <= HexDirection.NW; j++)
-                {
-                    HexCell currentB = currentA.GetNeighbor(j);
-                    if (currentB != null)
-                    {
-                        if (currentB.Unit != null)
-                        {
-                            if (currentB.Unit.UnitType.Contains("Patrol Boat"))
-                            {
-                                chaseState = true;
-                                stateChanged = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (chaseState)
-            {
-                break;
-            }
+            chaseState = true;
+            stateChanged = true;
         }
     }
 

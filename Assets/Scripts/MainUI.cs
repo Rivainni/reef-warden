@@ -946,11 +946,11 @@ public class MainUI : MonoBehaviour
                         spawner.RandomSpawn("Fishing Boat");
                         currentState.AddFisherman(1);
                     }
+                    storyTriggers[3].TriggerDialogue();
                 }
 
                 currentState.ToggleNightSpawn();
                 currentState.ResetNightSpawn();
-                storyTriggers[3].TriggerDialogue();
             }
         }
     }
@@ -1201,6 +1201,13 @@ public class MainUI : MonoBehaviour
         currentState.ActivateRadar();
         radarButton.interactable = false;
         int startTurn = currentState.GetTurn();
+        foreach (HexUnit unit in grid.GetUnits())
+        {
+            if (unit.UnitType == "Fishing Boat")
+            {
+                spawner.AddUnitWaypoint(unit.Location);
+            }
+        }
         StartCoroutine(OffRadar(startTurn));
     }
 

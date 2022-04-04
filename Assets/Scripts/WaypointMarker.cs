@@ -7,10 +7,23 @@ public class WaypointMarker : MonoBehaviour
 {
     // Indicator icon
     public Image img;
+    public Sprite[] sprites;
     // The target (location, enemy, etc..)
     public Transform target;
     // To adjust the position of the icon
     public Vector3 offset;
+
+    void Start()
+    {
+        HexUnit unit = target.GetComponent<HexUnit>();
+        if (unit)
+        {
+            if (unit.UnitType == "Fishing Boat")
+            {
+                img.sprite = sprites[0];
+            }
+        }
+    }
 
     void Update()
     {

@@ -593,6 +593,10 @@ public class PlayerState : ScriptableObject
         currentObjectives = new List<string>();
         daySpawn = false;
         nightSpawn = false;
+        radarActive = false;
+        AIS = false;
+        SAT = false;
+        SS = false;
         levelTurns = 0;
         healthCount = 0;
         patrols = 0;

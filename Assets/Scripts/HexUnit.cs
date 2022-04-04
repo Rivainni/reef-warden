@@ -363,6 +363,32 @@ public class HexUnit : MonoBehaviour
         return interacted;
     }
 
+    public bool ScanFor(string type)
+    {
+        for (HexDirection i = HexDirection.NE; i <= HexDirection.NW; i++)
+        {
+            HexCell currentA = Location.GetNeighbor(i);
+            if (currentA != null)
+            {
+                for (HexDirection j = HexDirection.NE; j <= HexDirection.NW; j++)
+                {
+                    HexCell currentB = currentA.GetNeighbor(j);
+                    if (currentB != null)
+                    {
+                        if (currentB.Unit != null)
+                        {
+                            if (currentB.Unit.UnitType.Contains(type))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     // public void Save(BinaryWriter writer)
     // {

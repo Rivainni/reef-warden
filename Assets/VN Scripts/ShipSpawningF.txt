@@ -1,6 +1,8 @@
 [NAME=Diana]Idle: Base to PB-001, there’s a boat entering our Area of Jurisdiction over
 [CONDITIONAL=UpgradeAIS]Idle: Base to PB-001, it seems the boat is a fishing boat, over.
-[CONDITIONAL=Spotted][ACTION=EnterCharacterPaulo]Concerned: I got a visual on the fishermen.
+[CONDITIONAL=Spotted][ACTION=EnterCharacterPaulo]Concerned: I got a visual on a fishing boat.
 Concerned: They’re going for the reef!
-[ACTION=EnterCharacterJulia]Concerned: Let’s get those guys!!
+[NAME=Julia]Concerned: Get 'em!!
+[CONDITIONAL=Caught][ACTION=EnterCharacterPaulo] Happy: Ok now we just do the usual Impact Assessment and it would also be a good idea to check back on the reef’s condition after
+[NAME=Julia]Happy1: Yup!
 EndQueue

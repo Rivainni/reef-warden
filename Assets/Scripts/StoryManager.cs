@@ -110,16 +110,68 @@ public class StoryManager : MonoBehaviour
         {
             string condition = inputStream.Peek();
             condition = inputStream.Dequeue().Substring(condition.IndexOf('=') + 1, condition.IndexOf(']') - (condition.IndexOf('=') + 1));
+            mainUI.GetCameraController().FreezeCamera(false);
 
-            if (condition == "UpgradeAIS" && mainUI.GetPlayerState().CheckBuilt("AIS"))
+            if (condition == "UpgradeAIS" && !mainUI.GetPlayerState().CheckBuilt("AIS"))
             {
-
+                inputStream.Dequeue();
             }
             else if (condition == "Spotted")
             {
+                List<int> playerIndices = new List<int>();
+                for (int i = 0; i < mainUI.GetHexGrid().GetUnits().Count; i++)
+                {
+                    if (mainUI.GetHexGrid().GetUnits()[i].UnitType.Contains("Patrol Boat"))
+                    {
+                        playerIndices.Add(i);
+                    }
+                }
+                storyUI.SetActive(false);
+                StartCoroutine(WaitForPlayer());
+                IEnumerator WaitForPlayer()
+                {
+                    yield return new WaitUntil(() => Scans() || IsOver());
+                    if (Scans())
+                    {
+                        storyUI.SetActive(true);
+                        mainUI.GetCameraController().FreezeCamera(true);
+                    }
+                    else
+                    {
+                        EndDialogue();
+                        mainUI.GetCameraController().FreezeCamera(false);
+                    }
+                }
 
+                bool Scans()
+                {
+                    foreach (int index in playerIndices)
+                    {
+                        if (mainUI.GetHexGrid().GetUnits()[index].ScanFor("Fishing Boat"))
+                        {
+                            return true;
+                        }
+                    }
+
+                    if (mainUI.GetPlayerState().GetRadarState())
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+
+                bool IsOver()
+                {
+                    if (mainUI.GetTimeController().IsDay())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
-
             PrintDialogue();
         }
         else if (inputStream.Peek().Contains("{0}"))
