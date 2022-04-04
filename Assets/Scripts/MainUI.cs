@@ -720,7 +720,7 @@ public class MainUI : MonoBehaviour
         }
         else
         {
-            spawner.RandomSpawn("Tier 2 Patrol Boat");
+            spawner.SpawnUnit(target, "Tier 2 Patrol Boat");
             currentState.AddManpower(-4);
         }
         currentState.AdjustIncome(-upkeep);
@@ -782,6 +782,29 @@ public class MainUI : MonoBehaviour
         {
             currentButton.GetComponentInChildren<Text>().text = "CLOSE";
             currentButton.onClick.AddListener(() => Close(toRemove));
+        }
+        else if (upgrade == "Double-engine Patrol Boat")
+        {
+            bool check = false;
+            foreach (HexUnit unit in grid.GetUnits())
+            {
+                if (unit.UnitType == "Tier 2 Patrol Boat")
+                {
+                    check = true;
+                    break;
+                }
+            }
+
+            if (check)
+            {
+                currentButton.GetComponentInChildren<Text>().text = "CLOSE";
+                currentButton.onClick.AddListener(() => Close(toRemove));
+            }
+            else
+            {
+                currentButton.GetComponentInChildren<Text>().text = "BUILD";
+                currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, upkeep, toRemove, target));
+            }
         }
         else if (currentState.CheckBuilt(upgrade) && upgrade == "Basketball Court")
         {
