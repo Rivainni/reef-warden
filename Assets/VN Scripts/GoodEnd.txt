@@ -1,13 +1,13 @@
-[ACTION=BG] You return to the ranger station.
-[ACTION=EnterCharacterJulio]Idle: Guys!! We got it, our research quota!!
-[NAME=Diana]Happy: Wait, the quota for our actual Research Monitoring Program?!
-[ACTION=EnterCharacterJulio]Idle: The one and only!
+[ACTION=BG]You return to the ranger station.
+[ACTION=EnterCharacterJulio]Idle:Guys!! We got it, our research quota!!
+[NAME=Diana]Happy:Wait, the quota for our actual Research Monitoring Program?!
+[ACTION=EnterCharacterJulio]Idle:The one and only!
 [NAME=Diana]Yes!!!
-[ACTION=EnterCharacterJulio]Idle: We have to appoint a meeting immediately to the management office so that we can request the extra funding they told us. They would also consider on adding more people on our team
-[ACTION=EnterCharacterJulia]Happy2: Money!? I heard the magical words of our society and I say yes!!
-[ACTION=EnterCharacterCarla]Idle: So does this mean we’re actually going to have money for a proper PC? I’m excited for that.
-[ACTION=EnterCharacterPaulo]Happy: Finally. We can have something that’s new.
-[ACTION=EnterCharacterManuel]Idle: As long as it’ll let me do less work.
-Idle: Can we also ask for new equipment now? Also for more people to help with the station rather than just me keeping it together with duct tape and glue?
-[ACTION=EnterCharacterJulio]Idle: Well it still depends on how the meeting will go, but I’m confident they’ll let us have those due to the hard work we’ve done for the reef.
+[ACTION=EnterCharacterJulio]Idle:We have to appoint a meeting immediately to the management office so that we can request the extra funding they told us. They would also consider on adding more people on our team
+[ACTION=EnterCharacterJulia]Happy2:Money!? I heard the magical words of our society and I say yes!!
+[ACTION=EnterCharacterCarla]Idle:So does this mean we’re actually going to have money for a proper PC? I’m excited for that.
+[ACTION=EnterCharacterPaulo]Happy:Finally. We can have something that’s new.
+[ACTION=EnterCharacterManuel]Idle:As long as it’ll let me do less work.
+Idle:Can we also ask for new equipment now? Also for more people to help with the station rather than just me keeping it together with duct tape and glue?
+[ACTION=EnterCharacterJulio]Idle:Well it still depends on how the meeting will go, but I’m confident they’ll let us have those due to the hard work we’ve done for the reef.
 EndQueue

@@ -628,7 +628,7 @@ public class PlayerState : ScriptableObject
         {
             incrementLevelCounters("security");
         }
-        if (morale >= 55 && level == 4)
+        if (morale >= 45 && level == 4)
         {
             incrementLevelCounters("morale");
         }
@@ -788,7 +788,7 @@ public class PlayerState : ScriptableObject
                     }
                     break;
                 case 3:
-                    if (CheckResearched("Double-engine Patrol Boat") && item.Contains("engine"))
+                    if (CheckResearched("Double-engine Patrol Boat") && item.Contains("patrol boat"))
                     {
                         toRemove.Add(item);
                     }

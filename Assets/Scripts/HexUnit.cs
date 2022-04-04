@@ -370,6 +370,13 @@ public class HexUnit : MonoBehaviour
             HexCell currentA = Location.GetNeighbor(i);
             if (currentA != null)
             {
+                if (currentA.Unit)
+                {
+                    if (currentA.Unit.UnitType.Contains(type))
+                    {
+                        return true;
+                    }
+                }
                 for (HexDirection j = HexDirection.NE; j <= HexDirection.NW; j++)
                 {
                     HexCell currentB = currentA.GetNeighbor(j);
@@ -383,10 +390,6 @@ public class HexUnit : MonoBehaviour
                             }
                         }
                     }
-                }
-                if (currentA.Unit.UnitType.Contains(type))
-                {
-                    return true;
                 }
             }
         }

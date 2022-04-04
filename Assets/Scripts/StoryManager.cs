@@ -20,6 +20,7 @@ public class StoryManager : MonoBehaviour
     [SerializeField] PlayerState initState;
     Queue<string> inputStream = new Queue<string>();
     bool pause = false;
+    bool primarySpeaker = false;
 
     // Start is called before the first frame update
     void Start()
@@ -58,6 +59,7 @@ public class StoryManager : MonoBehaviour
             string name = inputStream.Peek();
             name = inputStream.Dequeue().Substring(name.IndexOf('=') + 1, name.IndexOf(']') - (name.IndexOf('=') + 1));
             characterName.text = name;
+            primarySpeaker = true;
             PrintDialogue();
         }
         else if (inputStream.Peek().Contains("[ACTION="))
@@ -86,6 +88,10 @@ public class StoryManager : MonoBehaviour
                     characterName.text = newCharacter;
                 }
                 AddSprite(newCharacter);
+                if (!mainUI.GetPlayerState().CheckTutorial())
+                {
+                    primarySpeaker = false;
+                }
             }
             else if (action == "ExitCharacter")
             {
@@ -209,8 +215,9 @@ public class StoryManager : MonoBehaviour
                 }
             }
             string expression = current.Substring(0, stop);
+            Debug.Log(stop);
             storyText.text = current.Substring(stop + 1);
-            SwitchSprites(characterName.text, expression);
+            SwitchSprites(characterName.text, expression, primarySpeaker);
         }
         else
         {
@@ -251,20 +258,29 @@ public class StoryManager : MonoBehaviour
         PrintDialogue();
     }
 
-    void SwitchSprites(string character, string expression)
+    void SwitchSprites(string character, string expression, bool primary = false)
     {
-        Image[] current = characterSprites.GetComponentsInChildren<Image>();
-        string toLoad = character + expression;
-        Sprite newSprite = Resources.Load<Sprite>("Characters/" + expression + "/" + toLoad);
-
-        foreach (Image item in current)
+        Image current;
+        if (primary)
         {
-            if (item.sprite.name.Contains(character))
-            {
-                item.sprite = newSprite;
-                break;
-            }
+            current = characterSprites.transform.GetChild(0).GetComponent<Image>();
         }
+        else
+        {
+            current = characterSprites.transform.GetChild(1).GetComponent<Image>();
+        }
+
+        string toLoad = character + expression;
+        Sprite newSprite;
+        if (expression == "Happy1" || expression == "Happy2")
+        {
+            newSprite = Resources.Load<Sprite>("Characters/" + expression.Substring(0, 5) + "/" + toLoad);
+        }
+        else
+        {
+            newSprite = Resources.Load<Sprite>("Characters/" + expression + "/" + toLoad);
+        }
+        current.sprite = newSprite;
     }
 
     // same as above

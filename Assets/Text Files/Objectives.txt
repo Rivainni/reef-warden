@@ -13,7 +13,7 @@ Keep security above 55% for at least 4 turns.
 Conduct monitoring of clams at least once.
 At least 6 turns have passed since Level 3.
 [Level4]
-Keep morale above 55% for at least 4 turns.
+Keep morale above 45% for at least 4 turns.
 Have at least one personnel upgrade active.
 Tag turtles at least 2x.
 At least 6 turns have passed since Level 4.

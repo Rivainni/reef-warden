@@ -418,19 +418,34 @@ public class MainUI : MonoBehaviour
         float factor = destination.Distance * 0.5f;
         playerLocation = destination;
         // Debug.Log("You are at " + playerLocation.coordinates.ToString());
-        currentState.AddSecurity(factor);
+        if (currentState.CheckSAT())
+        {
+            currentState.AddSecurity(factor * 1.2f);
+        }
+        else
+        {
+            currentState.AddSecurity(factor);
+        }
         AfterAction(remove);
     }
 
     void CheckHealth(HexCell destination, GameObject remove, int reefStructure)
     {
+        storyTriggers[11].TriggerDialogue();
+        StartCoroutine(HealthDelay(reefStructure));
+        AfterAction(remove);
+    }
+
+    IEnumerator HealthDelay(int reefStructure)
+    {
+        yield return new WaitForSeconds(0.5f);
+        yield return new WaitUntil(() => selectedUnit.movement == false);
         currentState.ResetHealthWarning();
         currentState.incrementLevelCounters("health");
 
         currentState.UpdateHealth();
         currentState.AddResearch(250);
         currentState.ResetCD("CH" + reefStructure);
-        AfterAction(remove);
 
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject healthPanel = Instantiate(reefHealthPrefab, spawnAt, Quaternion.identity, transform);
@@ -462,7 +477,7 @@ public class MainUI : MonoBehaviour
             unit.ToggleBusy();
             currentState.AddResearch(1000);
             currentState.ResetCD("C" + reefStructure);
-            currentState.incrementLevelCounters("clam");
+            currentState.incrementLevelCounters("monitor");
         }
     }
 
@@ -545,7 +560,14 @@ public class MainUI : MonoBehaviour
         Destroy(toRemove);
         if (correctValue)
         {
-            currentState.AddSecurity(5);
+            if (currentState.CheckSAT())
+            {
+                currentState.AddSecurity(5 * 1.2f);
+            }
+            else
+            {
+                currentState.AddSecurity(5);
+            }
             currentState.SetMessage("Inspection correct.");
             UpdateUIElements();
             if (!currentState.CheckTutorial())
@@ -561,7 +583,14 @@ public class MainUI : MonoBehaviour
     {
         if (!correctValue)
         {
-            currentState.AddSecurity(5);
+            if (currentState.CheckSAT())
+            {
+                currentState.AddSecurity(5 * 1.2f);
+            }
+            else
+            {
+                currentState.AddSecurity(5);
+            }
             currentState.SetMessage("Inspection correct.");
             UpdateUIElements();
             if (!currentState.CheckTutorial())
@@ -590,7 +619,14 @@ public class MainUI : MonoBehaviour
         if (currentState.GetSecurity() >= 35.0f)
         {
             spawner.DestroyUnit(target);
-            currentState.AddSecurity(2);
+            if (currentState.CheckSAT())
+            {
+                currentState.AddSecurity(2 * 1.2f);
+            }
+            else
+            {
+                currentState.AddSecurity(2);
+            }
             AfterAction(remove);
             currentState.AddCatchScore();
         }
@@ -611,7 +647,14 @@ public class MainUI : MonoBehaviour
                     break;
                 case 1:
                     spawner.DestroyUnit(target);
-                    currentState.AddSecurity(2);
+                    if (currentState.CheckSAT())
+                    {
+                        currentState.AddSecurity(2 * 1.2f);
+                    }
+                    else
+                    {
+                        currentState.AddSecurity(2);
+                    }
                     AfterAction(remove);
                     currentState.AddCatchScore();
                     break;

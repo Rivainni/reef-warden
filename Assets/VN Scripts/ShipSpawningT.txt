@@ -1,4 +1,4 @@
-[NAME=Diana]Idle: Base to PB-001, there’s a boat entering our Area of Jurisdiction over.
-Idle: Base to PB-001, the boat is identified to be a tourist boat, you guys know the drill on that one.
-[ACTION=EnterCharacterPaulo]Concerned: Copy that base
+[NAME=Diana]Idle:Base to PB-001, there’s a boat entering our Area of Jurisdiction over.
+Idle:Base to PB-001, the boat is identified to be a tourist boat, you guys know the drill on that one.
+[ACTION=EnterCharacterPaulo]Concerned:Copy that, base.
 EndQueue
