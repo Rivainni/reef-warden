@@ -100,6 +100,7 @@ public class AudioManager : MonoBehaviour
         yield return new WaitUntil(() => !s.source.isPlaying);
         s = Array.Find(sounds, sound => sound.name == soundName + 1);
         s.source.Play();
+        yield return new WaitUntil(() => !s.source.isPlaying);
         StartCoroutine(Music(soundName));
     }
 
