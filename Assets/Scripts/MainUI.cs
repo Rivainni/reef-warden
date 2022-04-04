@@ -628,6 +628,7 @@ public class MainUI : MonoBehaviour
             }
         }
         target.SetInteracted();
+        storyTriggers[10].TriggerDialogue();
     }
 
     void DemolishUpgrade(GameObject remove, HexCell target)

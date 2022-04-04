@@ -580,6 +580,7 @@ Transform:
   - {fileID: 1613907801}
   - {fileID: 295774890}
   - {fileID: 1396813057}
+  - {fileID: 1390228591}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3327,6 +3328,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6db1cb787a1e9e840a07c4cd6f6e18e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1390228590
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1390228591}
+  - component: {fileID: 1390228592}
+  m_Layer: 0
+  m_Name: Fisherman Caught
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1390228591
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390228590}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 234571798}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1390228592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390228590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7880781563a481443b76fcc83d05e2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextFileAsset: {fileID: 4900000, guid: ade2dfdce2743194391bf3a4f20da0e7, type: 3}
+  title: Fisherman Caught
+  mainUI: {fileID: 2078076715}
 --- !u!1 &1396813056
 GameObject:
   m_ObjectHideFlags: 0

@@ -172,6 +172,10 @@ public class StoryManager : MonoBehaviour
                     }
                 }
             }
+            else if (condition == "Caught")
+            {
+
+            }
             PrintDialogue();
         }
         else if (inputStream.Peek().Contains("{0}"))

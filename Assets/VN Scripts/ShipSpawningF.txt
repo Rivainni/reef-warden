@@ -3,6 +3,4 @@
 [CONDITIONAL=Spotted][ACTION=EnterCharacterPaulo]Concerned: I got a visual on a fishing boat.
 Concerned: They’re going for the reef!
 [NAME=Julia]Concerned: Get 'em!!
-[CONDITIONAL=Caught][ACTION=EnterCharacterPaulo] Happy: Ok now we just do the usual Impact Assessment and it would also be a good idea to check back on the reef’s condition after
-[NAME=Julia]Happy1: Yup!
 EndQueue

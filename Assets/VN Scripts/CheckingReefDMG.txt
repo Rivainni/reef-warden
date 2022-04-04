@@ -1,6 +1,6 @@
 [ACTION=EnterCharacterPaulo]PB-001 to base, we’re going to check the reef for its condition over
-[NAME=Diana]Base to PB-001, copy that
-[ACTION=EnterCharacterPaulo]PB-001 to base, signs of damage on the reef…..it might have been those fishermen we took awhile to catch over
-[NAME=Diana]Base to PB-001, logging it…….do better over
-[ACTION=EnterCharacterPaulo]Copy.
+[NAME=Diana]Idle: Base to PB-001, copy that
+[ACTION=EnterCharacterPaulo]Idle: PB-001 to base, signs of damage on the reef…..it might have been those fishermen we took awhile to catch over
+[NAME=Diana]Concerned: Base to PB-001, logging it…….do better over
+[ACTION=EnterCharacterPaulo]Concerned: Copy.
 EndQueue

@@ -1,6 +1,6 @@
-[ACTION=EnterCharacterPaulo]PB-001d to base, we’re going to check the reef for its condition over
-[NAME=Diana]Base to PB-001, copy that
-[ACTION=EnterCharacterJulia]PB-001 to base, no change in reef condition
-[NAME=Diana]Base to PB-001, logging it, nice job guys!
-[ACTION=EnterCharacterPaulo]Copy.
+[ACTION=EnterCharacterPaulo]Idle: PB-001d to base, we’re going to check the reef for its condition over
+[NAME=Diana]Idle: Base to PB-001, copy that
+[ACTION=EnterCharacterJulia]Idle: PB-001 to base, no change in reef condition
+[NAME=Diana]Happy: Base to PB-001, logging it, nice job guys!
+[ACTION=EnterCharacterPaulo]Idle: Copy.
 EndQueue
