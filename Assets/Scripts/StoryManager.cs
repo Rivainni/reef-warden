@@ -419,6 +419,32 @@ public class StoryManager : MonoBehaviour
                 mainUI.GetSpawner().DestroyWaypoints();
             }
         }
+        else if (action == "Info")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Open the info menu.");
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => !mainUI.HasActiveContextMenu());
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+            }
+        }
+        else if (action == "ServiceMoved")
+        {
+            storyUI.SetActive(false);
+            mainUI.DisplayTutorialObjective("Move the service boat.");
+            HexCell start = mainUI.GetHexGrid().GetUnits()[1].Location;
+            StartCoroutine(WaitForPlayer());
+            IEnumerator WaitForPlayer()
+            {
+                yield return new WaitUntil(() => mainUI.GetHexGrid().GetUnits()[1].Location != start);
+                storyUI.SetActive(true);
+                mainUI.GetCameraController().FreezeCamera(true);
+            }
+        }
         else if (action == "Refuel")
         {
             storyUI.SetActive(false);

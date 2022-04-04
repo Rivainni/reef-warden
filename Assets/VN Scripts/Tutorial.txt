@@ -36,12 +36,16 @@ Concerned: We also need to report to the Management Office in the mainland about
 Happy: Wait for them to reach the spot and they’ll alert us with the red highlight.
 Idle: Move right next to them and right click.
 Idle: Click Moor and we’re done.
-[ACTION=InspectTourist3]Idle: Now, you see the green bar on top of the Patrol Boat?
+[ACTION=InspectTourist3]Idle: See the exclamation mark on the left of your screen?
+Happy: Click on it and it will bring out the Info Menu
+Happy: This lists all of the duties that you can do.
+Happy: It also describes each of them and it also tells you what they do.
+[ACTION=Info]Idle: Now, you see the green bar on top of the Patrol Boat?
 Concerned: Yeah. That’s the amount of gas we have left in the engine
 Happy: We need gas for our Patrol Boat. Click on the Service Boat anchored near our Station.
 Happy: This boat is used to repair and refill the gas in our Patrol Boat.
 Idle: The controls for it are the same with the Patrol Boat but since it’s sluggish and heavy, it can only move 4 tiles per turn.
-Idle: You know what?
+[ACTION=ServiceMoved]Idle: You know what?
 Happy: Just let the Patrol Boat move to it, it’s going to be a lot easier rather than waiting for it haha!
 [ACTION=Refuel]Happy: Ok good! Patrol Boat refueled and ready to go
 Idle: We also need to give a report to the Management Office in the mainland ASAP about our inspections, so that if ever we might face up against violators in court, we have evidence.

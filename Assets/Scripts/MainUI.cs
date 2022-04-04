@@ -426,17 +426,6 @@ public class MainUI : MonoBehaviour
     {
         currentState.ResetHealthWarning();
         currentState.incrementLevelCounters("health");
-        if (!currentState.CheckTutorial())
-        {
-            if (currentState.ReefDamaged())
-            {
-                storyTriggers[5].TriggerDialogue();
-            }
-            else
-            {
-                storyTriggers[6].TriggerDialogue();
-            }
-        }
 
         currentState.UpdateHealth();
         currentState.AddResearch(250);
@@ -449,7 +438,7 @@ public class MainUI : MonoBehaviour
         bar.SetHealth(currentState.GetHealth());
 
         Button close = healthPanel.transform.GetChild(2).GetComponent<Button>();
-        close.onClick.AddListener(() => Close(healthPanel));
+        close.onClick.AddListener(() => Close(healthPanel, true));
     }
 
     void CountBirds(HexCell destination, GameObject remove)
@@ -994,6 +983,7 @@ public class MainUI : MonoBehaviour
         if (contextMenuContent.Count > 0)
         {
             GameObject infoPanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
+            activeContextMenu = infoPanel;
 
             for (int i = 0; i < 2; i++)
             {
@@ -1114,13 +1104,29 @@ public class MainUI : MonoBehaviour
         UpdateUIElements();
     }
 
-    void Close(GameObject toRemove)
+    void Close(GameObject toRemove, bool wait = false)
     {
         activeContextMenu = null;
         FreezeInput(false);
         cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Prev", 0);
         Destroy(toRemove);
+
+        // wait for player to close reef health prompt
+        if (wait)
+        {
+            if (!currentState.CheckTutorial())
+            {
+                if (currentState.ReefDamaged())
+                {
+                    storyTriggers[5].TriggerDialogue();
+                }
+                else
+                {
+                    storyTriggers[6].TriggerDialogue();
+                }
+            }
+        }
     }
 
     void Use(string upgrade, GameObject toRemove)
