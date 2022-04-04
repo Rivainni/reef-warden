@@ -215,7 +215,6 @@ public class StoryManager : MonoBehaviour
                 }
             }
             string expression = current.Substring(0, stop);
-            Debug.Log(stop);
             storyText.text = current.Substring(stop + 1);
             SwitchSprites(characterName.text, expression, primarySpeaker);
         }

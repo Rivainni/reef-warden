@@ -109,7 +109,8 @@ public class AIBehaviour : MonoBehaviour
             {
                 if (mainUI.GetPlayerState().CheckSS())
                 {
-                    mainUI.GetPlayerState().AdjustMoney((int)(250 * 1.1f));
+                    int levelBonus = mainUI.GetPlayerState().GetLevel() > 3 ? 3 : mainUI.GetPlayerState().GetLevel();
+                    mainUI.GetPlayerState().AdjustMoney((int)(250 + (250 * 0.1f * levelBonus)));
                 }
                 else
                 {

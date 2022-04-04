@@ -502,7 +502,7 @@ public class MainUI : MonoBehaviour
     void AssistResearcher(HexCell destination, GameObject remove, HexUnit target)
     {
         spawner.DestroyUnit(target);
-        currentState.AddResearch(10000);
+        currentState.AddResearch(1000);
         AfterAction(remove);
     }
 
@@ -684,6 +684,10 @@ public class MainUI : MonoBehaviour
         {
             currentState.RemoveSS();
         }
+        else if (target.Upgrade.UpgradeType == "3rd Party Marketing Agencies")
+        {
+            currentState.RemoveMA();
+        }
         spawner.DestroyUpgrade(target.Upgrade);
     }
     void DoUpgrade(GameObject remove)
@@ -789,6 +793,10 @@ public class MainUI : MonoBehaviour
         {
             currentState.AddSS();
         }
+        else if (upgrade == "3rd Party Marketing Agencies")
+        {
+            currentState.AddMA();
+        }
         UpdateUIElements();
     }
 
@@ -853,7 +861,7 @@ public class MainUI : MonoBehaviour
                 currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, upkeep, toRemove, target));
             }
         }
-        else if (currentState.CheckBuilt(upgrade) && upgrade == "Basketball Court")
+        else if (currentState.CheckBuilt(upgrade) && (upgrade == "Basketball Court" || upgrade == "Rec Room"))
         {
             currentButton.GetComponentInChildren<Text>().text = "USE";
             currentButton.onClick.AddListener(() => Use(upgrade, toRemove));
@@ -967,13 +975,18 @@ public class MainUI : MonoBehaviour
             if (timeController.IsDay() && !currentState.SpawnedDay() && currentState.GetTourists() <= 2)
             {
                 currentState.ResetFisherman();
-                // foreach (HexUnit unit in grid.GetUnits())
-                // {
-                //     if (unit.UnitType == "Fishing Boat")
-                //     {
-                //         spawner.DestroyUnit(unit);
-                //     }
-                // }
+
+                if (currentState.CheckMA())
+                {
+                    if (currentState.GetLevel() >= 3)
+                    {
+                        max += 2;
+                    }
+                    else
+                    {
+                        max += 1;
+                    }
+                }
 
                 if (currentState.GetTourists() == 0)
                 {
@@ -1231,16 +1244,29 @@ public class MainUI : MonoBehaviour
 
     void Use(string upgrade, GameObject toRemove)
     {
+        int levelBonus = GetPlayerState().GetLevel() > 3 ? 3 : GetPlayerState().GetLevel();
         if (upgrade == "Basketball Court")
         {
             currentState.ResetCD("BB");
             if (currentState.CheckSAT())
             {
-                currentState.AddMorale(currentState.GetLevel() * 5 * 1.2f);
+                currentState.AddMorale((levelBonus * 5) + (0.2f * 5));
             }
             else
             {
-                currentState.AddMorale(currentState.GetLevel() * 5);
+                currentState.AddMorale(levelBonus * 5);
+            }
+        }
+        else if (upgrade == "Rec Room")
+        {
+            currentState.ResetCD("BB");
+            if (currentState.CheckSAT())
+            {
+                currentState.AddMorale((levelBonus * 10) + (0.2f * 10));
+            }
+            else
+            {
+                currentState.AddMorale(levelBonus * 10);
             }
         }
         Close(toRemove);

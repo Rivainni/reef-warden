@@ -29,6 +29,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int researchCD;
     [SerializeField] int radarCD;
     [SerializeField] int basketballCD;
+    [SerializeField] int recRoomCD;
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
@@ -47,6 +48,7 @@ public class PlayerState : ScriptableObject
     bool AIS = false;
     bool SAT = false;
     bool SS = false;
+    bool MA = false;
     bool daySpawn = false;
     bool nightSpawn = false;
     int sinceDaySpawn = 0;
@@ -302,6 +304,7 @@ public class PlayerState : ScriptableObject
         researchCD = (researchCD > 0) ? researchCD -= 1 : researchCD;
         radarCD = (radarCD > 0) ? radarCD -= 1 : radarCD;
         basketballCD = (basketballCD > 0) ? basketballCD -= 1 : basketballCD;
+        recRoomCD = (recRoomCD > 0) ? recRoomCD -= 1 : recRoomCD;
     }
 
     public void ResetCD(string type)
@@ -349,6 +352,10 @@ public class PlayerState : ScriptableObject
         else if (type.Equals("BB"))
         {
             basketballCD = 5;
+        }
+        else if (type.Equals("RR"))
+        {
+            recRoomCD = 5;
         }
     }
 
@@ -510,6 +517,21 @@ public class PlayerState : ScriptableObject
     public bool CheckSS()
     {
         return SS;
+    }
+
+    public void AddMA()
+    {
+        MA = true;
+    }
+
+    public void RemoveMA()
+    {
+        MA = false;
+    }
+
+    public bool CheckMA()
+    {
+        return MA;
     }
 
     public void AddTouristScore()
