@@ -3405,13 +3405,13 @@ MonoBehaviour:
   sounds:
   - name: Waves
     clip: {fileID: 8300000, guid: 1cc96a375df69d94687c904ecdc127a0, type: 3}
-    volume: 0.15
+    volume: 0.1
     pitch: 1
     loop: 1
     source: {fileID: 0}
   - name: Seagulls
     clip: {fileID: 8300000, guid: ca6c8f0366211ca498907065740321da, type: 3}
-    volume: 0.05
+    volume: 0.01
     pitch: 1
     loop: 0
     source: {fileID: 0}

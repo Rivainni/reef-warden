@@ -233,7 +233,7 @@ public class MainUI : MonoBehaviour
                     {
                         contextMenuContent.Add("Count Birds");
                     }
-                    if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(cell)) == 0 && cell.FeatureIndex == 0 && !contextMenuContent.Contains("Monitor Clams"))
+                    if (currentState.FetchCD("C" + GlobalCellCheck.GetIsland(cell)) == 0 && cell.FeatureIndex == 0 && !contextMenuContent.Contains("Monitor Clams") && currentState.GetLevel() >= 3)
                     {
                         contextMenuContent.Add("Monitor Clams");
                     }
@@ -902,17 +902,6 @@ public class MainUI : MonoBehaviour
             {
                 currentState.ToggleNightSpawn();
                 currentState.ResetNightSpawn();
-
-                if (!currentState.CheckTutorial())
-                {
-                    int random = Random.Range(0, 100);
-
-                    if (random > currentState.GetSecurity())
-                    {
-                        currentState.DecreaseHealth(2 + (1 * currentState.GetLevel()));
-                    }
-                    Debug.Log("bruh moment. some dude snuck in lmao");
-                }
             }
 
             if (timeController.IsDay() && !currentState.SpawnedDay() && currentState.GetTourists() <= 2)
@@ -948,28 +937,20 @@ public class MainUI : MonoBehaviour
             }
             else if (!timeController.IsDay() && !currentState.SpawnedNight() && currentState.GetFishermen() <= 2)
             {
-                if (currentState.GetRadarState())
-                {
-                    int random = Random.Range(0, 100);
+                int random = Random.Range(0, 100);
 
-                    if (random > currentState.GetSecurity())
+                if (random > currentState.GetSecurity())
+                {
+                    for (int i = 0; i < max; i++)
                     {
-                        for (int i = 0; i < max; i++)
-                        {
-                            spawner.RandomSpawn("Fishing Boat");
-                            currentState.AddFisherman(1);
-                        }
+                        spawner.RandomSpawn("Fishing Boat");
+                        currentState.AddFisherman(1);
                     }
+                }
 
-                    currentState.ToggleNightSpawn();
-                    currentState.ResetNightSpawn();
-                    storyTriggers[3].TriggerDialogue();
-                }
-                else
-                {
-                    currentState.ToggleNightSpawn();
-                    currentState.ResetNightSpawn();
-                }
+                currentState.ToggleNightSpawn();
+                currentState.ResetNightSpawn();
+                storyTriggers[3].TriggerDialogue();
             }
         }
     }

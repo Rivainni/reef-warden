@@ -41,8 +41,20 @@ public class AIBehaviour : MonoBehaviour
     {
         if (currentUnit.Location != finalDestination)
         {
-            SetMovementTarget(finalDestination);
-            StartCoroutine(TurnMove());
+            if (mainUI.GetPlayerState().CheckAIS() && currentUnit.UnitType != "Fishing Boat")
+            {
+                if (!currentPathExists)
+                {
+                    SetMovementTarget(finalDestination);
+                }
+                StartCoroutine(TurnMove());
+                SetMovementTarget(finalDestination);
+            }
+            else
+            {
+                SetMovementTarget(finalDestination);
+                StartCoroutine(TurnMove());
+            }
 
             // this may look stupid, but this is for when the unit has no more final destinations
             if (turnStopped == 0 && currentUnit.Location == finalDestination)
@@ -87,7 +99,6 @@ public class AIBehaviour : MonoBehaviour
                 }
                 currentUnit.Location.ResetColor();
                 ChooseEscape();
-                StartCoroutine(TurnMove());
                 stateChanged = true;
             }
         }
@@ -114,7 +125,7 @@ public class AIBehaviour : MonoBehaviour
         yield return new WaitUntil(() => currentUnit.Location == currentDestination);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
         yield return new WaitUntil(() => currentUnit.movement == false);
-        ClearPath();
+        // ClearPath();
     }
 
     // we want the ability to set a target destination

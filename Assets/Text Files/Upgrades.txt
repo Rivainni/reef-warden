@@ -28,7 +28,7 @@ Lets the player warn oncoming boats to stay away from the reef.
 The player starts with this upgrade unlocked and built.
 END
 !AIS!
-Lets the player know the information of the vessels in the area by Identifying their purpose.
+Lets the player see the path of vessels that are permitted to be there.
 Build Cost: 2000
 Research Cost: 750
 Upkeep: 1

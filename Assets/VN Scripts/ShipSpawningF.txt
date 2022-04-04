@@ -1,6 +1,6 @@
 [NAME=Diana]Idle: Base to PB-001, there’s a boat entering our Area of Jurisdiction over
 [CONDITIONAL=UpgradeAIS]Idle: Base to PB-001, it seems the boat is a fishing boat, over.
-[CONDITIONAL=Spotted] Got a visual on the fishermen.
-[ACTION=EnterCharacterPaulo]Concerned: They’re going for the reef!
+[CONDITIONAL=Spotted][ACTION=EnterCharacterPaulo]Concerned: I got a visual on the fishermen.
+Concerned: They’re going for the reef!
 [ACTION=EnterCharacterJulia]Concerned: Let’s get those guys!!
 EndQueue
