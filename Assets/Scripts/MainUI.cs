@@ -586,6 +586,7 @@ public class MainUI : MonoBehaviour
 
     void CatchFisherman(HexCell destination, GameObject remove, HexUnit target)
     {
+        target.SetInteracted();
         if (currentState.GetSecurity() >= 35.0f)
         {
             spawner.DestroyUnit(target);
@@ -616,7 +617,6 @@ public class MainUI : MonoBehaviour
                     break;
             }
         }
-        target.SetInteracted();
         storyTriggers[10].TriggerDialogue();
     }
 

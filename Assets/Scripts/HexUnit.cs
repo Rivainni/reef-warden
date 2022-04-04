@@ -384,6 +384,10 @@ public class HexUnit : MonoBehaviour
                         }
                     }
                 }
+                if (currentA.Unit.UnitType.Contains(type))
+                {
+                    return true;
+                }
             }
         }
         return false;
