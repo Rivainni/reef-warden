@@ -88,9 +88,12 @@ public class StoryManager : MonoBehaviour
                     characterName.text = newCharacter;
                 }
                 AddSprite(newCharacter);
-                if (!mainUI.GetPlayerState().CheckTutorial())
+                if (mainUI)
                 {
-                    primarySpeaker = false;
+                    if (!mainUI.GetPlayerState().CheckTutorial())
+                    {
+                        primarySpeaker = false;
+                    }
                 }
             }
             else if (action == "ExitCharacter")

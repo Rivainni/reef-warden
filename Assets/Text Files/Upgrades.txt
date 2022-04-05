@@ -82,6 +82,6 @@ END
 !Total Protection!
 The rangers’ findings in the reef are enough to convince politicians across the country of the necessity to dedicate more resources to defend the reef.
 Researching this will result in game victory.
-Research Cost: 5000
+Research Cost: 2500
 Time: 10
 END

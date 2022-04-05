@@ -76,15 +76,6 @@ public class CameraController : MonoBehaviour
     void HandleMovementInput()
     {
         bool locked = false;
-        // fast movement
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            movementSpeed = fastSpeed;
-        }
-        else
-        {
-            movementSpeed = normalSpeed;
-        }
 
         // keyboard movement
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))

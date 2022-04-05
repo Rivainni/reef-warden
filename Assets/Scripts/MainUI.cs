@@ -431,7 +431,10 @@ public class MainUI : MonoBehaviour
 
     void CheckHealth(HexCell destination, GameObject remove, int reefStructure)
     {
-        storyTriggers[11].TriggerDialogue();
+        if (!GetPlayerState().CheckTutorial())
+        {
+            storyTriggers[11].TriggerDialogue();
+        }
         StartCoroutine(HealthDelay(reefStructure));
         AfterAction(remove);
     }

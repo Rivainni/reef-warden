@@ -128,7 +128,7 @@ public class HexUnit : MonoBehaviour
     float orientation;
     bool busy;
     bool interacted;
-    const float travelSpeed = 2f;
+    const float travelSpeed = 3.0f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
     Renderer[] unitRenderers;
