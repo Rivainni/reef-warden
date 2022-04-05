@@ -230,7 +230,7 @@ public class MainUI : MonoBehaviour
                     {
                         contextMenuContent.Add("Check Reef Health");
                     }
-                    if (currentState.FetchCD("B") == 0 && (cell.Index == 490 || cell.Index == 491 || cell.Index == 516) && !contextMenuContent.Contains("Count Birds"))
+                    if (currentState.FetchCD("B") == 0 && (cell.Index == 490 || cell.Index == 491 || cell.Index == 516 || cell.Index == 515) && !contextMenuContent.Contains("Count Birds"))
                     {
                         contextMenuContent.Add("Count Birds");
                     }

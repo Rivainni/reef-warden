@@ -323,19 +323,19 @@ public class PlayerState : ScriptableObject
         }
         else if (type.Equals("B"))
         {
-            birdCD = 5;
+            birdCD = 3;
         }
         else if (type.Equals("C1"))
         {
-            clamCD1 = 10;
+            clamCD1 = 4;
         }
         else if (type.Equals("C2"))
         {
-            clamCD2 = 10;
+            clamCD2 = 4;
         }
         else if (type.Equals("C3"))
         {
-            clamCD3 = 10;
+            clamCD3 = 4;
         }
         else if (type.Equals("T"))
         {

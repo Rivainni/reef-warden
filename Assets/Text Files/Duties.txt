@@ -8,13 +8,13 @@ END
 Unlocks from Level 2.
 Rangers will have to stop near the bird islet and count the number of species. The records are submitted to the office once the rangers head back to the station. 
 This takes one turn and gives 500 research points. This action can be taken 1-2 unobstructedhexes away from the bird islet (see bird icons).
-The player may do this every 5 turns.
+The player may do this every 3 turns.
 END
 !Monitor Clam!
 Unlocks from Level 3.
 The rangers measure clams either by direct count or species count. 
 This takes two turns and gives 1000 research points. This action can be taken near any reef structure.
-The player may do this every 10 turns per reef structure.
+The player may do this every 4 turns per reef structure.
 END
 !Tag Turtles!
 Unlocks from Level 4 AND 'Species Tagging and Tracking' researched.

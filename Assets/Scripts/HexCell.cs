@@ -146,7 +146,7 @@ public class HexCell : MonoBehaviour
 
     public void SetLabel(string text)
     {
-        Text label = uiRect.GetComponent<Text>();
+        Text label = uiRect.GetChild(2).GetComponent<Text>();
         label.text = text;
     }
     public void DisableHighlight()

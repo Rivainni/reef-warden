@@ -696,7 +696,7 @@ MonoBehaviour:
   waypointMarker: {fileID: 5822157999589017094, guid: 1a841f5ff34cf7b47915180a7dd67209, type: 3}
   spawner: {fileID: 356808183}
   mainUI: {fileID: 2078076715}
-  cellLabelPrefab: {fileID: 8365395652673976220, guid: f078f3abc320eb24787e6080890efdca, type: 3}
+  cellLabelPrefab: {fileID: 6070545482638937159, guid: f078f3abc320eb24787e6080890efdca, type: 3}
   mapCreation: {fileID: 11400000, guid: 665d78d65c16d664fa588a54ab13b76d, type: 2}
   timeController: {fileID: 2015350036}
   unsafeCells: {fileID: 4900000, guid: 54554f94cd6905f49abf0895676c9868, type: 3}
@@ -1594,7 +1594,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 576616951}
   movementSpeed: 6
-  movementTime: 5
   rotationAmount: 1
   edgeSize: 10
   zoomAmount: {x: 0, y: -5, z: 5}
