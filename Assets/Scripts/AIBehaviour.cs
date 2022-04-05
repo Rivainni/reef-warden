@@ -453,5 +453,6 @@ public class AIBehaviour : MonoBehaviour
     public void Moor()
     {
         satisfied = true;
+        currentUnit.SetMoored();
     }
 }

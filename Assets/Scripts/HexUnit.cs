@@ -128,6 +128,7 @@ public class HexUnit : MonoBehaviour
     float orientation;
     bool busy;
     bool interacted;
+    bool moored;
     const float travelSpeed = 3.0f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
@@ -149,6 +150,7 @@ public class HexUnit : MonoBehaviour
         }
         busy = false;
         interacted = false;
+        moored = false;
     }
 
     public void ValidateLocation()
@@ -361,6 +363,16 @@ public class HexUnit : MonoBehaviour
     public bool HasInteracted()
     {
         return interacted;
+    }
+
+    public void SetMoored()
+    {
+        moored = true;
+    }
+
+    public bool HasMoored()
+    {
+        return moored;
     }
 
     public bool ScanFor(string type)

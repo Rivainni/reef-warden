@@ -205,7 +205,7 @@ public class MainUI : MonoBehaviour
                                 tempA = toCheckCell;
                                 targetA = toCheckCell.Unit;
                             }
-                            else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Assist Mooring") && toCheckCell.Unit.GetAIBehaviour().HasStopped())
+                            else if (toCheckCell.Unit.UnitType == "Tourist Boat" && !contextMenuContent.Contains("Assist Mooring") && toCheckCell.Unit.GetAIBehaviour().HasStopped() && !toCheckCell.Unit.HasMoored())
                             {
                                 contextMenuContent.Add("Assist Mooring");
                                 tempB = toCheckCell;
