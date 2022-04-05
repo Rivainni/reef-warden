@@ -32,6 +32,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] Button radarButton;
     [SerializeField] Button researchButton;
     [SerializeField] Button endTurnButton;
+    [SerializeField] Button infoButton;
     [SerializeField] ObjectivesDisplay objectivesDisplay;
     [SerializeField] CameraController cameraController;
     // allows us to access the dialogue stuff
@@ -903,7 +904,7 @@ public class MainUI : MonoBehaviour
 
 
         timeController.ForwardTime();
-        StartCoroutine(Movement(clicked));
+        StartCoroutine(Movement());
 
         foreach (HexUnit unit in grid.GetUnits())
         {
@@ -1031,12 +1032,12 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    IEnumerator Movement(Button clicked)
+    IEnumerator Movement()
     {
-        clicked.interactable = false;
+        FreezeTurnUI(true);
         yield return new WaitUntil(() => CheckMovement() == false);
         yield return new WaitUntil(() => timeController.CheckPause());
-        clicked.interactable = true;
+        FreezeTurnUI(false);
     }
 
     bool CheckMovement()
@@ -1054,8 +1055,9 @@ public class MainUI : MonoBehaviour
 
     public void InfoMenu()
     {
-        FreezeInput(false);
-        cameraController.FreezeCamera(false);
+        FreezeInput(true);
+        cameraController.FreezeCamera(true);
+        FreezeTurnUI(true);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         HexCell cell = grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
@@ -1069,7 +1071,6 @@ public class MainUI : MonoBehaviour
         if (contextMenuContent.Count > 0)
         {
             GameObject infoPanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
-            activeContextMenu = infoPanel;
 
             for (int i = 0; i < 2; i++)
             {
@@ -1090,9 +1091,6 @@ public class MainUI : MonoBehaviour
                     currentText.text = "Click on any of the actions in the list on the left to get started!";
                 }
             }
-
-            FreezeInput(true);
-            cameraController.FreezeCamera(true);
         }
     }
 
@@ -1151,6 +1149,7 @@ public class MainUI : MonoBehaviour
     {
         FreezeInput(true);
         cameraController.FreezeCamera(true);
+        FreezeTurnUI(true);
         grid.GetAudioManager().Play("Next", 0);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject researchPanel = Instantiate(researchPrefab, spawnAt, Quaternion.identity, transform);
@@ -1161,9 +1160,9 @@ public class MainUI : MonoBehaviour
         {
             if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) ||
             TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch() ||
-            (currentState.CheckTutorial() && button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "X"))
+            (currentState.CheckTutorial() && button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "X") ||
+            currentState.CheckResearchQueue(button.GetComponentInChildren<Text>().text) > 0)
             {
-                Debug.Log("Upgrade is " + button.GetComponentInChildren<Text>().text + ". Research status: " + currentState.CheckResearched(button.GetComponentInChildren<Text>().text + "."));
                 button.interactable = false;
             }
             else if (button.GetComponentInChildren<Text>().text == "X")
@@ -1176,17 +1175,13 @@ public class MainUI : MonoBehaviour
                 button.onClick.AddListener(() => ResearchUpgrade(button));
             }
         }
-
-        researchButton.interactable = false;
-        endTurnButton.interactable = false;
     }
 
     void ResearchUpgrade(Button clicked)
     {
         FreezeInput(false);
         cameraController.FreezeCamera(false);
-        researchButton.interactable = true;
-        endTurnButton.interactable = true;
+        FreezeTurnUI(false);
 
         grid.GetAudioManager().Play("Next", 0);
         string name = clicked.GetComponentInChildren<Text>().text;
@@ -1225,6 +1220,7 @@ public class MainUI : MonoBehaviour
         activeContextMenu = null;
         FreezeInput(false);
         cameraController.FreezeCamera(false);
+        FreezeTurnUI(false);
         grid.GetAudioManager().Play("Prev", 0);
         Destroy(toRemove);
 
@@ -1362,16 +1358,6 @@ public class MainUI : MonoBehaviour
     public void FreezeInput(bool toggle)
     {
         freeze = toggle;
-        if (freeze)
-        {
-            endTurnButton.interactable = false;
-            researchButton.interactable = false;
-        }
-        else
-        {
-            endTurnButton.interactable = true;
-            researchButton.interactable = true;
-        }
     }
 
     public void FreezeTurnUI(bool toggle)
@@ -1380,11 +1366,13 @@ public class MainUI : MonoBehaviour
         {
             endTurnButton.interactable = false;
             researchButton.interactable = false;
+            infoButton.interactable = false;
         }
         else
         {
             endTurnButton.interactable = true;
             researchButton.interactable = true;
+            infoButton.interactable = true;
         }
     }
 

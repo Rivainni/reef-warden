@@ -5040,6 +5040,7 @@ MonoBehaviour:
   radarButton: {fileID: 89648778}
   researchButton: {fileID: 316599004}
   endTurnButton: {fileID: 1720417494}
+  infoButton: {fileID: 602132241}
   objectivesDisplay: {fileID: 1375062249}
   cameraController: {fileID: 576616952}
   storyTriggers:
