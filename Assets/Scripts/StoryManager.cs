@@ -337,7 +337,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Patrol"));
                 mainUI.RailroadContextMenu("Patrol");
                 yield return new WaitUntil(() => mainUI.GetHexGrid().GetUnits()[0].Location == mainUI.GetHexGrid().GetCells()[260]);
                 mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[260]));
@@ -355,7 +355,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Check Reef Health"));
                 mainUI.RailroadContextMenu("Check Reef Health");
                 yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded() && mainUI.GetHexGrid().GetUnits()[0].Location == mainUI.GetHexGrid().GetCells()[259]);
                 mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[259]));
@@ -414,7 +414,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Inspect Tourist"));
                 mainUI.RailroadContextMenu("Inspect Tourist");
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
                 storyUI.SetActive(true);
@@ -429,7 +429,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Assist Mooring"));
                 mainUI.RailroadContextMenu("Assist Mooring");
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 1);
                 storyUI.SetActive(true);
@@ -444,7 +444,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Assist Researcher"));
                 yield return new WaitUntil(() => !mainUI.HasActiveContextMenu());
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
@@ -557,7 +557,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Check Reef Health"));
                 mainUI.RailroadContextMenu("Check Reef Health");
                 yield return new WaitUntil(() => !mainUI.HasActiveContextMenu());
                 storyUI.SetActive(true);

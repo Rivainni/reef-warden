@@ -361,7 +361,9 @@ public class MainUI : MonoBehaviour
     void AfterAction(GameObject remove)
     {
         FreezeInput(false);
+        FreezeTurnUI(false);
         cameraController.FreezeCamera(false);
+        activeContextMenu = null;
         grid.GetAudioManager().Play("Next", 0);
         DoMove();
         if (selectedUnit.IsPatrolBoat())
@@ -740,6 +742,11 @@ public class MainUI : MonoBehaviour
                     GameObject generic = Instantiate(textPrefab, upgradePanel.transform.GetChild(i).position, Quaternion.identity, upgradePanel.transform.GetChild(i));
                     Text currentText = generic.GetComponent<Text>();
                     currentText.text = "Select an available upgrade to get started!";
+
+                    generic = Instantiate(buttonPrefab, upgradePanel.transform.GetChild(i).position, Quaternion.identity, upgradePanel.transform.GetChild(i));
+                    Button currentButton = generic.GetComponent<Button>();
+                    currentButton.GetComponentInChildren<Text>().text = "CLOSE";
+                    currentButton.onClick.AddListener(() => Close(upgradePanel));
                 }
             }
 
@@ -1071,6 +1078,7 @@ public class MainUI : MonoBehaviour
         if (contextMenuContent.Count > 0)
         {
             GameObject infoPanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
+            activeContextMenu = infoPanel;
 
             for (int i = 0; i < 2; i++)
             {
@@ -1089,6 +1097,11 @@ public class MainUI : MonoBehaviour
                     GameObject generic = Instantiate(textPrefab, infoPanel.transform.GetChild(i).position, Quaternion.identity, infoPanel.transform.GetChild(i));
                     Text currentText = generic.GetComponent<Text>();
                     currentText.text = "Click on any of the actions in the list on the left to get started!";
+
+                    generic = Instantiate(buttonPrefab, infoPanel.transform.GetChild(i).position, Quaternion.identity, infoPanel.transform.GetChild(i));
+                    Button currentButton = generic.GetComponent<Button>();
+                    currentButton.GetComponentInChildren<Text>().text = "CLOSE";
+                    currentButton.onClick.AddListener(() => Close(infoPanel));
                 }
             }
         }
@@ -1223,6 +1236,7 @@ public class MainUI : MonoBehaviour
         FreezeTurnUI(false);
         grid.GetAudioManager().Play("Prev", 0);
         Destroy(toRemove);
+        UpdateUIElements();
 
         // wait for player to close reef health prompt
         if (wait)
@@ -1397,6 +1411,25 @@ public class MainUI : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool FindInContextMenu(string item)
+    {
+        if (activeContextMenu)
+        {
+            Button[] buttons = activeContextMenu.GetComponentsInChildren<Button>();
+
+            foreach (Button button in buttons)
+            {
+                string toCheck = button.GetComponentInChildren<Text>().text;
+
+                if (toCheck == item)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public Spawner GetSpawner()

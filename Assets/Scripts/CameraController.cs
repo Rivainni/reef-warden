@@ -5,11 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] Transform cameraTransform;
-
-    [SerializeField] float normalSpeed;
-    [SerializeField] float fastSpeed;
     [SerializeField] float movementSpeed;
-    [SerializeField] float movementTime;
     [SerializeField] float rotationAmount;
     [SerializeField] float edgeSize;
     [SerializeField] Vector3 zoomAmount;
@@ -159,7 +155,7 @@ public class CameraController : MonoBehaviour
         minZoomZ = 25.0f;
         minZ = -230.0f;
         maxX = 1004f;
-        maxZoomY = 35.0f;
+        maxZoomY = 50.0f;
         maxZoomZ = 80.0f;
         maxZ = 836f;
     }
