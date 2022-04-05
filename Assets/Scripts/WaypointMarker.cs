@@ -12,9 +12,11 @@ public class WaypointMarker : MonoBehaviour
     public Transform target;
     // To adjust the position of the icon
     public Vector3 offset;
+    Canvas canvas;
 
     void Start()
     {
+        canvas = transform.parent.GetComponent<Canvas>();
         HexUnit unit = target.GetComponent<HexUnit>();
         if (unit)
         {

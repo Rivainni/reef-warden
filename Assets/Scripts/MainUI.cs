@@ -468,6 +468,7 @@ public class MainUI : MonoBehaviour
         currentState.AddResearch(500);
         currentState.ResetCD("B");
         AfterAction(remove);
+        currentState.SetMessage("Birds counted.");
     }
 
     void MonitorClam(HexUnit unit, GameObject remove, int reefStructure)
@@ -477,6 +478,7 @@ public class MainUI : MonoBehaviour
         unit.ToggleBusy();
         unit.ActionPoints = 0;
         StartCoroutine(WaitForTwoTurns());
+        currentState.SetMessage("Beginning monitoring of clams.");
         IEnumerator WaitForTwoTurns()
         {
             yield return new WaitUntil(() => currentState.GetTurn() == startTurn + 2);
@@ -484,6 +486,7 @@ public class MainUI : MonoBehaviour
             currentState.AddResearch(1000);
             currentState.ResetCD("C" + reefStructure);
             currentState.incrementLevelCounters("monitor");
+            currentState.SetMessage("Monitoring finished.");
         }
     }
 
@@ -495,6 +498,7 @@ public class MainUI : MonoBehaviour
         unit.ToggleBusy();
         unit.ActionPoints = 0;
         StartCoroutine(WaitForTwoTurns());
+        currentState.SetMessage("Beginning turtle tagging.");
         IEnumerator WaitForTwoTurns()
         {
             yield return new WaitUntil(() => currentState.GetTurn() == startTurn + 2);
@@ -502,6 +506,7 @@ public class MainUI : MonoBehaviour
             currentState.AddResearch(1000);
             currentState.ResetCD("T");
             currentState.incrementLevelCounters("tag");
+            currentState.SetMessage("All turtles tagged!");
         }
     }
 
@@ -510,6 +515,7 @@ public class MainUI : MonoBehaviour
         spawner.DestroyUnit(target);
         currentState.AddResearch(1000);
         AfterAction(remove);
+        currentState.SetMessage("Assist complete.");
     }
 
     void InspectTourist(HexCell destination, GameObject remove, HexUnit target)
@@ -779,11 +785,13 @@ public class MainUI : MonoBehaviour
         {
             spawner.SpawnUpgrade(target, upgrade, constructionTime, researchCost, buildCost, upkeep);
             currentState.AddUpgrade(upgrade);
+            currentState.SetMessage(upgrade + " built.");
         }
         else
         {
             spawner.SpawnUnit(target, "Tier 2 Patrol Boat");
             currentState.AddManpower(-4);
+            currentState.SetMessage("A new patrol boat has arrived.");
         }
         currentState.AdjustIncome(-upkeep);
         currentState.AddManpower(1);
