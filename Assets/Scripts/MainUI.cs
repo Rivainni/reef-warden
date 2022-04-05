@@ -67,8 +67,11 @@ public class MainUI : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                grid.GetAudioManager().Play("Selected", 0);
-                DoSelection();
+                if (!selectedUnit || !selectedUnit.movement)
+                {
+                    grid.GetAudioManager().Play("Selected", 0);
+                    DoSelection();
+                }
             }
             else if (selectedUnit)
             {
