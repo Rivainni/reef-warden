@@ -394,6 +394,10 @@ public class MainUI : MonoBehaviour
                 message += "It has a permit - make sure to check if its manifests match!";
             }
         }
+        else if (target.Upgrade)
+        {
+            message += "That is a " + target.Upgrade.UpgradeType + ".\n";
+        }
         else if (target.Structure)
         {
             message += "That is a " + target.Structure.StructureType + ".\n";

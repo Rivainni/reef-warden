@@ -719,7 +719,7 @@ public class PlayerState : ScriptableObject
         }
         else if (name == "security")
         {
-            security++;
+            securityTurns++;
         }
         else if (name == "monitor")
         {
@@ -751,7 +751,7 @@ public class PlayerState : ScriptableObject
         }
         else if (name == "security")
         {
-            security = 0;
+            securityTurns = 0;
         }
         else if (name == "monitor")
         {
