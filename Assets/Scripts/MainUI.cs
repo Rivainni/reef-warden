@@ -281,6 +281,11 @@ public class MainUI : MonoBehaviour
             if (cell.Upgrade)
             {
                 contextMenuContent.Add("Demolish Upgrade");
+
+                if (cell.Upgrade.UpgradeType == "RADAR" || cell.Upgrade.UpgradeType == "Basketball Court" || cell.Upgrade.UpgradeType == "Rec Room")
+                {
+                    contextMenuContent.Add("Activate " + cell.Upgrade.UpgradeType);
+                }
             }
         }
 
@@ -352,6 +357,11 @@ public class MainUI : MonoBehaviour
                 else if (item == "Demolish Upgrade")
                 {
                     currentButton.onClick.AddListener(() => DemolishUpgrade(contextMenu, cell));
+                }
+
+                else if (item.Contains("Activate"))
+                {
+                    currentButton.onClick.AddListener(() => Use(cell.Upgrade.UpgradeType, contextMenu));
                 }
                 else if (item == "Close")
                 {
@@ -709,6 +719,7 @@ public class MainUI : MonoBehaviour
         }
         spawner.DestroyUpgrade(target.Upgrade);
     }
+
     void DoUpgrade(GameObject remove)
     {
         FreezeInput(false);
@@ -859,7 +870,12 @@ public class MainUI : MonoBehaviour
             currentButton.GetComponentInChildren<Text>().text = "IN QUEUE (" + currentState.CheckUpgrade(upgrade) + " TURNS)";
             currentButton.onClick.AddListener(() => Close(toRemove));
         }
-        else if (!currentState.CheckResearched(upgrade) || buildCost > currentState.GetMoney())
+        else if (currentState.CheckBuilt(upgrade) && (upgrade == "Basketball Court" || upgrade == "Rec Room"))
+        {
+            currentButton.GetComponentInChildren<Text>().text = "USE";
+            currentButton.onClick.AddListener(() => Use(upgrade, toRemove));
+        }
+        else if (!currentState.CheckResearched(upgrade) || buildCost > currentState.GetMoney() || currentState.CheckBuilt(upgrade))
         {
             currentButton.GetComponentInChildren<Text>().text = "CLOSE";
             currentButton.onClick.AddListener(() => Close(toRemove));
@@ -886,11 +902,6 @@ public class MainUI : MonoBehaviour
                 currentButton.GetComponentInChildren<Text>().text = "BUILD";
                 currentButton.onClick.AddListener(() => BuildUpgrade(upgrade, constructionTime, researchCost, buildCost, upkeep, toRemove, target));
             }
-        }
-        else if (currentState.CheckBuilt(upgrade) && (upgrade == "Basketball Court" || upgrade == "Rec Room"))
-        {
-            currentButton.GetComponentInChildren<Text>().text = "USE";
-            currentButton.onClick.AddListener(() => Use(upgrade, toRemove));
         }
         else
         {
@@ -1296,6 +1307,10 @@ public class MainUI : MonoBehaviour
             {
                 currentState.AddMorale(levelBonus * 10);
             }
+        }
+        else if (upgrade == "RADAR")
+        {
+            UseRadar();
         }
         Close(toRemove);
     }
