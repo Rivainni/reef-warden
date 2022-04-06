@@ -14,9 +14,18 @@ public class MinigameData : ScriptableObject
     {
         string toReturn = "";
 
-        toReturn += "Name: " + shipName[factor];
-        toReturn += "\nID: " + shipID[factor + randomisation];
-        toReturn += "\nCrew: " + crew[factor + randomisation];
+        if (factor + randomisation > 30)
+        {
+            toReturn += "Name: " + shipName[factor];
+            toReturn += "\nID: " + shipID[factor - randomisation];
+            toReturn += "\nCrew: " + crew[factor - randomisation];
+        }
+        else
+        {
+            toReturn += "Name: " + shipName[factor];
+            toReturn += "\nID: " + shipID[factor + randomisation];
+            toReturn += "\nCrew: " + crew[factor + randomisation];
+        }
 
         return toReturn;
     }

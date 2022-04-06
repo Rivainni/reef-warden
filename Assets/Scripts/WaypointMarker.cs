@@ -24,6 +24,12 @@ public class WaypointMarker : MonoBehaviour
             {
                 img.sprite = sprites[0];
             }
+            else if (unit.UnitType == "Service Boat")
+            {
+                img.sprite = sprites[1];
+                img.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                offset = new Vector3(offset.x, 5.0f, offset.z);
+            }
         }
     }
 

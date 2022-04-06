@@ -67,6 +67,7 @@ public class HexGrid : MonoBehaviour
 
         spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
         spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
+        spawner.AddUnitWaypoint(cells[serviceBoatSpawn]);
 
         TextRW.SetObjectives(objectives);
         TextRW.SetUpgrades(upgrades);
@@ -293,8 +294,6 @@ public class HexGrid : MonoBehaviour
             currentBehaviour.grid = this;
             currentBehaviour.mainUI = mainUI;
             currentBehaviour.spawner = spawner;
-
-            unit.IsVisible = location.IsVisible;
         }
     }
 
@@ -446,34 +445,6 @@ public class HexGrid : MonoBehaviour
             }
         }
         return visibleCells;
-    }
-
-    public void IncreaseVisibility(HexCell fromCell, int range)
-    {
-        List<HexCell> curr = GetVisibleCells(fromCell, range);
-        for (int i = 0; i < curr.Count; i++)
-        {
-            cells[i].IncreaseVisibility();
-            // cells[i].ResetColor();
-            if (cells[i].Unit)
-            {
-                cells[i].Unit.IsVisible = cells[i].IsVisible;
-            }
-        }
-    }
-
-    public void DecreaseVisibility(HexCell fromCell, int range)
-    {
-        List<HexCell> curr = GetVisibleCells(fromCell, range);
-        for (int i = 0; i < curr.Count; i++)
-        {
-            cells[i].DecreaseVisibility();
-            // cells[i].EnableHeavyHighlight();
-            if (cells[i].Unit)
-            {
-                cells[i].Unit.IsVisible = cells[i].IsVisible;
-            }
-        }
     }
 
     public HexCell GetCell(Ray ray)

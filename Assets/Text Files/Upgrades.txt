@@ -21,6 +21,7 @@ Requires 4 manpower to operate.
 Can move up to 14 tiles, depending on health.
 Build Cost: 8000
 Research Cost: 1000
+Time: 1
 Manpower: 4
 END
 !Radio!

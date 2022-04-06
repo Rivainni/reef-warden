@@ -80,15 +80,6 @@ public class HexCell : MonoBehaviour
     }
     int index;
 
-    public bool IsVisible
-    {
-        get
-        {
-            return visibility > 0;
-        }
-    }
-    int visibility;
-
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
     public Upgrade Upgrade { get; set; }
@@ -192,30 +183,4 @@ public class HexCell : MonoBehaviour
     {
         cellRenderer.material.color = defaultColor;
     }
-
-    public void IncreaseVisibility()
-    {
-        if (visibility < 1)
-        {
-            visibility++;
-        }
-    }
-
-    public void DecreaseVisibility()
-    {
-        if (visibility > 0)
-        {
-            visibility--;
-        }
-    }
-
-    // public void Save(BinaryWriter writer)
-    // {
-    //     writer.Write(IsImpassable);
-    // }
-
-    // public void Load(BinaryReader reader)
-    // {
-    //     IsImpassable = reader.ReadBoolean();
-    // }
 }

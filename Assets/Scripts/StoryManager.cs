@@ -366,20 +366,12 @@ public class StoryManager : MonoBehaviour
         }
         else if (action == "InspectTourist1")
         {
-            storyUI.SetActive(false);
             mainUI.GetSpawner().TutorialSpawn("Tourist Boat");
             mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[300]);
             mainUI.GetPlayerState().AddTourists(1);
             mainUI.GetPlayerState().ToggleDaySpawn();
             mainUI.UpdateUIElements();
             mainUI.DisplayTutorialObjective("Look for the tourist.");
-            StartCoroutine(WaitForPlayer());
-            IEnumerator WaitForPlayer()
-            {
-                yield return new WaitForSeconds(2.5f);
-                storyUI.SetActive(true);
-                mainUI.GetCameraController().FreezeCamera(true);
-            }
         }
         else if (action == "MoveAttempt")
         {
@@ -419,7 +411,6 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 0);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
-                mainUI.GetSpawner().DestroyWaypoints();
             }
         }
         else if (action == "InspectTourist3")
@@ -434,7 +425,6 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetTouristScore() > 1);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
-                mainUI.GetSpawner().DestroyWaypoints();
             }
         }
         else if (action == "Info")
@@ -497,7 +487,6 @@ public class StoryManager : MonoBehaviour
         {
             storyUI.SetActive(false);
             mainUI.DisplayTutorialObjective("Research the RADAR.");
-            mainUI.GetSpawner().DestroyWaypoints();
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
@@ -537,7 +526,6 @@ public class StoryManager : MonoBehaviour
             storyUI.SetActive(false);
             StartCoroutine(WaitForPlayer());
             mainUI.GetSpawner().TutorialSpawn("Fishing Boat");
-            mainUI.GetSpawner().AddUnitWaypoint(mainUI.GetHexGrid().GetCells()[299]);
             mainUI.GetPlayerState().AddFisherman(1);
             mainUI.GetPlayerState().ToggleNightSpawn();
             mainUI.DisplayTutorialObjective("Catch the Fishing Boat.");
@@ -546,7 +534,6 @@ public class StoryManager : MonoBehaviour
                 yield return new WaitUntil(() => mainUI.GetPlayerState().GetCatchScore() > 0);
                 storyUI.SetActive(true);
                 mainUI.GetCameraController().FreezeCamera(true);
-                mainUI.GetSpawner().DestroyWaypoints();
             }
         }
         else if (action == "CheckReefHealth2")

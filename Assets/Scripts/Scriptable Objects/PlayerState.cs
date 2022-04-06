@@ -109,12 +109,12 @@ public class PlayerState : ScriptableObject
 
     public float GetMorale()
     {
-        return morale;
+        return Mathf.Clamp(morale, 0, 100);
     }
 
     public float GetSecurity()
     {
-        return security;
+        return Mathf.Clamp(security, 0, 100);
     }
 
     public float GetHealth()
@@ -220,11 +220,19 @@ public class PlayerState : ScriptableObject
     public void AddMorale(float toAdd)
     {
         morale += toAdd;
+        if (morale >= 100.0f)
+        {
+            morale = 100.0f;
+        }
     }
 
     public void AddSecurity(float toAdd)
     {
         security += toAdd;
+        if (security >= 100.0f)
+        {
+            security = 100.0f;
+        }
     }
 
     public void DecreaseHealth(float toDecrease)

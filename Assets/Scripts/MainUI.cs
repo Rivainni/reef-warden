@@ -174,6 +174,14 @@ public class MainUI : MonoBehaviour
         selectedUnit.Travel(grid.GetPlayerBehaviour().GetPath());
         selectedUnit.ActionPoints = grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints);
         grid.GetPlayerBehaviour().ClearPath();
+        FreezeTurnUI(true);
+        StartCoroutine(WaitForPlayerMovement());
+    }
+
+    IEnumerator WaitForPlayerMovement()
+    {
+        yield return new WaitUntil(() => selectedUnit.movement == false);
+        FreezeTurnUI(false);
     }
 
     void HexAction()
@@ -549,6 +557,8 @@ public class MainUI : MonoBehaviour
         }
         yield return new WaitForSeconds(0.5f);
         yield return new WaitUntil(() => selectedUnit.movement == false);
+
+        FreezeTurnUI(true);
         Vector3 spawnAt = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
         GameObject gamePanel = Instantiate(doublePanelPrefab, spawnAt, Quaternion.identity, transform);
 
@@ -556,7 +566,7 @@ public class MainUI : MonoBehaviour
         int correct = Random.Range(0, 2);
         bool correctValue = correct < 1;
 
-        int random = Random.Range(0, 30);
+        int random = Random.Range(0, 31);
 
         for (int i = 0; i < 2; i++)
         {
@@ -607,6 +617,7 @@ public class MainUI : MonoBehaviour
         }
         currentState.AddTouristScore();
         target.SetInteracted();
+        FreezeTurnUI(false);
     }
 
     void InspectTouristGameDisapprove(bool correctValue, HexUnit target, GameObject toRemove)
@@ -631,6 +642,7 @@ public class MainUI : MonoBehaviour
         Destroy(toRemove);
         currentState.AddTouristScore();
         target.SetInteracted();
+        FreezeTurnUI(false);
     }
 
     void AssistMooring(HexCell destination, GameObject remove, HexUnit target)
@@ -969,9 +981,16 @@ public class MainUI : MonoBehaviour
         GameObject end = Instantiate(endPrefab, transform.position, Quaternion.identity, transform);
         Text textA = end.transform.GetChild(0).gameObject.GetComponent<Text>();
         Text textB = end.transform.GetChild(1).gameObject.GetComponent<Text>();
+        Button button = end.transform.GetChild(2).gameObject.GetComponent<Button>();
 
         textA.text = state;
         textB.text = reason;
+        button.onClick.AddListener(() => ExitToMainMenu());
+    }
+
+    void ExitToMainMenu()
+    {
+        SceneManager.LoadScene("Main Menu");
     }
 
     void SpawnUnits()
