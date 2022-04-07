@@ -23,6 +23,7 @@ Unlocks from Level 4 AND 'Species Tagging and Tracking' researched.
 The rangers tag turtles to measure their growth rate per year. This takes two turns and gives 2000 research points. This action can be taken near any reef structure.
 Has 2000 cost.
 The player may do this every 10 turns.
+END
 !Collaboration with other researchers!
 Unlocks from the start.
 Researchers arrive on a boat on the first daytime turn after level 5 is unlocked. The player can choose to repeat this event by the “call researchers” action. Each time this happens, the player must send rangers to accommodate them. This will grant the player one special upgrade. 

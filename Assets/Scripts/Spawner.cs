@@ -47,7 +47,7 @@ public class Spawner : MonoBehaviour
     public void SpawnUpgrade(HexCell cell, string upgradeType, int constructionTime, int researchCost, int buildCost, int upkeep)
     {
         int upgradeIndex = System.Array.IndexOf(upgradeTypes, upgradeType);
-        Debug.Log("testing " + upgradeType);
+        // Debug.Log("testing " + upgradeType);
         if (cell && !cell.Structure)
         {
             if (upgradeIndex != -1)
@@ -58,7 +58,7 @@ public class Spawner : MonoBehaviour
             else
             {
                 hexGrid.AddUpgrade(Instantiate(upgradePrefabs[0]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
-                Debug.Log(upgradeType);
+                // Debug.Log(upgradeType);
             }
         }
     }
@@ -113,7 +113,7 @@ public class Spawner : MonoBehaviour
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
         }
 
-        Debug.Log("Spawned " + unitType);
+        // Debug.Log("Spawned " + unitType);
 
         if (unitType == "Tourist Boat")
         {
@@ -131,8 +131,7 @@ public class Spawner : MonoBehaviour
         {
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
         }
-
-        Debug.Log("Spawned " + unitType);
+        // Debug.Log("Spawned " + unitType);
     }
 
     public void AddUnitWaypoint(HexCell cell)

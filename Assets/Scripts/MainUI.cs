@@ -122,8 +122,8 @@ public class MainUI : MonoBehaviour
         {
             if (cell != currentCell)
             {
-                Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
-                Debug.Log("reef structure" + GlobalCellCheck.GetIsland(cell));
+                // Debug.Log("You clicked on a cell with coordinates " + cell.coordinates.ToString());
+                // Debug.Log("reef structure" + GlobalCellCheck.GetIsland(cell));
                 currentCell = cell;
                 return true;
             }
@@ -138,7 +138,7 @@ public class MainUI : MonoBehaviour
 
         if (currentCell)
         {
-            Debug.Log("This is cell index " + currentCell.Index);
+            // Debug.Log("This is cell index " + currentCell.Index);
             if (!currentCell.Unit || selectedUnit == currentCell.Unit)
             {
                 selectedUnit = null;
@@ -147,7 +147,7 @@ public class MainUI : MonoBehaviour
             else if (currentCell.Unit && currentCell.Unit.UnitType.Contains("Patrol Boat") || currentCell.Unit.UnitType == "Service Boat")
             {
                 selectedUnit = currentCell.Unit;
-                Debug.Log("Selected " + selectedUnit.UnitType);
+                // Debug.Log("Selected " + selectedUnit.UnitType);
                 currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType);
                 grid.ShowUI(true);
             }
@@ -175,12 +175,14 @@ public class MainUI : MonoBehaviour
         selectedUnit.ActionPoints = grid.GetPlayerBehaviour().WithinTurnPath(selectedUnit.ActionPoints);
         grid.GetPlayerBehaviour().ClearPath();
         FreezeTurnUI(true);
+        FreezeInput(true);
         StartCoroutine(WaitForPlayerMovement());
     }
 
     IEnumerator WaitForPlayerMovement()
     {
         yield return new WaitUntil(() => selectedUnit.movement == false);
+        FreezeInput(false);
         FreezeTurnUI(false);
     }
 
@@ -284,7 +286,7 @@ public class MainUI : MonoBehaviour
             }
             else if (cell.Upgrade)
             {
-                contextMenuContent.Add("Replace Upgrade");
+                contextMenuContent.Add("Build/Replace Upgrade");
             }
             if (cell.Upgrade)
             {
@@ -303,6 +305,7 @@ public class MainUI : MonoBehaviour
             GameObject contextMenu = Instantiate(panelPrefab, spawnAt, Quaternion.identity, transform);
             activeContextMenu = contextMenu;
             FreezeInput(true);
+            FreezeTurnUI(true);
             cameraController.FreezeCamera(true);
 
             foreach (string item in contextMenuContent)
@@ -381,8 +384,6 @@ public class MainUI : MonoBehaviour
 
     void AfterAction(GameObject remove)
     {
-        FreezeInput(false);
-        FreezeTurnUI(false);
         cameraController.FreezeCamera(false);
         activeContextMenu = null;
         grid.GetAudioManager().Play("Next", 0);
@@ -392,7 +393,7 @@ public class MainUI : MonoBehaviour
             selectedUnit.DecreaseHP();
         }
         UpdateUIElements();
-        Close(remove);
+        Destroy(remove);
     }
 
     void Inspect(HexCell target, GameObject remove)
@@ -797,7 +798,7 @@ public class MainUI : MonoBehaviour
         Close(remove);
         currentState.AdjustMoney(-buildCost);
         currentState.AddManpower(-1);
-        Debug.Log("Built " + upgrade + " for " + buildCost);
+        // Debug.Log("Built " + upgrade + " for " + buildCost);
         UpdateUIElements();
         UpdateUIQueue(upgrade, 1, constructionTime);
         StartCoroutine(DelayedBuild(upgrade, constructionTime, researchCost, buildCost, upkeep, target));
@@ -1087,9 +1088,11 @@ public class MainUI : MonoBehaviour
     IEnumerator Movement()
     {
         FreezeTurnUI(true);
+        FreezeInput(true);
         yield return new WaitUntil(() => CheckMovement() == false);
         yield return new WaitUntil(() => timeController.CheckPause());
         FreezeTurnUI(false);
+        FreezeInput(false);
     }
 
     bool CheckMovement()
@@ -1252,7 +1255,7 @@ public class MainUI : MonoBehaviour
 
         researchTime = curr.Turns;
         researchCost = curr.ResearchCost;
-        Debug.Log(name + ", " + researchTime + " turns and " + researchCost + " points.");
+        // Debug.Log(name + ", " + researchTime + " turns and " + researchCost + " points.");
 
         if (currentState.GetResearch() >= researchCost)
         {
@@ -1277,8 +1280,8 @@ public class MainUI : MonoBehaviour
     {
         activeContextMenu = null;
         FreezeInput(false);
-        cameraController.FreezeCamera(false);
         FreezeTurnUI(false);
+        cameraController.FreezeCamera(false);
         grid.GetAudioManager().Play("Prev", 0);
         Destroy(toRemove);
         UpdateUIElements();
