@@ -95,6 +95,7 @@ public class AIBehaviour : MonoBehaviour
                     {
                         mainUI.GetPlayerState().DecreaseHealth(10);
                     }
+                    spawner.DestroyWaypoint(currentUnit.Waypoint);
                     mainUI.UpdateUIElements();
                 }
                 currentUnit.Location.ResetColor();
@@ -454,5 +455,6 @@ public class AIBehaviour : MonoBehaviour
     {
         satisfied = true;
         currentUnit.SetMoored();
+        spawner.DestroyWaypoint(currentUnit.Waypoint);
     }
 }

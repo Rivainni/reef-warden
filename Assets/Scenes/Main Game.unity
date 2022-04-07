@@ -903,6 +903,7 @@ MonoBehaviour:
   - Service Boat
   - Tourist Boat
   - Fishing Boat
+  - Research Boat
   movementPoints: 0a0000000d000000040000000300000004000000
   unitPrefabs:
   - {fileID: -678434393824927237, guid: 2b395fd535d8b9c45b47cce453b6aeb1, type: 3}
@@ -910,6 +911,7 @@ MonoBehaviour:
   - {fileID: -6607372331495214366, guid: dcff82307f3aec840a3dc977a0979e84, type: 3}
   - {fileID: -145626158155621914, guid: c1fdb885bb1d06a4491c87386507abcc, type: 3}
   - {fileID: -9008059652368044876, guid: 27f24a1a61aefe343807582176caa413, type: 3}
+  - {fileID: 8913429063992691099, guid: 2e6dfbc0af071894a9fd8cc3fd627677, type: 3}
   structureTypes:
   - Ranger Station
   - Buoy

@@ -336,11 +336,15 @@ public class HexGrid : MonoBehaviour
         upgrade.Die();
     }
 
-    public void AddWaypoint(WaypointMarker waypointMarker, Transform target)
+    public void AddWaypoint(WaypointMarker waypointMarker, Transform target, bool unit = false)
     {
         waypoints.Add(waypointMarker);
         waypointMarker.target = target;
         waypointMarker.transform.SetParent(mainUI.transform);
+        if (unit)
+        {
+            target.GetComponent<HexUnit>().Waypoint = waypointMarker;
+        }
     }
 
     public void RemoveWaypoint(WaypointMarker waypointMarker)

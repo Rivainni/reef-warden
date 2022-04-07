@@ -115,7 +115,7 @@ public class Spawner : MonoBehaviour
 
         // Debug.Log("Spawned " + unitType);
 
-        if (unitType == "Tourist Boat")
+        if (unitType == "Tourist Boat" || unitType == "Research Boat")
         {
             AddUnitWaypoint(cell);
         }
@@ -136,7 +136,7 @@ public class Spawner : MonoBehaviour
 
     public void AddUnitWaypoint(HexCell cell)
     {
-        hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.Unit.transform);
+        hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.Unit.transform, true);
     }
 
     public void AddCellWaypoint(HexCell cell)

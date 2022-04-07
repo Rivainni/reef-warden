@@ -94,22 +94,18 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    public bool IsVisible
+    public WaypointMarker Waypoint
     {
         get
         {
-            return isVisible;
+            return waypoint;
         }
         set
         {
-            isVisible = value;
-            // foreach (Renderer item in unitRenderers)
-            // {
-            //     item.enabled = value;
-            // }
+            waypoint = value;
         }
     }
-    bool isVisible;
+    WaypointMarker waypoint;
 
     public HexGrid Grid { get; set; }
 
