@@ -140,6 +140,7 @@ public class HexUnit : MonoBehaviour
     {
         location.Unit = null;
         Grid.GetAudioManager().Stop("Boat");
+        waypoint.Die();
         Destroy(gameObject);
     }
 

@@ -72,12 +72,6 @@ public class Spawner : MonoBehaviour
     public void DestroyUnit(HexUnit unit)
     {
         destructionQueue.Enqueue(unit);
-        WaypointMarker activeWaypoint = hexGrid.FindWaypoint(unit);
-
-        if (activeWaypoint != null)
-        {
-            DestroyWaypoint(activeWaypoint);
-        }
     }
 
     public void DestroyUnits()
@@ -136,7 +130,9 @@ public class Spawner : MonoBehaviour
 
     public void AddUnitWaypoint(HexCell cell)
     {
-        hexGrid.AddWaypoint(Instantiate(hexGrid.GetWaypointMarker()), cell.Unit.transform, true);
+        WaypointMarker waypointMarker = Instantiate(hexGrid.GetWaypointMarker());
+        cell.Unit.Waypoint = waypointMarker;
+        hexGrid.AddWaypoint(waypointMarker, cell.Unit.transform);
     }
 
     public void AddCellWaypoint(HexCell cell)

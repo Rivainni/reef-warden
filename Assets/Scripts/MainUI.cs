@@ -399,6 +399,7 @@ public class MainUI : MonoBehaviour
     void Inspect(HexCell target, GameObject remove)
     {
         FreezeInput(false);
+        FreezeTurnUI(false);
         cameraController.FreezeCamera(false);
         string message = "";
         if (target.Unit)
@@ -556,7 +557,6 @@ public class MainUI : MonoBehaviour
         {
             storyTriggers[7].TriggerDialogue();
         }
-        yield return new WaitForSeconds(0.5f);
         yield return new WaitUntil(() => selectedUnit.movement == false);
 
         FreezeTurnUI(true);
