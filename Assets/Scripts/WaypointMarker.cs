@@ -7,10 +7,31 @@ public class WaypointMarker : MonoBehaviour
 {
     // Indicator icon
     public Image img;
+    public Sprite[] sprites;
     // The target (location, enemy, etc..)
     public Transform target;
     // To adjust the position of the icon
     public Vector3 offset;
+    Canvas canvas;
+
+    void Start()
+    {
+        canvas = transform.parent.GetComponent<Canvas>();
+        HexUnit unit = target.GetComponent<HexUnit>();
+        if (unit)
+        {
+            if (unit.UnitType == "Fishing Boat")
+            {
+                img.sprite = sprites[0];
+            }
+            else if (unit.UnitType == "Service Boat")
+            {
+                img.sprite = sprites[1];
+                img.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                offset = new Vector3(offset.x, 5.0f, offset.z);
+            }
+        }
+    }
 
     void Update()
     {
@@ -29,7 +50,6 @@ public class WaypointMarker : MonoBehaviour
             // Check if the target is on the left side of the screen
             if (pos.x < Screen.width / 2)
             {
-                // Place it on the right (Since it's behind the player, it's the opposite)
                 pos.x = maxX;
             }
             else

@@ -80,43 +80,48 @@ public class HexCell : MonoBehaviour
     }
     int index;
 
-    public bool IsVisible
-    {
-        get
-        {
-            return visibility > 0;
-        }
-    }
-    int visibility;
-
     public HexUnit Unit { get; set; }
     public HexStructure Structure { get; set; }
     public Upgrade Upgrade { get; set; }
-    public int Adjacency
+    public int FeatureIndex
     {
         get
         {
-            return adjacency;
+            return featureIndex;
         }
         set
         {
-            adjacency = value;
-            if (adjacency > 0)
-            {
-                Image highlight = uiRect.GetChild(1).GetComponent<Image>();
-                highlight.enabled = true;
-            }
+            featureIndex = value;
         }
     }
-    int adjacency;
+    int featureIndex;
 
     Renderer cellRenderer;
     Color defaultColor;
+    Feature feature;
 
     void Awake()
     {
         cellRenderer = GetComponent<Renderer>();
         defaultColor = cellRenderer.material.color;
+    }
+
+    void Start()
+    {
+        feature = uiRect.GetChild(1).GetComponent<Feature>();
+        if (featureIndex != -1)
+        {
+            feature.SetImage(featureIndex);
+            feature.EnableImage(true);
+            if (featureIndex == 3)
+            {
+                feature.SetImageScale(0.75f, 0.75f);
+            }
+        }
+        else
+        {
+            feature.EnableImage(false);
+        }
     }
 
     public HexCell GetNeighbor(HexDirection direction)
@@ -132,7 +137,7 @@ public class HexCell : MonoBehaviour
 
     public void SetLabel(string text)
     {
-        UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
+        Text label = uiRect.GetChild(2).GetComponent<Text>();
         label.text = text;
     }
     public void DisableHighlight()
@@ -148,31 +153,19 @@ public class HexCell : MonoBehaviour
         highlight.enabled = true;
     }
 
-    void ClearFeature()
-    {
-        Image highlight = uiRect.GetChild(2).GetComponent<Image>();
-        highlight.enabled = false;
-    }
-
-    void EnableFeature()
-    {
-        Image highlight = uiRect.GetChild(2).GetComponent<Image>();
-        highlight.enabled = true;
-    }
-
     void OnMouseOver()
     {
-        if (Adjacency > 0)
+        if (FeatureIndex != -1)
         {
-            EnableFeature();
+            feature.SetImage(featureIndex + 4);
         }
     }
 
     void OnMouseExit()
     {
-        if (Adjacency > 0)
+        if (FeatureIndex != -1)
         {
-            ClearFeature();
+            feature.SetImage(featureIndex);
         }
     }
 
@@ -190,30 +183,4 @@ public class HexCell : MonoBehaviour
     {
         cellRenderer.material.color = defaultColor;
     }
-
-    public void IncreaseVisibility()
-    {
-        if (visibility < 1)
-        {
-            visibility++;
-        }
-    }
-
-    public void DecreaseVisibility()
-    {
-        if (visibility > 0)
-        {
-            visibility--;
-        }
-    }
-
-    // public void Save(BinaryWriter writer)
-    // {
-    //     writer.Write(IsImpassable);
-    // }
-
-    // public void Load(BinaryReader reader)
-    // {
-    //     IsImpassable = reader.ReadBoolean();
-    // }
 }

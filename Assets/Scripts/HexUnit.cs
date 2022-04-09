@@ -69,25 +69,13 @@ public class HexUnit : MonoBehaviour
         }
         set
         {
-            if (location && IsPlayerControlled())
-            {
-                Grid.DecreaseVisibility(location, visionRange);
-                location.Unit = null;
-            }
-            else if (location)
+            if (location)
             {
                 location.Unit = null;
             }
 
             location = value;
             value.Unit = this;
-
-            if (IsPlayerControlled())
-            {
-                value.IncreaseVisibility();
-                Grid.IncreaseVisibility(value, visionRange);
-            }
-
             transform.localPosition = value.Position;
         }
     }
@@ -106,38 +94,28 @@ public class HexUnit : MonoBehaviour
         }
     }
 
-    public bool IsVisible
+    public WaypointMarker Waypoint
     {
         get
         {
-            return isVisible;
+            return waypoint;
         }
         set
         {
-            isVisible = value;
-            // foreach (Renderer item in unitRenderers)
-            // {
-            //     item.enabled = value;
-            // }
-            Debug.Log(unitType + " is currently visible: " + value);
+            waypoint = value;
         }
     }
-    bool isVisible;
+    WaypointMarker waypoint;
 
     public HexGrid Grid { get; set; }
 
     float orientation;
     bool busy;
     bool interacted;
-    const float travelSpeed = 2f;
+    bool moored;
+    const float travelSpeed = 3.0f;
     const float rotationSpeed = 180f;
     List<HexCell> pathToTravel;
-    Renderer[] unitRenderers;
-
-    void Awake()
-    {
-        unitRenderers = GetComponentsInChildren<Renderer>();
-    }
 
     void Start()
     {
@@ -150,6 +128,7 @@ public class HexUnit : MonoBehaviour
         }
         busy = false;
         interacted = false;
+        moored = false;
     }
 
     public void ValidateLocation()
@@ -159,11 +138,12 @@ public class HexUnit : MonoBehaviour
 
     public void Die()
     {
-        if (location && IsPlayerControlled())
-        {
-            Grid.DecreaseVisibility(location, visionRange);
-        }
         location.Unit = null;
+        Grid.GetAudioManager().Stop("Boat");
+        if (waypoint)
+        {
+            waypoint.Die();
+        }
         Destroy(gameObject);
     }
 
@@ -189,15 +169,6 @@ public class HexUnit : MonoBehaviour
         // transform.localPosition = c;
         yield return LookAt(pathToTravel[1].Position);
 
-        if (IsPlayerControlled())
-        {
-            Grid.DecreaseVisibility
-            (
-                currentTravelLocation ? currentTravelLocation : pathToTravel[0],
-                visionRange
-            );
-        }
-
         float t = Time.deltaTime * travelSpeed;
 
         for (int i = 1; i < pathToTravel.Count; i++)
@@ -207,11 +178,6 @@ public class HexUnit : MonoBehaviour
             b = pathToTravel[i - 1].Position;
             c = (b + currentTravelLocation.Position) * 0.5f;
 
-            if (IsPlayerControlled())
-            {
-                Grid.IncreaseVisibility(pathToTravel[i], visionRange);
-            }
-
             for (; t < 1f; t += Time.deltaTime * travelSpeed)
             {
                 transform.localPosition = Bezier.GetPoint(a, b, c, t);
@@ -220,12 +186,6 @@ public class HexUnit : MonoBehaviour
                 transform.localRotation = Quaternion.LookRotation(d);
                 yield return null;
             }
-
-            if (IsPlayerControlled())
-            {
-                Grid.DecreaseVisibility(pathToTravel[i], visionRange);
-            }
-
             t -= 1f;
         }
         currentTravelLocation = null;
@@ -234,11 +194,6 @@ public class HexUnit : MonoBehaviour
         // b = pathToTravel[pathToTravel.Count - 1].Position;
         b = location.Position;
         c = b;
-
-        if (IsPlayerControlled())
-        {
-            Grid.IncreaseVisibility(location, visionRange);
-        }
 
         for (; t < 1f; t += Time.deltaTime * travelSpeed)
         {
@@ -282,8 +237,15 @@ public class HexUnit : MonoBehaviour
     {
         HP -= reducedActionPoints - ActionPoints;
         healthBar.SetHealth(HP);
-        reducedActionPoints = Mathf.RoundToInt((HP / 100) * maxActionPoints);
-        Debug.Log(HP + " HP. Your max points are " + reducedActionPoints + ".");
+        if (HP <= 10.0f)
+        {
+            reducedActionPoints = Mathf.RoundToInt((10 / 100) * maxActionPoints);
+        }
+        else
+        {
+            reducedActionPoints = Mathf.RoundToInt((HP / 100) * maxActionPoints);
+        }
+        // Debug.Log(HP + " HP. Your max points are " + reducedActionPoints + ".");
     }
 
     public void RestoreHP()
@@ -356,17 +318,46 @@ public class HexUnit : MonoBehaviour
         return interacted;
     }
 
+    public void SetMoored()
+    {
+        moored = true;
+    }
 
-    // public void Save(BinaryWriter writer)
-    // {
-    //     location.coordinates.Save(writer);
-    //     writer.Write(orientation);
-    // }
+    public bool HasMoored()
+    {
+        return moored;
+    }
 
-    // public static void Load(BinaryReader reader, HexGrid grid)
-    // {
-    //     HexCoordinates coordinates = HexCoordinates.Load(reader);
-    //     float orientation = reader.ReadSingle();
-    //     grid.AddUnit(Instantiate(unitPrefab), grid.GetCell(coordinates), orientation);
-    // }
+    public bool ScanFor(string type)
+    {
+        for (HexDirection i = HexDirection.NE; i <= HexDirection.NW; i++)
+        {
+            HexCell currentA = Location.GetNeighbor(i);
+            if (currentA != null)
+            {
+                if (currentA.Unit)
+                {
+                    if (currentA.Unit.UnitType.Contains(type))
+                    {
+                        return true;
+                    }
+                }
+                for (HexDirection j = HexDirection.NE; j <= HexDirection.NW; j++)
+                {
+                    HexCell currentB = currentA.GetNeighbor(j);
+                    if (currentB != null)
+                    {
+                        if (currentB.Unit != null)
+                        {
+                            if (currentB.Unit.UnitType.Contains(type))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

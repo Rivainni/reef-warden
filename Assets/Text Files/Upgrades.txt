@@ -7,7 +7,7 @@ Time: 1
 Manpower: 1
 END
 !Rec Room!
-Provides +x/2x/4x morale. 
+Provides +10%/15%/20% morale. 
 Has a 5 turn cooldown.
 Build Cost: 500
 Research Cost: 100
@@ -18,9 +18,10 @@ END
 !Double-engine Patrol Boat!
 Faster and bigger than the single-engine starter boat. Limit 1, does not take up slots.
 Requires 4 manpower to operate.
-Can move 8-10 hexes, depending on health.
+Can move up to 14 tiles, depending on health.
 Build Cost: 8000
 Research Cost: 1000
+Time: 1
 Manpower: 4
 END
 !Radio!
@@ -28,7 +29,7 @@ Lets the player warn oncoming boats to stay away from the reef.
 The player starts with this upgrade unlocked and built.
 END
 !AIS!
-Lets the player know the information of the vessels in the area by Identifying their purpose.
+Lets the player see the path of vessels that are permitted to be there.
 Build Cost: 2000
 Research Cost: 750
 Upkeep: 1
@@ -54,7 +55,7 @@ Manpower: 1
 END
 !Souvenir Stand!
 Allows tourists to buy souvenirs from the ranger station before leaving.
-Provides +10%/20%/40% increase in revenue from each tourist.
+Provides +10%/20%/30% increase in revenue from each tourist.
 Build Cost: 1000
 Research Cost: 100
 Upkeep: 0
@@ -63,7 +64,7 @@ Manpower: 1
 END
 !3rd Party Marketing Agencies!
 Advertises tourism opportunities to the reef
-Increases incoming tourists by x/2x/3x.
+Increases maximum tourists by 1 (Level 1+) or 2 (Level 3+) per turn.
 Build Cost: 4000
 Research Cost: 500
 Upkeep: 250
@@ -79,12 +80,9 @@ Unlocks turtle tagging as a research action, which provides greatly increased re
 Research Cost: 1000
 Time: 3
 END
-!Access to Research Boat!
-Players will be able to call in an off-map research boat once every 10 turns to give a +30% bonus to research actions done within the next 5 turns.
-END
 !Total Protection!
 The rangers’ findings in the reef are enough to convince politicians across the country of the necessity to dedicate more resources to defend the reef.
 Researching this will result in game victory.
-Research Cost: 2000
+Research Cost: 2500
 Time: 10
 END

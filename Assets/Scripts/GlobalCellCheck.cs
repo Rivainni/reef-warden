@@ -97,7 +97,7 @@ public static class GlobalCellCheck
                 {
                     return 1;
                 }
-                else if (i == 2)
+                else if (i >= 10)
                 {
                     return 2;
                 }

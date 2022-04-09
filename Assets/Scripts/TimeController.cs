@@ -47,14 +47,16 @@ public class TimeController : MonoBehaviour
         }
         else if (!pause)
         {
-            targetTime = currentTime;
+            DateTime correctedTime = new DateTime();
+            correctedTime = correctedTime.Date.AddHours(currentTime.Hour);
+            targetTime = correctedTime;
             pause = true;
+            timeIndicator.text = correctedTime.ToString("HH:mm");
         }
     }
 
     void UpdateTimeOfDay()
     {
-        // currentTime = currentTime.AddHours(3);
         currentTime = currentTime.AddSeconds(Time.deltaTime * timeMultiplier);
         timeIndicator.text = currentTime.ToString("HH:mm");
     }
@@ -84,7 +86,6 @@ public class TimeController : MonoBehaviour
             day = false;
         }
 
-        // sunLight.transform.rotation = Quaternion.Euler(0, sunLightRotation, 0);
         sunLight.transform.rotation = Quaternion.AngleAxis(sunLightRotation, Vector3.right);
     }
 

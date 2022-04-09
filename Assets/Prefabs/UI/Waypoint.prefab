@@ -89,5 +89,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   img: {fileID: 2288877180832387981}
+  sprites:
+  - {fileID: 21300000, guid: 4e31462bb2c945c4ebeaf26ed64bb3ec, type: 3}
+  - {fileID: 21300000, guid: 0235fce0d86beca47a1af7dc5b800e10, type: 3}
   target: {fileID: 0}
   offset: {x: 0, y: 10, z: 0}

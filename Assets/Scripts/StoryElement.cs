@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class StoryElement : MonoBehaviour
 {
     [SerializeField] TextAsset TextFileAsset; // your imported text file for your NPC
-    [SerializeField] string name;
+    [SerializeField] string title;
     [SerializeField] MainUI mainUI; // need to access the player state to determine whether to start dialogue or nah.
     Queue<string> dialogue = new Queue<string>(); // stores the dialogue (Great Performance!)
 
@@ -59,7 +59,7 @@ public class StoryElement : MonoBehaviour
     IEnumerator WaitForState()
     {
         yield return new WaitUntil(() => mainUI.GetPlayerState() != null);
-        if (name == "Tutorial" && mainUI.GetPlayerState().CheckTutorial())
+        if (title == "Tutorial" && mainUI.GetPlayerState().CheckTutorial())
         {
             TriggerDialogue();
         }

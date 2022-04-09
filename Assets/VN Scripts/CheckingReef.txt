@@ -1,0 +1,2 @@
+[ACTION=EnterCharacterPaulo]Idle:PB-001 to base, we’re going to check the reef for its condition over
+[NAME=Diana]Idle:Base to PB-001, copy that

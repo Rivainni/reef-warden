@@ -7,6 +7,7 @@ using System.IO;
 public static class TextRW
 {
     public static TextAsset upgradesFile;
+    public static TextAsset dutiesFile;
     public static TextAsset objectivesFile;
 
     public struct UpgradeItem
@@ -20,7 +21,14 @@ public static class TextRW
         public int Upkeep { get; set; }
     }
 
+    public struct InfoItem
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+
     static List<UpgradeItem> upgrades = new List<UpgradeItem>();
+    static List<InfoItem> duties = new List<InfoItem>();
     static List<string> level1Objectives = new List<string>();
     static List<string> level2Objectives = new List<string>();
     static List<string> level3Objectives = new List<string>();
@@ -54,6 +62,23 @@ public static class TextRW
         {
             return level1Objectives;
         }
+    }
+
+    public static List<InfoItem> GetDuties()
+    {
+        return duties;
+    }
+
+    public static InfoItem GetDuty(string name)
+    {
+        foreach (InfoItem duty in duties)
+        {
+            if (duty.Name == name)
+            {
+                return duty;
+            }
+        }
+        return duties[0];
     }
 
     public static List<UpgradeItem> GetUpgrades()
@@ -112,6 +137,34 @@ public static class TextRW
                 else if (line.StartsWith("END"))
                 {
                     upgrades.Add(curr);
+                }
+                else
+                {
+                    curr.Description += line + "\n";
+                }
+            }
+        }
+    }
+
+    public static void SetDuties(TextAsset text)
+    {
+        dutiesFile = text;
+        string txt = dutiesFile.text;
+        string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());
+
+        InfoItem curr = new InfoItem();
+        foreach (string line in lines)
+        {
+            if (!string.IsNullOrEmpty(line))
+            {
+                if (line.StartsWith("!"))
+                {
+                    curr = new InfoItem();
+                    curr.Name = line.Substring(1, line.Length - 2);
+                }
+                else if (line.StartsWith("END"))
+                {
+                    duties.Add(curr);
                 }
                 else
                 {
@@ -211,6 +264,7 @@ public static class TextRW
         catch (FileNotFoundException e)
         {
             TextRW.WriteSettings(Screen.currentResolution.width, Screen.currentResolution.height, 1, 100, 100);
+            Debug.Log(e);
         }
 
         string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());

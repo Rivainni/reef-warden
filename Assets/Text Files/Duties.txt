@@ -1,0 +1,54 @@
+!Check Reef Health!
+Unlocks from the start.
+Rangers aboard a patrol boat will hold station and dive at the reef to check the corals; this updates reef health. 
+This takes one turn and gives 250 research points. 
+This action can be taken in any spot with a reef icon.
+The player may do this every 2 turns per reef structure (North Atoll, South Atoll, Jessie Beazley Reef).
+END
+!Count Birds!
+Unlocks from Level 2.
+Rangers will have to stop near the bird islet and count the number of species. The records are submitted to the office once the rangers head back to the station. 
+This takes one turn and gives 500 research points. 
+This action can be taken 1-2 hexes away from the bird islet (see bird icons).
+The player may do this every 3 turns.
+END
+!Monitor Clam!
+Unlocks from Level 3.
+The rangers measure clams either by direct count or species count. 
+This takes two turns and gives 1000 research points. This action can be taken near any reef structure.
+The player may do this every 4 turns per reef structure.
+END
+!Tag Turtles!
+Unlocks from Level 4 AND 'Species Tagging and Tracking' researched.
+The rangers tag turtles to measure their growth rate per year. This takes two turns and gives 2000 research points. This action can be taken near any reef structure.
+Has 2000 cost.
+The player may do this every 10 turns.
+END
+!Collaboration with other researchers!
+Unlocks from the start.
+Researchers arrive on a boat on the first daytime turn after level 5 is unlocked. The player can choose to repeat this event by the “call researchers” action. Each time this happens, the player must send rangers to accommodate them. This will grant the player one special upgrade. 
+The player may do this every 10 turns.
+END
+!Patrol!
+Available from the start.
+Rangers will have to do patrols around the reef. Patrol adds (2% * tilesMoved) security per turn it is used.
+This action is available every turn.
+END
+!Catch Fisherman!
+If there are detections of illegal fishermen in the area, players must respond to these. Failure to do so decreases the reef’s health.
+Below 35% security, there is a chance that fishermen may evade capture.
+Note that 
+!Inspect Tourist!
+The rangers may approach a tourist ship to perform an inspection. There will be a minigame wherein the player must check if the permit presented matches with the permit the rangers have.
+If the player guesses correctly, they receive 5% security. If the permits do not match, the player receives a bonus.
+END
+!Assist Mooring!
+Once a tourist vessel arrives at a dive spot, rangers assist them in setting up the vessel’s mooring lines.
+The player must arrive within 3 turns of the tourist vessel stopping, otherwise the vessel may leave or drop anchor.
+If they drop anchor, the reef is damaged (5%).
+END
+!Assist Researcher!
+Researchers arrive on a boat on the first daytime turn after level 5 is unlocked. 
+The player can get this again at least ten turns after this. Each time this happens, the player must send rangers to accommodate them. 
+This will grant the player 10000 research points.
+END

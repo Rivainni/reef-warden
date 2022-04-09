@@ -29,6 +29,7 @@ public class PlayerState : ScriptableObject
     [SerializeField] int researchCD;
     [SerializeField] int radarCD;
     [SerializeField] int basketballCD;
+    [SerializeField] int recRoomCD;
 
     [SerializeField] int income;
     [SerializeField] string[] possibleActions;
@@ -47,6 +48,7 @@ public class PlayerState : ScriptableObject
     bool AIS = false;
     bool SAT = false;
     bool SS = false;
+    bool MA = false;
     bool daySpawn = false;
     bool nightSpawn = false;
     int sinceDaySpawn = 0;
@@ -107,12 +109,12 @@ public class PlayerState : ScriptableObject
 
     public float GetMorale()
     {
-        return morale;
+        return Mathf.Clamp(morale, 0, 100);
     }
 
     public float GetSecurity()
     {
-        return security;
+        return Mathf.Clamp(security, 0, 100);
     }
 
     public float GetHealth()
@@ -180,9 +182,17 @@ public class PlayerState : ScriptableObject
         income += factor;
     }
 
+    // when earning money, take morale into account. since the idea is that there might be additional pay for performance.
     public void AdjustMoney(int factor)
     {
-        money += Mathf.RoundToInt(factor + factor * morale);
+        if (factor < 0)
+        {
+            money += factor;
+        }
+        else
+        {
+            money += Mathf.RoundToInt(factor + factor * morale);
+        }
     }
 
     public void AddResearch(int RP)
@@ -210,11 +220,19 @@ public class PlayerState : ScriptableObject
     public void AddMorale(float toAdd)
     {
         morale += toAdd;
+        if (morale >= 100.0f)
+        {
+            morale = 100.0f;
+        }
     }
 
     public void AddSecurity(float toAdd)
     {
         security += toAdd;
+        if (security >= 100.0f)
+        {
+            security = 100.0f;
+        }
     }
 
     public void DecreaseHealth(float toDecrease)
@@ -294,6 +312,7 @@ public class PlayerState : ScriptableObject
         researchCD = (researchCD > 0) ? researchCD -= 1 : researchCD;
         radarCD = (radarCD > 0) ? radarCD -= 1 : radarCD;
         basketballCD = (basketballCD > 0) ? basketballCD -= 1 : basketballCD;
+        recRoomCD = (recRoomCD > 0) ? recRoomCD -= 1 : recRoomCD;
     }
 
     public void ResetCD(string type)
@@ -312,19 +331,19 @@ public class PlayerState : ScriptableObject
         }
         else if (type.Equals("B"))
         {
-            birdCD = 5;
+            birdCD = 3;
         }
         else if (type.Equals("C1"))
         {
-            clamCD1 = 10;
+            clamCD1 = 4;
         }
         else if (type.Equals("C2"))
         {
-            clamCD2 = 10;
+            clamCD2 = 4;
         }
         else if (type.Equals("C3"))
         {
-            clamCD3 = 10;
+            clamCD3 = 4;
         }
         else if (type.Equals("T"))
         {
@@ -341,6 +360,10 @@ public class PlayerState : ScriptableObject
         else if (type.Equals("BB"))
         {
             basketballCD = 5;
+        }
+        else if (type.Equals("RR"))
+        {
+            recRoomCD = 5;
         }
     }
 
@@ -504,6 +527,21 @@ public class PlayerState : ScriptableObject
         return SS;
     }
 
+    public void AddMA()
+    {
+        MA = true;
+    }
+
+    public void RemoveMA()
+    {
+        MA = false;
+    }
+
+    public bool CheckMA()
+    {
+        return MA;
+    }
+
     public void AddTouristScore()
     {
         touristsInspected++;
@@ -585,6 +623,10 @@ public class PlayerState : ScriptableObject
         currentObjectives = new List<string>();
         daySpawn = false;
         nightSpawn = false;
+        radarActive = false;
+        AIS = false;
+        SAT = false;
+        SS = false;
         levelTurns = 0;
         healthCount = 0;
         patrols = 0;
@@ -616,7 +658,7 @@ public class PlayerState : ScriptableObject
         {
             incrementLevelCounters("security");
         }
-        if (morale >= 55 && level == 4)
+        if (morale >= 45 && level == 4)
         {
             incrementLevelCounters("morale");
         }
@@ -685,7 +727,7 @@ public class PlayerState : ScriptableObject
         }
         else if (name == "security")
         {
-            security++;
+            securityTurns++;
         }
         else if (name == "monitor")
         {
@@ -717,7 +759,7 @@ public class PlayerState : ScriptableObject
         }
         else if (name == "security")
         {
-            security = 0;
+            securityTurns = 0;
         }
         else if (name == "monitor")
         {
@@ -776,7 +818,7 @@ public class PlayerState : ScriptableObject
                     }
                     break;
                 case 3:
-                    if (CheckResearched("Double-engine Patrol Boat") && item.Contains("engine"))
+                    if (CheckResearched("Double-engine Patrol Boat") && item.Contains("patrol boat"))
                     {
                         toRemove.Add(item);
                     }
@@ -803,7 +845,7 @@ public class PlayerState : ScriptableObject
                     {
                         toRemove.Add(item);
                     }
-                    else if (tagCount >= 2 && item.Contains("turtle"))
+                    else if (tagCount >= 2 && item.Contains("turtles"))
                     {
                         toRemove.Add(item);
                     }

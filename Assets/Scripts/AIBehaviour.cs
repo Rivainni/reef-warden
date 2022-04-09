@@ -29,7 +29,10 @@ public class AIBehaviour : MonoBehaviour
         heuristics = new int[grid.GetCells().Length];
         currentUnit = this.gameObject.GetComponent<HexUnit>();
         ChooseTarget();
-        Debug.Log("First target of " + currentUnit.UnitType + " is " + finalDestination.Index);
+        if (currentUnit.UnitType == "Tourist Boat")
+        {
+            finalDestination.EnableHighlight(Color.green);
+        }
         turnStopped = 0;
         satisfied = false;
     }
@@ -38,17 +41,23 @@ public class AIBehaviour : MonoBehaviour
     {
         if (currentUnit.Location != finalDestination)
         {
-            StartCoroutine(TurnMove());
-            SetMovementTarget(finalDestination);
-
-            if (currentUnit.Location == finalDestination)
+            if (mainUI.GetPlayerState().CheckAIS() && currentUnit.UnitType != "Fishing Boat")
             {
-                currentUnit.Location.EnableHeavyHighlight();
+                if (!currentPathExists)
+                {
+                    SetMovementTarget(finalDestination);
+                }
+                StartCoroutine(TurnMove());
+                SetMovementTarget(finalDestination);
             }
-        }
-        else if (!stateChanged)
-        {
-            if (turnStopped == 0)
+            else
+            {
+                SetMovementTarget(finalDestination);
+                StartCoroutine(TurnMove());
+            }
+
+            // this may look stupid, but this is for when the unit has no more final destinations
+            if (turnStopped == 0 && currentUnit.Location == finalDestination)
             {
                 turnStopped = mainUI.GetPlayerState().GetTurn();
                 if (currentPathExists)
@@ -61,7 +70,9 @@ public class AIBehaviour : MonoBehaviour
                     turnStopped++;
                 }
             }
-
+        }
+        else if (!stateChanged)
+        {
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
@@ -84,11 +95,11 @@ public class AIBehaviour : MonoBehaviour
                     {
                         mainUI.GetPlayerState().DecreaseHealth(10);
                     }
+                    spawner.DestroyWaypoint(currentUnit.Waypoint);
                     mainUI.UpdateUIElements();
                 }
                 currentUnit.Location.ResetColor();
                 ChooseEscape();
-                StartCoroutine(TurnMove());
                 stateChanged = true;
             }
         }
@@ -99,7 +110,8 @@ public class AIBehaviour : MonoBehaviour
             {
                 if (mainUI.GetPlayerState().CheckSS())
                 {
-                    mainUI.GetPlayerState().AdjustMoney((int)(250 * 1.1f));
+                    int levelBonus = mainUI.GetPlayerState().GetLevel() > 3 ? 3 : mainUI.GetPlayerState().GetLevel();
+                    mainUI.GetPlayerState().AdjustMoney((int)(250 + (250 * 0.1f * levelBonus)));
                 }
                 else
                 {
@@ -112,13 +124,10 @@ public class AIBehaviour : MonoBehaviour
     IEnumerator TurnMove()
     {
         DoMove();
-        // grid.ShowUI(false);
         yield return new WaitUntil(() => currentUnit.Location == currentDestination);
         currentUnit.ActionPoints = WithinTurnPath(currentUnit.ActionPoints);
         yield return new WaitUntil(() => currentUnit.movement == false);
-        // grid.ShowUI(true);
-
-        if (currentUnit.Location == finalDestination)
+        if (!mainUI.GetPlayerState().CheckAIS() || currentUnit.UnitType == "Fishing Boat")
         {
             ClearPath();
         }
@@ -172,8 +181,6 @@ public class AIBehaviour : MonoBehaviour
         {
             ChooseBuoy();
         }
-
-        SetMovementTarget(finalDestination);
     }
 
     void ChooseBuoy()
@@ -327,10 +334,7 @@ public class AIBehaviour : MonoBehaviour
                 currentIndex = current.Index;
                 int turn = (distances[currentIndex] - 1) / speed;
                 current.SetLabel((turn + 1).ToString());
-                if (!current.Structure)
-                {
-                    current.EnableHighlight(Color.green);
-                }
+                current.EnableHighlight(Color.green);
                 current.HasOverlap = true;
                 current = current.PathFrom;
             }
@@ -387,10 +391,7 @@ public class AIBehaviour : MonoBehaviour
             {
                 current.HasOverlap = false;
                 current.SetLabel(null);
-                if (!current.Structure)
-                {
-                    current.DisableHighlight();
-                }
+                current.DisableHighlight();
                 current = current.PathFrom;
             }
             current.HasOverlap = false;
@@ -430,33 +431,10 @@ public class AIBehaviour : MonoBehaviour
 
     void CheckForPatrolBoat()
     {
-        for (HexDirection i = HexDirection.NE; i <= HexDirection.NW; i++)
+        if (currentUnit.ScanFor("Patrol Boat"))
         {
-            HexCell currentA = currentUnit.Location.GetNeighbor(i);
-            if (currentA != null)
-            {
-                for (HexDirection j = HexDirection.NE; j <= HexDirection.NW; j++)
-                {
-                    HexCell currentB = currentA.GetNeighbor(j);
-                    if (currentB != null)
-                    {
-                        if (currentB.Unit != null)
-                        {
-                            if (currentB.Unit.UnitType.Contains("Patrol Boat"))
-                            {
-                                chaseState = true;
-                                stateChanged = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (chaseState)
-            {
-                break;
-            }
+            chaseState = true;
+            stateChanged = true;
         }
     }
 
@@ -476,5 +454,7 @@ public class AIBehaviour : MonoBehaviour
     public void Moor()
     {
         satisfied = true;
+        currentUnit.SetMoored();
+        spawner.DestroyWaypoint(currentUnit.Waypoint);
     }
 }

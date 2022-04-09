@@ -5,11 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] Transform cameraTransform;
-
-    [SerializeField] float normalSpeed;
-    [SerializeField] float fastSpeed;
     [SerializeField] float movementSpeed;
-    [SerializeField] float movementTime;
     [SerializeField] float rotationAmount;
     [SerializeField] float edgeSize;
     [SerializeField] Vector3 zoomAmount;
@@ -76,15 +72,6 @@ public class CameraController : MonoBehaviour
     void HandleMovementInput()
     {
         bool locked = false;
-        // fast movement
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            movementSpeed = fastSpeed;
-        }
-        else
-        {
-            movementSpeed = normalSpeed;
-        }
 
         // keyboard movement
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
@@ -141,15 +128,6 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.Q))
-        {
-            newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
-        }
-        if (Input.GetKey(KeyCode.E))
-        {
-            newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-        }
-
         if (Input.GetKey(KeyCode.R))
         {
             newZoom += zoomAmount;
@@ -177,7 +155,7 @@ public class CameraController : MonoBehaviour
         minZoomZ = 25.0f;
         minZ = -230.0f;
         maxX = 1004f;
-        maxZoomY = 35.0f;
+        maxZoomY = 50.0f;
         maxZoomZ = 80.0f;
         maxZ = 836f;
     }

@@ -26,6 +26,7 @@ public class HexGrid : MonoBehaviour
     [SerializeField] TextAsset adjacentChecks;
     [SerializeField] TextAsset objectives;
     [SerializeField] TextAsset upgrades;
+    [SerializeField] TextAsset duties;
     [SerializeField] AudioManager audioManager;
 
     public bool HasPath
@@ -66,9 +67,11 @@ public class HexGrid : MonoBehaviour
 
         spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
         spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
+        spawner.AddUnitWaypoint(cells[serviceBoatSpawn]);
 
         TextRW.SetObjectives(objectives);
         TextRW.SetUpgrades(upgrades);
+        TextRW.SetDuties(duties);
     }
 
     void CreateChunks()
@@ -99,14 +102,24 @@ public class HexGrid : MonoBehaviour
         // for adding the images
         for (int i = 0; i < cells.Length; i++)
         {
+            // if near buoy
             switch (GlobalCellCheck.IsAdjacentToBuoy(cells[i]))
             {
                 case 1:
-                    cells[i].Adjacency = 1;
+                    cells[i].FeatureIndex = 0;
                     break;
                 case 2:
-                    cells[i].Adjacency = 2;
+                    cells[i].FeatureIndex = 1;
                     break;
+                default:
+                    cells[i].FeatureIndex = -1;
+                    break;
+            }
+
+            // other special tiles
+            if (i == 489)
+            {
+                cells[i].FeatureIndex = 3;
             }
         }
     }
@@ -125,16 +138,6 @@ public class HexGrid : MonoBehaviour
 
         if (mapCreation.IsLand(check))
         {
-            // int treeChance = Random.Range(0, 101);
-            // if (treeChance < 85)
-            // {
-            //     cell = cells[i] = Instantiate<HexCell>(landA);
-            // }
-            // else
-            // {
-            //     cell = cells[i] = Instantiate<HexCell>(landB);
-            // }
-
             if (i == 465)
             {
                 cell = cells[i] = Instantiate<HexCell>(landB);
@@ -216,7 +219,6 @@ public class HexGrid : MonoBehaviour
             case 1:
                 spawner.SpawnStructure(cell, "Buoy");
                 buoyCells.Add(cell);
-                cell.EnableHighlight(Color.green);
                 break;
         }
 
@@ -292,8 +294,6 @@ public class HexGrid : MonoBehaviour
             currentBehaviour.grid = this;
             currentBehaviour.mainUI = mainUI;
             currentBehaviour.spawner = spawner;
-
-            unit.IsVisible = location.IsVisible;
         }
     }
 
@@ -370,6 +370,18 @@ public class HexGrid : MonoBehaviour
         return null;
     }
 
+    public WaypointMarker FindWaypoint(HexCell cell)
+    {
+        for (int i = 0; i < waypoints.Count; i++)
+        {
+            if (waypoints[i].target == cell.transform)
+            {
+                return waypoints[i];
+            }
+        }
+        return null;
+    }
+
     public void ResetPoints()
     {
         for (int i = 0; i < units.Count; i++)
@@ -433,36 +445,6 @@ public class HexGrid : MonoBehaviour
             }
         }
         return visibleCells;
-    }
-
-    public void IncreaseVisibility(HexCell fromCell, int range)
-    {
-        List<HexCell> curr = GetVisibleCells(fromCell, range);
-        for (int i = 0; i < curr.Count; i++)
-        {
-            cells[i].IncreaseVisibility();
-            // cells[i].ResetColor();
-            Debug.Log("vis");
-            if (cells[i].Unit)
-            {
-                cells[i].Unit.IsVisible = cells[i].IsVisible;
-            }
-        }
-    }
-
-    public void DecreaseVisibility(HexCell fromCell, int range)
-    {
-        List<HexCell> curr = GetVisibleCells(fromCell, range);
-        for (int i = 0; i < curr.Count; i++)
-        {
-            cells[i].DecreaseVisibility();
-            // cells[i].EnableHeavyHighlight();
-            Debug.Log("inv");
-            if (cells[i].Unit)
-            {
-                cells[i].Unit.IsVisible = cells[i].IsVisible;
-            }
-        }
     }
 
     public HexCell GetCell(Ray ray)

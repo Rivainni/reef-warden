@@ -1,2 +1,2 @@
-[NAME=Julia] Ok, so their info doesn’t match with what the Management Office has.
-[ACTION=EnterCharacterPaulo] Yeah….no they can’t proceed as-is. They have to pay a fine.
+[NAME=Julia]Concerned:Ok, so their info doesn’t match with what the Management Office has.
+[ACTION=EnterCharacterPaulo]Idle:Yeah….no they can’t proceed as-is. They have to pay a fine.
