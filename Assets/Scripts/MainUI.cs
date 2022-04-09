@@ -476,6 +476,7 @@ public class MainUI : MonoBehaviour
         currentState.ResetHealthWarning();
         currentState.incrementLevelCounters("health");
 
+        float pastHealth = currentState.GetHealth();
         currentState.UpdateHealth();
         currentState.AddResearch(250);
         currentState.ResetCD("CH" + reefStructure);
@@ -486,7 +487,7 @@ public class MainUI : MonoBehaviour
         bar.SetHealth(currentState.GetHealth());
 
         Button close = healthPanel.transform.GetChild(2).GetComponent<Button>();
-        close.onClick.AddListener(() => Close(healthPanel, true));
+        close.onClick.AddListener(() => Close(healthPanel, true, pastHealth));
     }
 
     void CountBirds(HexCell destination, GameObject remove)
@@ -1276,7 +1277,7 @@ public class MainUI : MonoBehaviour
         UpdateUIElements();
     }
 
-    void Close(GameObject toRemove, bool wait = false)
+    void Close(GameObject toRemove, bool wait = false, float health = 0.0f)
     {
         activeContextMenu = null;
         FreezeInput(false);
@@ -1291,7 +1292,7 @@ public class MainUI : MonoBehaviour
         {
             if (!currentState.CheckTutorial())
             {
-                if (currentState.ReefDamaged())
+                if (currentState.GetHealth() < health)
                 {
                     storyTriggers[5].TriggerDialogue();
                 }
