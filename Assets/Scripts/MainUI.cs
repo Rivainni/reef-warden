@@ -680,13 +680,14 @@ public class MainUI : MonoBehaviour
             switch (random)
             {
                 case 0:
-                    currentState.SetMessage("Catch failed. They got away!");
+                    currentState.SetMessage("Catch failed. They got away! We have to try again in a while.");
                     int current = currentState.GetTurn();
                     IEnumerator WaitNextTurn()
                     {
                         yield return new WaitUntil(() => currentState.GetTurn() > current);
                         target.FailedInteraction();
                     }
+                    AfterAction(remove);
                     StartCoroutine(WaitNextTurn());
                     break;
                 case 1:

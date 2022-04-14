@@ -167,7 +167,6 @@ public class HexUnit : MonoBehaviour
     {
         Grid.GetAudioManager().Play("Boat", 0);
         Vector3 a, b, c = pathToTravel[0].Position;
-        // transform.localPosition = c;
         yield return LookAt(pathToTravel[1].Position);
 
         float t = Time.deltaTime * travelSpeed;
