@@ -14,16 +14,6 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    public void StartGame()
-    {
-        SceneManager.LoadScene("Cutscene");
-    }
-
-    public void Skip()
-    {
-        SceneManager.LoadScene("Main Game");
-    }
-
     public void Settings()
     {
         TextRW.ReadSettings();

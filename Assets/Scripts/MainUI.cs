@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -37,6 +36,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] CameraController cameraController;
     // allows us to access the dialogue stuff
     [SerializeField] StoryElement[] storyTriggers;
+    [SerializeField] LevelLoader levelLoader;
     GameObject activeContextMenu;
     bool freeze;
 
@@ -995,7 +995,7 @@ public class MainUI : MonoBehaviour
 
     void ExitToMainMenu()
     {
-        SceneManager.LoadScene("Main Menu");
+        levelLoader.LoadLevel("Main Menu");
     }
 
     void SpawnUnits()

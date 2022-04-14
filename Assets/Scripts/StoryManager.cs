@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class StoryManager : MonoBehaviour
 {
@@ -18,6 +17,7 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] bool cutscene = true;
     [SerializeField] PlayerState initState;
+    [SerializeField] LevelLoader levelLoader;
     Queue<string> inputStream = new Queue<string>();
     bool pause = false;
     bool primarySpeaker = false;
@@ -237,11 +237,15 @@ public class StoryManager : MonoBehaviour
         storyText.text = "";
         characterName.text = "";
         inputStream.Clear();
-        storyUI.SetActive(false);
+
+        if (!cutscene)
+        {
+            storyUI.SetActive(false);
+        }
 
         if (cutscene)
         {
-            SceneManager.LoadSceneAsync("Main Game");
+            levelLoader.LoadLevel("Main Game");
             cutscene = false;
             initState.StartTutorial();
         }
