@@ -280,8 +280,6 @@ public class AIBehaviour : MonoBehaviour
                 return true;
             }
 
-            int currentTurn = (distances[currentIndex] - 1) / speed;
-
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
@@ -290,15 +288,12 @@ public class AIBehaviour : MonoBehaviour
                     continue;
                 }
 
-                // we can remove this?
-                int neighborIndex = neighbor.Index;
-
                 int moveCost = 1;
-                if (neighbor == null || distances[neighborIndex] != int.MaxValue)
+                if (neighbor == null || distances[neighbor.Index] != int.MaxValue)
                 {
                     continue;
                 }
-                if (GlobalCellCheck.IsImpassable(neighbor) || neighbor.Unit || GlobalCellCheck.IsNotReachable(neighborIndex))
+                if (GlobalCellCheck.IsImpassable(neighbor) || neighbor.Unit || GlobalCellCheck.IsNotReachable(neighbor.Index))
                 {
                     continue;
                 }
@@ -308,9 +303,9 @@ public class AIBehaviour : MonoBehaviour
                 }
 
                 int distance = distances[currentIndex] + moveCost;
-                distances[neighborIndex] = distance;
+                distances[neighbor.Index] = distance;
                 neighbor.PathFrom = current;
-                heuristics[neighborIndex] = neighbor.coordinates.DistanceTo(toCell.coordinates);
+                heuristics[neighbor.Index] = neighbor.coordinates.DistanceTo(toCell.coordinates);
                 frontier.Add(neighbor);
                 frontier.Sort((x, y) => GetPriority(x.Index).CompareTo(GetPriority(y.Index)));
             }
@@ -329,12 +324,9 @@ public class AIBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
-            int currentIndex;
             while (current != currentPathFrom)
             {
-                currentIndex = current.Index;
-                int turn = (distances[currentIndex] - 1) / speed;
-                current.SetLabel((turn + 1).ToString());
+                current.SetLabel("M");
                 current.EnableHighlight(Color.green);
                 current.HasOverlap = true;
                 current = current.PathFrom;
@@ -344,7 +336,7 @@ public class AIBehaviour : MonoBehaviour
         currentPathFrom.EnableHighlight(Color.blue);
         if (!grid.GetBuoyCells().Contains(currentPathTo))
         {
-            currentPathTo.EnableHighlight(Color.red);
+            currentPathTo.EnableHighlight(Color.green);
         }
     }
 
@@ -424,7 +416,6 @@ public class AIBehaviour : MonoBehaviour
         }
         path.Add(currentPathFrom);
         path.Reverse();
-        ListPool<HexCell>.Release(path);
         return path;
     }
 

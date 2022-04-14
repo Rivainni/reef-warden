@@ -40,8 +40,6 @@ public class PlayerBehaviour : MonoBehaviour
                 return true;
             }
 
-            int currentTurn = (current.Distance - 1) / speed;
-
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
@@ -80,8 +78,16 @@ public class PlayerBehaviour : MonoBehaviour
             while (current != currentPathFrom)
             {
                 int turn = (current.Distance - 1) / speed;
-                current.SetLabel((turn + 1).ToString());
-                current.EnableHighlight(Color.white);
+                if (turn > 0)
+                {
+                    current.SetLabel("X");
+                    current.EnableHighlight(Color.red);
+                }
+                else
+                {
+                    current.SetLabel("R");
+                    current.EnableHighlight(Color.white);
+                }
                 current.HasOverlap = true;
                 current = current.PathFrom;
             }
@@ -90,7 +96,14 @@ public class PlayerBehaviour : MonoBehaviour
         currentPathFrom.EnableHighlight(Color.blue);
         if (!grid.GetBuoyCells().Contains(currentPathTo))
         {
-            currentPathTo.EnableHighlight(Color.red);
+            if (currentPathTo.GetLabel() == "R")
+            {
+                currentPathTo.EnableHighlight(Color.green);
+            }
+            else
+            {
+                currentPathTo.EnableHighlight(Color.red);
+            }
         }
     }
 
@@ -143,6 +156,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             return null;
         }
+
         List<HexCell> path = ListPool<HexCell>.Get();
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
@@ -150,7 +164,6 @@ public class PlayerBehaviour : MonoBehaviour
         }
         path.Add(currentPathFrom);
         path.Reverse();
-        ListPool<HexCell>.Release(path);
         return path;
     }
 }
