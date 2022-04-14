@@ -148,7 +148,7 @@ public class MainUI : MonoBehaviour
             {
                 selectedUnit = currentCell.Unit;
                 // Debug.Log("Selected " + selectedUnit.UnitType);
-                currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType);
+                currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType + ".  Moves left: " + selectedUnit.ActionPoints + ".");
                 grid.ShowUI(true);
             }
         }
@@ -182,6 +182,8 @@ public class MainUI : MonoBehaviour
     IEnumerator WaitForPlayerMovement()
     {
         yield return new WaitUntil(() => selectedUnit.movement == false);
+        currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType + ".  Moves left: " + selectedUnit.ActionPoints + ".");
+        UpdateUIElements();
         FreezeInput(false);
         FreezeTurnUI(false);
     }
