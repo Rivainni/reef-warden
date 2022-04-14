@@ -1247,7 +1247,7 @@ public class MainUI : MonoBehaviour
 
         grid.GetAudioManager().Play("Next", 0);
         string name = clicked.GetComponentInChildren<Text>().text;
-        GameObject window = clicked.transform.parent.parent.gameObject;
+        GameObject window = clicked.transform.parent.parent.parent.gameObject;
 
         int researchTime = 0;
         int researchCost = 0;
