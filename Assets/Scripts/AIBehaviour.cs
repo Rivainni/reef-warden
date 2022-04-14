@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 // this class is for allied and enemy units
 public class AIBehaviour : MonoBehaviour
@@ -16,7 +17,6 @@ public class AIBehaviour : MonoBehaviour
     bool stateChanged;
     bool satisfied;
     int turnStopped;
-    List<HexCell> fullPath;
     int[] distances;
     int[] heuristics;
 
@@ -266,7 +266,7 @@ public class AIBehaviour : MonoBehaviour
             distances[i] = int.MaxValue;
         }
 
-        List<HexCell> frontier = new List<HexCell>();
+        List<HexCell> frontier = ListPool<HexCell>.Get();
         distances[fromCell.Index] = 0;
         frontier.Add(fromCell);
         while (frontier.Count > 0)
@@ -315,6 +315,7 @@ public class AIBehaviour : MonoBehaviour
                 frontier.Sort((x, y) => GetPriority(x.Index).CompareTo(GetPriority(y.Index)));
             }
         }
+        ListPool<HexCell>.Release(frontier);
         return false;
     }
 
@@ -416,13 +417,14 @@ public class AIBehaviour : MonoBehaviour
             return null;
         }
 
-        List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
+        List<HexCell> path = ListPool<HexCell>.Get();
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
             path.Add(c);
         }
         path.Add(currentPathFrom);
         path.Reverse();
+        ListPool<HexCell>.Release(path);
         return path;
     }
 

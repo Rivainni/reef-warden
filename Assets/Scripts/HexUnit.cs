@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Pool;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -191,7 +192,6 @@ public class HexUnit : MonoBehaviour
         currentTravelLocation = null;
 
         a = c;
-        // b = pathToTravel[pathToTravel.Count - 1].Position;
         b = location.Position;
         c = b;
 
