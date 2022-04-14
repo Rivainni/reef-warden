@@ -1227,7 +1227,7 @@ public class MainUI : MonoBehaviour
             {
                 button.interactable = false;
             }
-            else if (button.GetComponentInChildren<Text>().text == "X")
+            else if (button.GetComponentInChildren<Text>().text == "CLOSE")
             {
                 button.onClick.AddListener(() => Close(researchPanel));
             }
