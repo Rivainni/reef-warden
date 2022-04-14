@@ -61,6 +61,11 @@ https://soundbible.com/2193-Flock-Seagulls.html
 https://soundbible.com/890-Boat.html
 https://cdn.pixabay.com/download/audio/2021/10/12/audio_688d6a3071.mp3?filename=gentle-ocean-waves-breaking-on-beach-d-9333.mp3
 
+MUSIC
+https://www.chosic.com/download-audio/31968/
+https://www.chosic.com/download-audio/29438/
+https://www.chosic.com/download-audio/29290/
+
 Highlight audio
 https://youtu.be/oBkfujKPZw8
 https://youtu.be/oBkfujKPZw8
@@ -68,3 +73,4 @@ https://youtu.be/oBkfujKPZw8
 
 ## Important Links
 [Final Game Design Document](https://docs.google.com/document/d/19ao2h-TXHOEv0M6ZNG7mHmcw25SVbVLa5tEHVx3JDgo/edit?usp=sharing)
+[Story](https://docs.google.com/document/d/1MKbBXQJO1eta5LRAnzKISyTWsTN-LJS7D6i4FfmeHws/edit?usp=sharing)
