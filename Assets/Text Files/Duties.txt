@@ -1,5 +1,5 @@
 !Check Reef Health!
-Rangers aboard a patrol boat will hold station and dive at the reef to check the corals; this updates reef health. 
+Rangers aboard a patrol boat will hold station and dive at the reef to check the corals; this updates reef health.
 
 Availability: Start
 Research Points: 250
@@ -75,7 +75,7 @@ CD Rule: N/A
 END
 !Assist Researcher!
 Researchers arrive on a black boat on the first daytime turn after level 5 is unlocked. Each time this happens, the player must send rangers to accommodate them.
- 
+
 Availability: Level 5
 Research Points: 10000
 Time: 2
