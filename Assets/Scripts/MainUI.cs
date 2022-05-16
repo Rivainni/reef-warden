@@ -948,6 +948,7 @@ public class MainUI : MonoBehaviour
         currentState.EndTurn();
         objectivesDisplay.DisplayObjectives();
         clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
+        clicked.transform.GetChild(3).GetComponentInChildren<Text>().text = "LVL " + currentState.GetLevel();
         grid.ResetPoints();
         selectedUnit = null;
         grid.GetPlayerBehaviour().ClearPath();

@@ -21,8 +21,9 @@ Can move up to 14 tiles, depending on health.
 Build Cost: 8000
 Research Cost: 1000
 Time: 1
-Manpower: 4, to build and operate
-IMPORTANT NOTE: This boat can only be summoned on an available and reachable ocean tile adjacent to the station.
+Manpower: 4
+4 manpower to build and operate.
+This boat can only be summoned on an available and reachable ocean tile adjacent to the station.
 END
 !Radio!
 Lets the player warn oncoming boats to stay away from the reef.
