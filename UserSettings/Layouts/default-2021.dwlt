@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 989
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Game
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 17
+  controlID: 86
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 106
+  controlID: 96
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 107
+  controlID: 97
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -346,22 +346,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets/Scripts
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scenes
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\Nitro\Desktop\Misc\Unity\ReefWarden
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 322}
-    m_SelectedIDs: 74540000
-    m_LastClickedID: 21620
-    m_ExpandedIDs: 000000006c5400006e54000070540000725400007454000076540000785400007a5400007c5400001a55000000ca9a3b
+    scrollPos: {x: 0, y: 386}
+    m_SelectedIDs: 14570000
+    m_LastClickedID: 22292
+    m_ExpandedIDs: 000000000e57000010570000125700001457000016570000185700001a5700001c5700001e57000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -389,7 +389,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000006c5400006e54000070540000725400007454000076540000785400007a5400007c540000
+    m_ExpandedIDs: 000000000e57000010570000125700001457000016570000185700001a5700001c5700001e570000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -519,7 +519,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: ce74d8ff1c75d8ffe275d8ffa676d8ff5277d8ff2879d8ff6e7bd8ff627cd8ff7e10d9ff8010d9ff9212d9ff9c14d9fffaa8d9ffa8aad9ffaaaad9ffbeabd9ffc0abd9ffe2acd9ffb4add9ff02aed9ff1caed9ffcaaed9ff6eafd9ff40b1d9ff2cb4d9ff98b5d9ff92b6d9ffe0b6d9ffa2b7d9ff50b8d9fff4b8d9ffd6bad9ff4ebdd9ffb2bed9ff02c3d9ff04c4d9ff0cdfd9ffc4dfd9ff16e5d9ff2ee6d9ff40e8d9ffe4e8d9ffceebd9ffb4f1d9ffbef1d9fff0f2d9ff723cdbff743cdbff803cdbff8e4ddbff9268dbff906adbff5a6cdbffd06edbff92c2e1ffecc2e1ffb0c3e1ff1ec4e1ff82c4e1ff24c6e1ff16f3e2fff609f8ff4a0af8ff0e0bf8ff7c0bf8ffe00bf8ff820df8ff3afbffffde7f000058810000b68100003e57010048570100486c0100586d0100426e0100dc6e01002c6f0100a8760100b27801006e8401007c840100b2900100f69001008a920100409d0100
+      m_ExpandedIDs: 9eeaffffeceaffffaeebffff70ecffff18edffffeaeeffff52f6ffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -821,9 +821,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: -0.039296374, y: -0.012892498, z: 0.00050703395, w: -0.9991443}
   m_Size:
-    m_Target: 1096.7509
+    m_Target: 1266.1575
     speed: 2
-    m_Value: 1148.4302
+    m_Value: 1266.1575
   m_Ortho:
     m_Target: 0
     speed: 2
