@@ -1197,6 +1197,7 @@ public class MainUI : MonoBehaviour
         }
 
         toReplace.GetComponent<Text>().text = curr.Description + cd;
+        toReplace.GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
 
         foreach (Button trash in rem)
         {
