@@ -584,7 +584,7 @@ public class PlayerState : ScriptableObject
             username = "Juan";
         }
 
-        money = 10000;
+        money = 5000;
         income = 0;
         research = 250;
         manpower = 6;

@@ -111,11 +111,11 @@ public class AIBehaviour : MonoBehaviour
                 if (mainUI.GetPlayerState().CheckSS())
                 {
                     int levelBonus = mainUI.GetPlayerState().GetLevel() > 3 ? 3 : mainUI.GetPlayerState().GetLevel();
-                    mainUI.GetPlayerState().AdjustMoney((int)(250 + (250 * 0.1f * levelBonus)));
+                    mainUI.GetPlayerState().AdjustMoney((int)(150 + (150 * 0.1f * levelBonus)));
                 }
                 else
                 {
-                    mainUI.GetPlayerState().AdjustMoney(250);
+                    mainUI.GetPlayerState().AdjustMoney(150);
                 }
             }
         }
