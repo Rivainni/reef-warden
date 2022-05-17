@@ -1040,9 +1040,13 @@ public class MainUI : MonoBehaviour
 
                 if (currentState.CheckMA())
                 {
-                    if (currentState.GetLevel() >= 3)
+                    if (currentState.GetLevel() >= 4)
                     {
-                        max += 2;
+                        max = 3;
+                    }
+                    else if (currentState.GetLevel() >= 2)
+                    {
+                        max = 2;
                     }
                     else
                     {
@@ -1070,7 +1074,7 @@ public class MainUI : MonoBehaviour
                 currentState.ResetDaySpawn();
                 storyTriggers[4].TriggerDialogue();
             }
-            else if (!timeController.IsDay() && !currentState.SpawnedNight() && currentState.GetFishermen() <= 2)
+            else if (!timeController.IsDay() && !currentState.SpawnedNight())
             {
                 int random = Random.Range(0, 100);
 
@@ -1395,6 +1399,26 @@ public class MainUI : MonoBehaviour
 
             toUpdate.text += name + " - ";
             toUpdate.text += time;
+        }
+        UpdateUIElements();
+    }
+
+    void UpdateExistingQueue()
+    {
+        Text[] check = queueDisplay.GetComponentsInChildren<Text>();
+        Text toUpdate = null;
+        for (int i = 0; i < check.Length; i++)
+        {
+
+            if (check[i].text.Contains("B:"))
+            {
+                toUpdate.text = "B: ";
+            }
+            else
+            {
+                toUpdate.text = "R: ";
+            }
+            break;
         }
         UpdateUIElements();
     }

@@ -76,7 +76,7 @@ public class AIBehaviour : MonoBehaviour
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
-                mainUI.GetPlayerState().DecreaseHealth(2 + (1 * mainUI.GetPlayerState().GetLevel()));
+                mainUI.GetPlayerState().DecreaseHealth(2 * mainUI.GetPlayerState().GetLevel());
 
                 if (chaseState || mainUI.GetTimeController().IsDay())
                 {
