@@ -19,9 +19,16 @@ public class UITextUpdate : MonoBehaviour
     {
         PlayerState currentState = mainUI.GetPlayerState();
 
-        if (current.text.Contains("GP: "))
+        if (current.text.Contains("₱: "))
         {
-            current.text = "GP: " + currentState.GetMoney();
+            if (mainUI.GetPlayerState().GetIncome() < 0)
+            {
+                current.text = "₱: " + currentState.GetMoney() + " (" + currentState.GetIncome() + ")";
+            }
+            else
+            {
+                current.text = "₱: " + currentState.GetMoney();
+            }
         }
         else if (current.text.Contains("RP: "))
         {

@@ -866,10 +866,10 @@ public class MainUI : MonoBehaviour
         TextRW.UpgradeItem curr = TextRW.GetUpgrade(upgrade);
 
         toReplace.GetComponent<Text>().text = curr.Description;
-        toReplace.GetComponent<Text>().text += "Build: " + curr.BuildCost + "\n";
-        toReplace.GetComponent<Text>().text += "Research: " + curr.ResearchCost + "\n";
-        toReplace.GetComponent<Text>().text += "Upkeep: " + curr.Upkeep + "\n";
-        toReplace.GetComponent<Text>().text += "Time: " + curr.Turns + "\n";
+        toReplace.GetComponent<Text>().text += "Money Cost: " + curr.BuildCost + "\n";
+        toReplace.GetComponent<Text>().text += "Research Cost: " + curr.ResearchCost + "\n";
+        toReplace.GetComponent<Text>().text += "Per-turn Upkeep: " + curr.Upkeep + "\n";
+        toReplace.GetComponent<Text>().text += "Build Time: " + curr.Turns + "\n";
         constructionTime = curr.Turns;
         researchCost = curr.ResearchCost;
         buildCost = curr.BuildCost;
@@ -1162,6 +1162,8 @@ public class MainUI : MonoBehaviour
                     currentButton.onClick.AddListener(() => Close(infoPanel));
                 }
             }
+
+            contextMenuContent = null;
         }
     }
 
