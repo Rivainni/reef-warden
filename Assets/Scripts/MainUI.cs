@@ -869,6 +869,7 @@ public class MainUI : MonoBehaviour
         toReplace.GetComponent<Text>().text += "Build: " + curr.BuildCost + "\n";
         toReplace.GetComponent<Text>().text += "Research: " + curr.ResearchCost + "\n";
         toReplace.GetComponent<Text>().text += "Upkeep: " + curr.Upkeep + "\n";
+        toReplace.GetComponent<Text>().text += "Time: " + curr.Turns + "\n";
         constructionTime = curr.Turns;
         researchCost = curr.ResearchCost;
         buildCost = curr.BuildCost;
@@ -1231,13 +1232,14 @@ public class MainUI : MonoBehaviour
         {
             if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) ||
             TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch() ||
-            (currentState.CheckTutorial() && button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "X") ||
+            (currentState.CheckTutorial() && button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "CLOSE") ||
             currentState.CheckResearchQueue(button.GetComponentInChildren<Text>().text) > 0)
             {
                 button.interactable = false;
             }
             else if (button.GetComponentInChildren<Text>().text == "CLOSE")
             {
+
                 button.onClick.AddListener(() => Close(researchPanel));
             }
             else
@@ -1487,7 +1489,7 @@ public class MainUI : MonoBehaviour
                 {
                     found = true;
                 }
-                else if (toCheck != "Close" || found)
+                else if (toCheck != "Close" || toCheck != "CLOSE" || found)
                 {
                     button.interactable = false;
                 }
