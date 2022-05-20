@@ -441,7 +441,7 @@ public class AIBehaviour : MonoBehaviour
 
     public bool HasStopped()
     {
-        return turnStopped > 0;
+        return turnStopped > 0 && finalDestination == currentUnit.Location;
     }
 
     public void Moor()
