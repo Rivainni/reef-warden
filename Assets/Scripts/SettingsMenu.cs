@@ -12,7 +12,6 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] Text scaleText;
     [SerializeField] Dropdown resolutionDropdown;
     [SerializeField] Toggle fullscreenToggle;
-    [SerializeField] Slider scaleSlider;
     [SerializeField] Slider volumeSlider;
     float currentVolume;
     float currentScale;
@@ -30,12 +29,6 @@ public class SettingsMenu : MonoBehaviour
         currentVolume = volume;
         int result = VolumeToInt(volume);
         volumeText.text = result.ToString() + "%";
-    }
-
-    public void SetScale(float scale)
-    {
-        currentScale = scale;
-        scaleText.text = scale.ToString() + "%";
     }
 
     public void SetFullScreen(bool isFullscreen)
@@ -85,7 +78,6 @@ public class SettingsMenu : MonoBehaviour
         resolutionDropdown.RefreshShownValue();
 
         fullscreenToggle.isOn = Convert.ToBoolean(TextRW.GetSettings()[2]);
-        scaleSlider.value = TextRW.GetSettings()[3];
         scaleText.text = TextRW.GetSettings()[3].ToString() + "%";
         volumeSlider.value = VolumeToFloat(TextRW.GetSettings()[4]);
         volumeText.text = TextRW.GetSettings()[4].ToString() + "%";
