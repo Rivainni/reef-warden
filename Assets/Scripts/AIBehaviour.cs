@@ -41,6 +41,7 @@ public class AIBehaviour : MonoBehaviour
     {
         if (currentUnit.Location != finalDestination)
         {
+
             if (mainUI.GetPlayerState().CheckAIS() && currentUnit.UnitType != "Fishing Boat")
             {
                 if (!currentPathExists)
@@ -76,7 +77,7 @@ public class AIBehaviour : MonoBehaviour
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
-                mainUI.GetPlayerState().DecreaseHealth(2 * mainUI.GetPlayerState().GetLevel());
+                mainUI.GetPlayerState().DecreaseHealth(4 * mainUI.GetPlayerState().GetLevel());
 
                 if (chaseState || mainUI.GetTimeController().IsDay())
                 {
@@ -180,13 +181,17 @@ public class AIBehaviour : MonoBehaviour
         if (currentUnit.UnitType == "Tourist Boat" || currentUnit.UnitType == "Fishing Boat")
         {
             ChooseBuoy();
+            if (finalDestination == null)
+            {
+                spawner.DestroyUnit(currentUnit);
+            }
         }
     }
 
     void ChooseBuoy()
     {
         int maxDistance = 0;
-        int currentIndex = 0;
+        int currentIndex = -1;
         for (int i = 0; i < grid.GetBuoyCells().Count; i++)
         {
             finalDestination = grid.GetBuoyCells()[i];
@@ -207,7 +212,14 @@ public class AIBehaviour : MonoBehaviour
             }
         }
 
-        finalDestination = grid.GetCells()[currentIndex];
+        if (currentIndex != -1)
+        {
+            finalDestination = grid.GetCells()[currentIndex];
+        }
+        else
+        {
+            finalDestination = null;
+        }
     }
 
     void ChooseEscape()
