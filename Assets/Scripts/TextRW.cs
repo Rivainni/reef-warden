@@ -136,7 +136,10 @@ public static class TextRW
                 }
                 else if (line.StartsWith("END"))
                 {
-                    upgrades.Add(curr);
+                    if (!CheckIfLoaded(curr.Name, "upgrades"))
+                    {
+                        upgrades.Add(curr);
+                    }
                 }
                 else
                 {
@@ -164,7 +167,10 @@ public static class TextRW
                 }
                 else if (line.StartsWith("END"))
                 {
-                    duties.Add(curr);
+                    if (!CheckIfLoaded(curr.Name, "duties"))
+                    {
+                        duties.Add(curr);
+                    }
                 }
                 else
                 {
@@ -312,5 +318,31 @@ public static class TextRW
                 }
             }
         }
+    }
+
+    static bool CheckIfLoaded(string toCheck, string type)
+    {
+        if (type == "upgrades")
+        {
+            foreach (UpgradeItem upgrade in upgrades)
+            {
+                if (toCheck == upgrade.Name)
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            foreach (InfoItem duty in duties)
+            {
+                if (toCheck == duty.Name)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

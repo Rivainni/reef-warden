@@ -968,6 +968,7 @@ public class MainUI : MonoBehaviour
         }
         SpawnUnits();
         spawner.DestroyUnits();
+        UpdateUIQueue();
         UpdateUIElements();
 
         if (currentState.GetTrueHealth() <= 0)
@@ -1407,14 +1408,27 @@ public class MainUI : MonoBehaviour
         UpdateUIElements();
     }
 
-    void UpdateExistingQueue()
+    void UpdateUIQueue()
     {
         Text[] check = queueDisplay.GetComponentsInChildren<Text>();
         Text toUpdate = null;
-        for (int i = 0; i < check.Length; i++)
+        string name = "";
+        int turns = 0;
+        for (int i = 1; i < check.Length; i++)
         {
+            toUpdate = check[i];
+            name = check[i].text.Substring(3, (check[i].text.Length - 3) - (3 + 1));
+            if (check[i].text[check.Length - 2].ToString() == "")
+            {
+                turns = int.Parse(check[i].text[check[i].text.Length - 1].ToString());
+            }
+            else
+            {
+                turns = int.Parse(check[i].text[check[i].text.Length - 2].ToString() + check[i].text[check[i].text.Length - 1].ToString());
+            }
 
-            if (check[i].text.Contains("B:"))
+
+            if (check[i].text[0].ToString() == "B")
             {
                 toUpdate.text = "B: ";
             }
@@ -1422,7 +1436,11 @@ public class MainUI : MonoBehaviour
             {
                 toUpdate.text = "R: ";
             }
-            break;
+
+            toUpdate.text += name + " - ";
+            toUpdate.text += turns - 1;
+
+            check[i].text = toUpdate.text;
         }
         UpdateUIElements();
     }
