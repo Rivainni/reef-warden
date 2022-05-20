@@ -1006,13 +1006,17 @@ public class MainUI : MonoBehaviour
         if (!currentState.CheckTutorial())
         {
             int max;
-            if (currentState.GetLevel() == 1)
+            if (currentState.GetLevel() >= 4)
             {
-                max = 1;
+                max = 3;
+            }
+            else if (currentState.GetLevel() >= 2)
+            {
+                max = 2;
             }
             else
             {
-                max = currentState.GetLevel() / 2;
+                max = 1;
             }
 
             if (currentState.SpawnedDay())
@@ -1052,7 +1056,7 @@ public class MainUI : MonoBehaviour
                     }
                     else
                     {
-                        max += 1;
+                        max = 1;
                     }
                 }
 
@@ -1082,7 +1086,7 @@ public class MainUI : MonoBehaviour
 
                 if (random + 10 > currentState.GetSecurity())
                 {
-                    for (int i = 0; i < max; i++)
+                    for (int i = 0; i <= max; i++)
                     {
                         spawner.RandomSpawn("Fishing Boat");
                         currentState.AddFisherman(1);
@@ -1321,7 +1325,7 @@ public class MainUI : MonoBehaviour
     void Use(string upgrade, GameObject toRemove)
     {
         int levelBonus = GetPlayerState().GetLevel() > 3 ? 3 : GetPlayerState().GetLevel();
-        if (upgrade == "Basketball Court")
+        if (upgrade == "Basketball Court" && currentState.FetchCD("BB") == 0)
         {
             currentState.ResetCD("BB");
             if (currentState.CheckSAT())
@@ -1333,7 +1337,7 @@ public class MainUI : MonoBehaviour
                 currentState.AddMorale(levelBonus * 5);
             }
         }
-        else if (upgrade == "Rec Room")
+        else if (upgrade == "Rec Room" && currentState.FetchCD("RR") == 0)
         {
             currentState.ResetCD("BB");
             if (currentState.CheckSAT())
@@ -1578,5 +1582,10 @@ public class MainUI : MonoBehaviour
     public bool HasActiveContextMenu()
     {
         return activeContextMenu;
+    }
+
+    public HexCell GetCurrentCell()
+    {
+        return currentCell;
     }
 }

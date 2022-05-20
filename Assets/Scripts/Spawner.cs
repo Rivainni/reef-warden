@@ -58,7 +58,6 @@ public class Spawner : MonoBehaviour
             else
             {
                 hexGrid.AddUpgrade(Instantiate(upgradePrefabs[0]), cell, Random.Range(0f, 360f), upgradeType, constructionTime, researchCost, buildCost, upkeep);
-                // Debug.Log(upgradeType);
             }
         }
     }
@@ -124,8 +123,8 @@ public class Spawner : MonoBehaviour
         if (cell && !cell.Unit)
         {
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
+            AddUnitWaypoint(cell);
         }
-        // Debug.Log("Spawned " + unitType);
     }
 
     public void AddUnitWaypoint(HexCell cell)

@@ -191,7 +191,7 @@ public class PlayerState : ScriptableObject
         }
         else
         {
-            money += Mathf.RoundToInt(factor + factor * morale);
+            money += Mathf.RoundToInt(factor + (factor * morale / 100));
         }
     }
 
@@ -292,6 +292,14 @@ public class PlayerState : ScriptableObject
         else if (type.Equals("RADAR"))
         {
             return radarCD;
+        }
+        else if (type.Equals("BB"))
+        {
+            return basketballCD;
+        }
+        else if (type.Equals("RR"))
+        {
+            return recRoomCD;
         }
         else
         {

@@ -33,7 +33,7 @@ END
 Lets the player see the path of vessels that are permitted to be there.
 Build Cost: 2000
 Research Cost: 750
-Upkeep: 1
+Upkeep: 100
 Time: 1
 Manpower: 1
 END

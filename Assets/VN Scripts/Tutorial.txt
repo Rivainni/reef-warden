@@ -58,7 +58,8 @@ Happy:The radar is just one of the many upgrades you can make for the station an
 Happy:Each upgrade can do unique things that will help you in your daily tasks or add boosts to the resources.
 Happy:Doing tasks like checking reef health, doing bird counts, monitoring clams and assisting research boats can give you research points.
 [ACTION=Research]Idle:Now that it’s ready, try building it. Select one of the tiles adjacent to the station and right-click.
-[ACTION=Build]Idle:Click on the Radar button near the Research button.
+Idle:Note that some upgrades are restricted to certain tiles. Make sure to read the upgrade descriptions carefully.
+[ACTION=Build]Idle:Click on the RADAR button at the bottom of the screen, near the Research button.
 [ACTION=UseRADAR]Concerned:It looks like we spotted some unidentified ships with the radar, a good thing too since those pesky illegal fishermen mostly come at night when it’s hard to spot them.
 Idle:So I’m going to send the report to the Office about this possible confrontation with violators.
 Concerned:This is going to be a hassle in court and for Julio haha, since he is the Protocol Officer.

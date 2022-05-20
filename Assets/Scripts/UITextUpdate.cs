@@ -63,7 +63,7 @@ public class UITextUpdate : MonoBehaviour
         }
         else if (current.text.Contains(":"))
         {
-            current.text = "" + currentState.GetMessage();
+            current.text = ":" + currentState.GetMessage();
         }
     }
 
