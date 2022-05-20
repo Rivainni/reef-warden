@@ -95,7 +95,6 @@ public class HexCell : MonoBehaviour
         }
     }
     int featureIndex;
-
     Renderer cellRenderer;
     Color defaultColor;
     Feature feature;

@@ -1007,11 +1007,7 @@ public class MainUI : MonoBehaviour
         if (!currentState.CheckTutorial())
         {
             int max;
-            if (currentState.GetLevel() >= 4)
-            {
-                max = 3;
-            }
-            else if (currentState.GetLevel() >= 2)
+            if (currentState.GetLevel() >= 3)
             {
                 max = 2;
             }

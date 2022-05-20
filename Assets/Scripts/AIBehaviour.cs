@@ -160,7 +160,7 @@ public class AIBehaviour : MonoBehaviour
         {
             for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
             {
-                if (distances[c.Index] <= currentUnit.ActionPoints)
+                if (distances[c.Index] <= currentUnit.ActionPoints && c.Unit == null)
                 {
                     currentDestination = c;
                     break;
@@ -197,7 +197,7 @@ public class AIBehaviour : MonoBehaviour
             }
 
             int currDistance = distances[finalDestination.Index];
-            if (currDistance < maxDistance)
+            if (currDistance < maxDistance && finalDestination.Unit == null)
             {
                 currentIndex = finalDestination.Index;
             }

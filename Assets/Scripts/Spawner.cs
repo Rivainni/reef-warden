@@ -123,7 +123,10 @@ public class Spawner : MonoBehaviour
         if (cell && !cell.Unit)
         {
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
-            AddUnitWaypoint(cell);
+            if (unitType == "Fishing Boat")
+            {
+                AddUnitWaypoint(cell);
+            }
         }
     }
 
