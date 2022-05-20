@@ -19,51 +19,51 @@ public class UITextUpdate : MonoBehaviour
     {
         PlayerState currentState = mainUI.GetPlayerState();
 
-        if (current.text.Contains("₱: "))
+        if (current.name == "Money")
         {
             if (mainUI.GetPlayerState().GetIncome() < 0)
             {
-                current.text = "₱: " + currentState.GetMoney() + " (" + currentState.GetIncome() + ")";
+                current.text = currentState.GetMoney() + " (" + currentState.GetIncome() + ")";
             }
             else
             {
-                current.text = "₱: " + currentState.GetMoney();
+                current.text = "" + currentState.GetMoney();
             }
         }
-        else if (current.text.Contains("RP: "))
+        else if (current.name == "Research")
         {
-            current.text = "RP: " + currentState.GetResearch();
+            current.text = "" + currentState.GetResearch();
         }
-        else if (current.text.Contains("MANPOWER: "))
+        else if (current.name == "Manpower")
         {
-            current.text = "MANPOWER: " + currentState.GetManpower();
+            current.text = "" + currentState.GetManpower();
         }
-        else if (current.text.Contains("TOURISTS: "))
+        else if (current.name == "Tourists")
         {
-            current.text = "TOURISTS: " + currentState.GetTourists();
+            current.text = "" + currentState.GetTourists();
         }
-        else if (current.text.Contains("MOR: "))
+        else if (current.name == "Morale")
         {
-            current.text = "MOR: " + Mathf.Round(currentState.GetMorale());
+            current.text = "" + Mathf.Round(currentState.GetMorale());
         }
-        else if (current.text.Contains("SEC: "))
+        else if (current.name == "Security")
         {
-            current.text = "SEC: " + Mathf.Round(currentState.GetSecurity());
+            current.text = "" + Mathf.Round(currentState.GetSecurity());
         }
-        else if (current.text.Contains("HP: "))
+        else if (current.name == "HP")
         {
             if (currentState.GetLastHealthCheck() >= 5)
             {
-                current.text = "HP: " + "!!!";
+                current.text = "" + "!!!";
             }
             else
             {
-                current.text = "HP: " + Mathf.Round(currentState.GetHealth());
+                current.text = "" + Mathf.Round(currentState.GetHealth());
             }
         }
         else if (current.text.Contains(":"))
         {
-            current.text = ": " + currentState.GetMessage();
+            current.text = "" + currentState.GetMessage();
         }
     }
 
