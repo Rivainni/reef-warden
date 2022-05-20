@@ -825,6 +825,7 @@ public class MainUI : MonoBehaviour
         else
         {
             spawner.SpawnUnit(target, "Tier 2 Patrol Boat");
+            currentCell.Upgrade = null;
             currentState.AddManpower(-4);
             currentState.SetMessage("A new patrol boat has arrived.");
         }
