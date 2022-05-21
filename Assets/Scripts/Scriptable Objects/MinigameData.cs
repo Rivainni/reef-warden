@@ -14,7 +14,7 @@ public class MinigameData : ScriptableObject
     {
         string toReturn = "";
 
-        if (factor + randomisation > 30)
+        if (factor + randomisation > 29)
         {
             toReturn += "Name: " + shipName[factor];
             toReturn += "\nID: " + shipID[factor - randomisation];

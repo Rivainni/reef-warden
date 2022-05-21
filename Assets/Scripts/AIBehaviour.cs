@@ -54,7 +54,10 @@ public class AIBehaviour : MonoBehaviour
             else
             {
                 SetMovementTarget(finalDestination);
-                StartCoroutine(TurnMove());
+                if (currentPathExists)
+                {
+                    StartCoroutine(TurnMove());
+                }
             }
 
             // this may look stupid, but this is for when the unit has no more final destinations

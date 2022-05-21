@@ -479,7 +479,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Patrol"));
                 mainUI.RailroadContextMenu("Patrol");
                 yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
                 mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[261]));
@@ -506,7 +506,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Build Upgrade"));
                 mainUI.RailroadContextMenu("Build Upgrade");
                 yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
                 storyUI.SetActive(true);

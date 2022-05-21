@@ -138,7 +138,7 @@ public class MainUI : MonoBehaviour
 
         if (currentCell)
         {
-            // Debug.Log("This is cell index " + currentCell.Index);
+            Debug.Log("This is cell index " + currentCell.Index);
             if (!currentCell.Unit || selectedUnit == currentCell.Unit)
             {
                 selectedUnit = null;
@@ -576,13 +576,18 @@ public class MainUI : MonoBehaviour
         {
             GameObject toShow = Instantiate(textPrefab, gamePanel.transform.GetChild(i).position, Quaternion.identity, gamePanel.transform.GetChild(i));
             Text matchText = toShow.GetComponent<Text>();
+            if (i == 0)
+            {
+                matchText.text = "OFFICIAL COPY\n\n";
+            }
+
             if (correctValue)
             {
-                matchText.text = minigameData.GenerateSet(random, correct);
+                matchText.text += minigameData.GenerateSet(random, correct);
             }
             else
             {
-                matchText.text = minigameData.GenerateSet(random, correct + i);
+                matchText.text += minigameData.GenerateSet(random, correct + i);
             }
         }
 
@@ -1075,6 +1080,7 @@ public class MainUI : MonoBehaviour
 
                 currentState.ToggleDaySpawn();
                 currentState.ResetDaySpawn();
+                spawner.ClearSpawns();
                 storyTriggers[4].TriggerDialogue();
             }
             else if (!timeController.IsDay() && !currentState.SpawnedNight())

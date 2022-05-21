@@ -19,11 +19,13 @@ public class Spawner : MonoBehaviour
     [SerializeField] HexStructure[] structurePrefabs;
     [SerializeField] Upgrade[] upgradePrefabs;
 
+    List<HexCell> currentSpawnPoints;
     Queue<HexUnit> destructionQueue;
 
     void Start()
     {
         destructionQueue = new Queue<HexUnit>();
+        currentSpawnPoints = new List<HexCell>();
     }
 
     public void SpawnUnit(HexCell cell, string unitType)
@@ -100,9 +102,76 @@ public class Spawner : MonoBehaviour
         int random = Random.Range(0, GlobalCellCheck.GetEscapeCellCount());
         HexCell cell = hexGrid.GetCells()[GlobalCellCheck.GetEscapeCell(random)];
 
+        if (unitType == "Tourist Boat")
+        {
+            while (currentSpawnPoints.Contains(cell))
+            {
+                random = Random.Range(0, GlobalCellCheck.GetEscapeCellCount());
+                cell = hexGrid.GetCells()[GlobalCellCheck.GetEscapeCell(random)];
+            }
+        }
+
         int unitIndex = System.Array.IndexOf(unitTypes, unitType);
         if (cell && !cell.Unit)
         {
+            if (unitType == "Tourist Boat")
+            {
+                currentSpawnPoints.Add(cell);
+
+                switch (cell.Index)
+                {
+                    case 0:
+                        //200
+                        //24
+                        currentSpawnPoints.Add(hexGrid.GetCells()[200]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[24]);
+                        break;
+                    case 600:
+                        //375
+                        //624
+                        currentSpawnPoints.Add(hexGrid.GetCells()[375]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[624]);
+                        break;
+                    case 624:
+                        //600
+                        //399
+                        currentSpawnPoints.Add(hexGrid.GetCells()[600]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[399]);
+                        break;
+                    case 24:
+                        //224
+                        //0
+                        currentSpawnPoints.Add(hexGrid.GetCells()[224]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[0]);
+                        break;
+                    case 200:
+                        //375
+                        //0
+                        currentSpawnPoints.Add(hexGrid.GetCells()[375]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[0]);
+                        break;
+                    case 224:
+                        //24
+                        //399
+                        currentSpawnPoints.Add(hexGrid.GetCells()[24]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[399]);
+                        break;
+                    case 375:
+                        //600
+                        //200
+                        currentSpawnPoints.Add(hexGrid.GetCells()[600]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[200]);
+                        break;
+                    case 399:
+                        //624
+                        //224
+                        currentSpawnPoints.Add(hexGrid.GetCells()[624]);
+                        currentSpawnPoints.Add(hexGrid.GetCells()[224]);
+                        break;
+                    default:
+                        break;
+                }
+            }
             hexGrid.AddUnit(Instantiate(unitPrefabs[unitIndex]), cell, Random.Range(0f, 360f), unitType, movementPoints[unitIndex]);
         }
 
@@ -112,6 +181,11 @@ public class Spawner : MonoBehaviour
         {
             AddUnitWaypoint(cell);
         }
+    }
+
+    public void ClearSpawns()
+    {
+        currentSpawnPoints.Clear();
     }
 
     public void TutorialSpawn(string unitType)

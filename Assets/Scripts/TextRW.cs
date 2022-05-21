@@ -182,6 +182,12 @@ public static class TextRW
 
     public static void SetObjectives(TextAsset text)
     {
+        level1Objectives.Clear();
+        level2Objectives.Clear();
+        level3Objectives.Clear();
+        level4Objectives.Clear();
+        level5Objectives.Clear();
+
         objectivesFile = text;
         string txt = objectivesFile.text;
         string[] lines = txt.Split(System.Environment.NewLine.ToCharArray());
