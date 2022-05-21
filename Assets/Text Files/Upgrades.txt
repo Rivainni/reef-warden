@@ -11,7 +11,7 @@ Provides +10%/15%/20% morale.
 Has a 5 turn cooldown.
 Build Cost: 500
 Research Cost: 100
-Upkeep: 100
+Upkeep: 50
 Time: 1
 Manpower: 1
 END
@@ -33,7 +33,7 @@ END
 Lets the player see the path of vessels that are permitted to be there.
 Build Cost: 2000
 Research Cost: 750
-Upkeep: 100
+Upkeep: 50
 Time: 1
 Manpower: 1
 END
@@ -42,7 +42,7 @@ When triggered, it gives the player map-wide visibility for one turn.
 May be used again after 5 turns.
 Build Cost: 2000
 Research Cost: 250
-Upkeep: 200
+Upkeep: 100
 Time: 1
 Manpower: 1
 END
@@ -50,7 +50,7 @@ END
 Gives +20% base bonus to security and base morale
 Build Cost: 2000
 Research Cost: 500
-Upkeep: 200
+Upkeep: 100
 Time: 4
 Manpower: 1
 END
@@ -65,10 +65,10 @@ Manpower: 1
 END
 !3rd Party Marketing Agencies!
 Advertises tourism opportunities to the reef
-Increases maximum tourists by 1 (Level 1+) or 2 (Level 3+) per turn.
+Increases maximum tourists by 1 (Level 1+) or 2 (Level 4+) per day.
 Build Cost: 4000
 Research Cost: 500
-Upkeep: 250
+Upkeep: 125
 Time: 4
 Manpower: 2
 END

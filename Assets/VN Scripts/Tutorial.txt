@@ -7,13 +7,12 @@ Happy:Use the W, A, S, D keyboard buttons or move the mouse to the corner of the
 [ACTION=WASD]Happy:To zoom in, use the Mousewheel, R, or F.
 [ACTION=RF]Happy:There we go, now let's move on to the patrol.
 Idle:Since we can only travel so much in 2 hours, the Patrol Boat can move only 10 tiles per turn.
-Happy:Click on the boat and right click on the spot you want to go to.
+Happy:Left click on the Patrol Boat (silver) and right click on the spot you want to go to.
 Happy:Then, click on the prompt ‘Patrol’.
 Happy:Do this on the spot I marked on the map.
 [ACTION=Patrol]Idle:Next on our agenda is to check on the reef’s state.
-Happy:Click on the boat and select a spot close to one of the buoys.
-Happy:Right click on the reef and select ‘Check Reef Health’.
-Happy:Do this on the spot I marked on the map.
+Happy:Left click on the boat and mouse over the designated waypoint. This denotes part of the reef.
+Happy:Right click on it and select ‘Check Reef Health’.
 [ACTION=CheckReefHealth]Happy:Ok, well the reef is looking great and healthy. Our job is to make sure that it’s health doesn’t go down to the point that there would be nothing to save anymore, where’s the fun in that right?
 Happy:We also need to document its condition everytime we check on the reef.
 Happy:We can maintain its health by looking out for stuff like rowdy tourists doing things that can hurt the reef or illegal fishermen looking for stuff to catch and sell.

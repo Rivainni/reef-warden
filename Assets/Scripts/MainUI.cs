@@ -613,6 +613,7 @@ public class MainUI : MonoBehaviour
                 currentState.AddSecurity(5);
             }
             currentState.SetMessage("Inspection correct.");
+            currentState.AddMorale(2);
             UpdateUIElements();
             if (!currentState.CheckTutorial())
             {
@@ -637,6 +638,7 @@ public class MainUI : MonoBehaviour
                 currentState.AddSecurity(5);
             }
             currentState.SetMessage("Inspection correct.");
+            currentState.AddMorale(2);
             UpdateUIElements();
             if (!currentState.CheckTutorial())
             {
@@ -655,6 +657,7 @@ public class MainUI : MonoBehaviour
         AIBehaviour current = target.GetComponent<AIBehaviour>();
         current.Moor();
         currentState.AddTouristScore();
+        currentState.AddMorale(2);
         target.Location.ResetColor();
         AfterAction(remove);
     }
@@ -673,6 +676,7 @@ public class MainUI : MonoBehaviour
             {
                 currentState.AddSecurity(2);
             }
+            currentState.AddMorale(5);
             AfterAction(remove);
             currentState.AddCatchScore();
         }
@@ -1007,7 +1011,7 @@ public class MainUI : MonoBehaviour
         if (!currentState.CheckTutorial())
         {
             int max;
-            if (currentState.GetLevel() >= 3)
+            if (currentState.GetLevel() >= 4)
             {
                 max = 2;
             }
@@ -1045,15 +1049,11 @@ public class MainUI : MonoBehaviour
                 {
                     if (currentState.GetLevel() >= 4)
                     {
-                        max = 3;
-                    }
-                    else if (currentState.GetLevel() >= 2)
-                    {
-                        max = 2;
+                        max += 2;
                     }
                     else
                     {
-                        max = 1;
+                        max += 1;
                     }
                 }
 
@@ -1079,6 +1079,19 @@ public class MainUI : MonoBehaviour
             }
             else if (!timeController.IsDay() && !currentState.SpawnedNight())
             {
+                if (currentState.GetLevel() >= 4)
+                {
+                    max = 3;
+                }
+                else if (currentState.GetLevel() >= 3)
+                {
+                    max = 2;
+                }
+                else
+                {
+                    max = 1;
+                }
+
                 int random = Random.Range(0, 100);
 
                 if (random + 10 > currentState.GetSecurity())

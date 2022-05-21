@@ -650,6 +650,10 @@ public class PlayerState : ScriptableObject
         turn++;
         incrementLevelCounters("level");
         money += income;
+        if (money <= 0)
+        {
+            money = 0;
+        }
         sinceLastHealthCheck++;
         morale *= Mathf.Exp(-moraleLambda * 1);
         security *= Mathf.Exp(-securityLambda * 1);

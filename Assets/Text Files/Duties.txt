@@ -47,6 +47,7 @@ If there are detections of illegal fishermen in the area, players must respond t
 Below 35% security, there is a chance that fishermen may evade capture.
 
 Availability: Start
+Morale: 5%
 Security: 2%
 Time: 1
 Location: Adjacent to a Fishing Boat
@@ -59,6 +60,7 @@ If the player guesses correctly, they receive 5% security. If the permits do not
 Availability: Start
 Money: 500
 Security: 5%
+Morale: 2%
 Time: 1
 Location: Adjacent to a Tourist Boat
 CD Rule: N/A
@@ -69,6 +71,7 @@ The player must arrive within 3 turns of the tourist vessel stopping, otherwise 
 
 If they drop anchor, the reef is damaged (5%).
 Availability: Start
+Morale: 2%
 Time: 1
 Location: Adjacent to a Tourist Boat
 CD Rule: N/A

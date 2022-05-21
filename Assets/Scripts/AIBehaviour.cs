@@ -87,7 +87,7 @@ public class AIBehaviour : MonoBehaviour
                     stateChanged = true;
                 }
             }
-            else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 3)
+            else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 2)
             {
                 if (!satisfied)
                 {
@@ -112,11 +112,11 @@ public class AIBehaviour : MonoBehaviour
                 if (mainUI.GetPlayerState().CheckSS())
                 {
                     int levelBonus = mainUI.GetPlayerState().GetLevel() > 3 ? 3 : mainUI.GetPlayerState().GetLevel();
-                    mainUI.GetPlayerState().AdjustMoney((int)(400 + (400 * 0.1f * levelBonus)));
+                    mainUI.GetPlayerState().AdjustMoney((int)(1500 + (1500 * 0.1f * levelBonus)));
                 }
                 else
                 {
-                    mainUI.GetPlayerState().AdjustMoney(400);
+                    mainUI.GetPlayerState().AdjustMoney(1500);
                 }
             }
         }
