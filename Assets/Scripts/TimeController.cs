@@ -7,11 +7,8 @@ using UnityEngine.UI;
 [System.Serializable]
 public struct SaveTime
 {
-    public DateTime currentTime;
-    public DateTime targetTime;
-    public float sunLightRotation;
-    public float sunLightIntensity;
-    public float moonLightIntensity;
+    public string currentTime;
+    public string targetTime;
 }
 
 public class TimeController : MonoBehaviour, IDataPersistence
@@ -38,8 +35,18 @@ public class TimeController : MonoBehaviour, IDataPersistence
 
     void Start()
     {
-        currentTime = DateTime.Now.Date + TimeSpan.FromHours(startHour);
-        targetTime = currentTime;
+        StartCoroutine(WaitForLoad());
+    }
+
+    IEnumerator WaitForLoad()
+    {
+        yield return new WaitUntil(() => playerState != null);
+        if (playerState.time.currentTime == "")
+        {
+            Debug.Log("uohh");
+            currentTime = DateTime.Now.Date + TimeSpan.FromHours(startHour);
+            targetTime = currentTime;
+        }
         sunriseTime = TimeSpan.FromHours(sunriseHour);
         sunsetTime = TimeSpan.FromHours(sunsetHour);
         timeIndicator.text = currentTime.ToString("HH:mm");
@@ -56,7 +63,7 @@ public class TimeController : MonoBehaviour, IDataPersistence
             RotateSun();
             UpdateLightSettings();
         }
-        else if (!pause)
+        else if (!pause && playerState != null)
         {
             DateTime correctedTime = new DateTime();
             correctedTime = correctedTime.Date.AddHours(currentTime.Hour);
@@ -146,17 +153,23 @@ public class TimeController : MonoBehaviour, IDataPersistence
     public void LoadData(PlayerState playerState)
     {
         this.playerState = playerState;
-        this.currentTime = playerState.time.currentTime;
-        this.targetTime = playerState.time.targetTime;
+
+        SaveTime temp = playerState.time;
+        if (temp.currentTime != "" && temp.targetTime != "")
+        {
+            this.currentTime = DateTime.ParseExact(temp.currentTime, "dd/MM/yyyy hh:mm:ss tt", null);
+            this.targetTime = DateTime.ParseExact(temp.targetTime, "dd/MM/yyyy hh:mm:ss tt", null);
+        }
     }
     public void SaveData(ref PlayerState playerState)
     {
         SaveTime saveTime = new SaveTime();
 
-        saveTime.currentTime = currentTime;
-        saveTime.targetTime = targetTime;
-        saveTime.sunLightRotation = sunLight.transform.rotation.y;
-        saveTime.sunLightIntensity = sunLight.intensity;
-        saveTime.moonLightIntensity = moonLight.intensity;
+        if (currentTime.ToString() != "01/01/0001 12:00:00 AM")
+        {
+            saveTime.currentTime = currentTime.ToString("dd/MM/yyyy hh:mm:ss tt");
+            saveTime.targetTime = (currentTime.AddHours(2)).ToString("dd/MM/yyyy hh:mm:ss tt");
+            playerState.time = saveTime;
+        }
     }
 }

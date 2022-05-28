@@ -39,31 +39,30 @@ public class PlayerState : IDataPersistence
     [SerializeField] Queue<UpgradeItem> researchQueue = new Queue<UpgradeItem>();
     [SerializeField] int touristsInspected;
     [SerializeField] int fishermenCaught;
-    string message;
-    List<string> currentObjectives = new List<string>();
+    [SerializeField] string message;
+    [SerializeField] List<string> currentObjectives = new List<string>();
     const float moraleLambda = 0.01f;
     const float securityLambda = 0.04f;
-    bool radarActive = false;
-    bool inTutorial = false;
-    bool AIS = false;
-    bool SAT = false;
-    bool SS = false;
-    bool MA = false;
-    bool daySpawn = false;
-    bool nightSpawn = false;
-    int sinceDaySpawn = 0;
-    int sinceNightSpawn = 0;
-    int sinceLastHealthCheck = 0;
+    [SerializeField] bool radarActive = false;
+    [SerializeField] bool AIS = false;
+    [SerializeField] bool SAT = false;
+    [SerializeField] bool SS = false;
+    [SerializeField] bool MA = false;
+    [SerializeField] bool daySpawn = false;
+    [SerializeField] bool nightSpawn = false;
+    [SerializeField] int sinceDaySpawn = 0;
+    [SerializeField] int sinceNightSpawn = 0;
+    [SerializeField] int sinceLastHealthCheck = 0;
 
     // counters for objectives
-    int levelTurns = 0;
-    int healthCount = 0;
-    int patrols = 0;
-    int birdCount = 0;
-    int securityTurns = 0;
-    int monitorClams = 0;
-    int moraleTurns = 0;
-    int tagCount = 0;
+    [SerializeField] int levelTurns = 0;
+    [SerializeField] int healthCount = 0;
+    [SerializeField] int patrols = 0;
+    [SerializeField] int birdCount = 0;
+    [SerializeField] int securityTurns = 0;
+    [SerializeField] int monitorClams = 0;
+    [SerializeField] int moraleTurns = 0;
+    [SerializeField] int tagCount = 0;
 
     public List<SaveUnit> units;
     public List<SaveUpgrade> upgrades;
@@ -626,6 +625,11 @@ public class PlayerState : IDataPersistence
             AddLevel();
             SetObjectives(TextRW.GetObjectives(level));
         }
+
+        if (level == 1 && currentObjectives.Count == 1)
+        {
+            SetObjectives(TextRW.GetObjectives(level));
+        }
     }
 
     public bool CheckTutorial()
@@ -934,6 +938,8 @@ public class PlayerState : IDataPersistence
 
         unlockedUpgrades = new List<string> { "Basketball Court", "Radio", "Service Boat" };
         builtUpgrades = new List<string> { "Radio" };
+        upgradeQueue = new Queue<UpgradeItem>();
+        researchQueue = new Queue<UpgradeItem>();
         touristsInspected = 0;
         fishermenCaught = 0;
         radarActive = false;
@@ -941,6 +947,8 @@ public class PlayerState : IDataPersistence
         currentObjectives = new List<string>();
         daySpawn = false;
         nightSpawn = false;
+        sinceDaySpawn = 0;
+        sinceNightSpawn = 0;
         AIS = false;
         SAT = false;
         SS = false;
@@ -989,6 +997,8 @@ public class PlayerState : IDataPersistence
 
         this.unlockedUpgrades = playerState.GetUnlockedUpgrades();
         this.builtUpgrades = playerState.GetBuiltUpgrades();
+        this.upgradeQueue = playerState.upgradeQueue;
+        this.researchQueue = playerState.researchQueue;
         this.touristsInspected = playerState.GetTouristScore();
         this.fishermenCaught = playerState.GetCatchScore();
         this.radarActive = playerState.GetRadarState();
@@ -996,6 +1006,8 @@ public class PlayerState : IDataPersistence
         this.currentObjectives = playerState.GetObjectives();
         this.daySpawn = playerState.SpawnedDay();
         this.nightSpawn = playerState.SpawnedNight();
+        this.sinceDaySpawn = playerState.sinceDaySpawn;
+        this.sinceNightSpawn = playerState.sinceNightSpawn;
         this.AIS = playerState.CheckAIS();
         this.SAT = playerState.CheckSAT();
         this.SS = playerState.CheckSS();
@@ -1044,6 +1056,8 @@ public class PlayerState : IDataPersistence
 
         playerState.unlockedUpgrades = this.GetUnlockedUpgrades();
         playerState.builtUpgrades = this.GetBuiltUpgrades();
+        playerState.researchQueue = this.researchQueue;
+        playerState.upgradeQueue = this.upgradeQueue;
         playerState.touristsInspected = this.GetTouristScore();
         playerState.fishermenCaught = this.GetCatchScore();
         playerState.radarActive = this.GetRadarState();
@@ -1051,6 +1065,8 @@ public class PlayerState : IDataPersistence
         playerState.currentObjectives = this.GetObjectives();
         playerState.daySpawn = this.SpawnedDay();
         playerState.nightSpawn = this.SpawnedNight();
+        playerState.sinceDaySpawn = this.sinceDaySpawn;
+        playerState.sinceNightSpawn = this.sinceNightSpawn;
         playerState.AIS = this.CheckAIS();
         playerState.SAT = this.CheckSAT();
         playerState.SS = this.CheckSS();

@@ -72,11 +72,13 @@ public class HexGrid : MonoBehaviour, IDataPersistence
         CreateCells();
         PopulateUpgradeCells();
 
-        bool spawned = false;
         foreach (SaveUnit unit in playerState.units)
         {
-            spawned = true;
             spawner.SpawnUnit(GetCells()[unit.location], unit.unitType);
+            if (unit.unitType == "Service Boat" || (unit.unitType == "Fishing Boat" && playerState.GetRadarState()) || (unit.unitType == "Tourist Boat" && !unit.moored))
+            {
+                spawner.AddUnitWaypoint(GetCells()[unit.location]);
+            }
         }
 
         foreach (SaveUpgrade upgrade in playerState.upgrades)
@@ -84,7 +86,7 @@ public class HexGrid : MonoBehaviour, IDataPersistence
             spawner.SpawnUpgrade(GetCells()[upgrade.location], upgrade.upgradeType, upgrade.buildTime, upgrade.researchCost, upgrade.buildCost, upgrade.upkeep);
         }
 
-        if (!spawned)
+        if (playerState.units.Count == 0)
         {
             spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
             spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
@@ -517,6 +519,8 @@ public class HexGrid : MonoBehaviour, IDataPersistence
 
     public void SaveData(ref PlayerState playerState)
     {
+        playerState.units.Clear();
+        playerState.upgrades.Clear();
         foreach (HexUnit unit in units)
         {
             playerState.units.Add(unit.Save());

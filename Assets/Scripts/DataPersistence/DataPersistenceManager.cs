@@ -36,7 +36,6 @@ public class DataPersistenceManager : MonoBehaviour
         if (currentScene.name != "Main Menu")
         {
             dataPersistenceObjects = FindAllDataPersistenceObjects();
-            SaveGame();
             LoadGame();
         }
     }

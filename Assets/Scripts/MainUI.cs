@@ -944,6 +944,10 @@ public class MainUI : MonoBehaviour, IDataPersistence
             // Debug.Log("Error at " + item.gameObject.name);
             item.UpdateText();
         }
+
+        objectivesDisplay.DisplayObjectives();
+        endTurnButton.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
+        endTurnButton.transform.GetChild(3).GetComponentInChildren<Text>().text = "LVL " + currentState.GetLevel();
     }
 
     public PlayerState GetPlayerState()
@@ -955,9 +959,6 @@ public class MainUI : MonoBehaviour, IDataPersistence
     {
         grid.GetAudioManager().Play("Next", 0);
         currentState.EndTurn();
-        objectivesDisplay.DisplayObjectives();
-        clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
-        clicked.transform.GetChild(3).GetComponentInChildren<Text>().text = "LVL " + currentState.GetLevel();
         grid.ResetPoints();
         selectedUnit = null;
         grid.GetPlayerBehaviour().ClearPath();
