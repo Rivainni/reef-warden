@@ -43,7 +43,6 @@ public class TimeController : MonoBehaviour, IDataPersistence
         yield return new WaitUntil(() => playerState != null);
         if (playerState.time.currentTime == "")
         {
-            Debug.Log("uohh");
             currentTime = DateTime.Now.Date + TimeSpan.FromHours(startHour);
             targetTime = currentTime;
         }

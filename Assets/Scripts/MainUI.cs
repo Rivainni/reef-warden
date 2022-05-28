@@ -125,7 +125,7 @@ public class MainUI : MonoBehaviour, IDataPersistence
 
         if (currentCell)
         {
-            Debug.Log("This is cell index " + currentCell.Index);
+            // Debug.Log("This is cell index " + currentCell.Index);
             if (!currentCell.Unit || selectedUnit == currentCell.Unit)
             {
                 selectedUnit = null;

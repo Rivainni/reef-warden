@@ -11,7 +11,8 @@ Happy:Left click on the Patrol Boat (silver) and right click on the spot you wan
 Happy:Then, click on the prompt ‘Patrol’.
 Happy:Do this on the spot I marked on the map.
 [ACTION=Patrol]Idle:Next on our agenda is to check on the reef’s state.
-Happy:Left click on the boat and mouse over the designated waypoint. This denotes part of the reef.
+Happy:Left click on the boat and mouse over the designated waypoint. The reef icon denotes it as part of the reef.
+Happy:If you look at the map, you can see the reef icon glow.
 Happy:Right click on it and select ‘Check Reef Health’.
 [ACTION=CheckReefHealth]Happy:Ok, well the reef is looking great and healthy. Our job is to make sure that it’s health doesn’t go down to the point that there would be nothing to save anymore, where’s the fun in that right?
 Happy:We also need to document its condition everytime we check on the reef.
@@ -32,8 +33,9 @@ Happy:The accredited companies should know the rules and therefore would have sl
 Concerned:If these hold up then we can let them go, but if it not, they need to pay a fine.
 Concerned:We also need to report to the Management Office in the mainland about our inspections if ever we might face up against violators in court.
 [ACTION=InspectTourist2]Idle:After inspecting the tourists, they need our help in mooring their boat on the dive spot.
+Idle: We might need to wait a few turns before they reach the diving spot.
 Happy:Wait for them to reach the spot and they’ll alert us with the red highlight.
-Idle:Move right next to them and right click.
+Idle:Once that happens, right click a spot next to them.
 Idle:Click Moor and we’re done.
 [ACTION=InspectTourist3]Idle:See the exclamation mark on the left of your screen?
 Happy:Click on it and it will bring out the Info Menu
@@ -70,4 +72,6 @@ Idle:We gotta go back to the station and detain these violators there until Mana
 Idle:And we need to make another report detailing everything that happened and what we found about these guys.
 Concerned:Julio might also have to go to the Mainland for a while to testify as a witness during the trial of these guys.
 Happy:Well it looks like that’s it for today, we can head back to the station now.
+Happy:I’m pretty sure I got you sped up on all of the things needed, so I’ll be staying back in the station manning the radio.
+Happy:Remember to just check your objectives list if you ever get lost!
 EndQueue
