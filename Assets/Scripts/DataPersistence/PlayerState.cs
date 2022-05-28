@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "PlayerState")]
-public class PlayerState : ScriptableObject
+[System.Serializable]
+public class PlayerState : IDataPersistence
 {
     [SerializeField] string username;
     [SerializeField] int money;
@@ -64,6 +64,10 @@ public class PlayerState : ScriptableObject
     int monitorClams = 0;
     int moraleTurns = 0;
     int tagCount = 0;
+
+    public List<SaveUnit> units;
+    public List<SaveUpgrade> upgrades;
+    public SaveTime time;
 
     struct UpgradeItem
     {
@@ -585,66 +589,6 @@ public class PlayerState : ScriptableObject
         return fishermenCaught;
     }
 
-    public void Clean()
-    {
-        if (username == "")
-        {
-            username = "Juan";
-        }
-
-        money = 5000;
-        income = 0;
-        research = 250;
-        manpower = 6;
-        tourists = 0;
-        fishermen = 0;
-        morale = 50;
-        security = 50;
-        trueReefHealth = 100;
-        seenReefHealth = 50;
-        turn = 1;
-
-        if (inTutorial)
-        {
-            level = 0;
-        }
-        else
-        {
-            level = 1;
-        }
-
-        checkHealthCD1 = 0;
-        checkHealthCD2 = 0;
-        checkHealthCD3 = 0;
-        birdCD = 0;
-        clamCD1 = 0;
-        clamCD2 = 0;
-        clamCD3 = 0;
-        turtleCD = 0;
-        researchCD = 0;
-        unlockedUpgrades = new List<string> { "Basketball Court", "Radio", "Service Boat" };
-        builtUpgrades = new List<string> { "Radio" };
-        touristsInspected = 0;
-        fishermenCaught = 0;
-        radarActive = false;
-        message = "";
-        currentObjectives = new List<string>();
-        daySpawn = false;
-        nightSpawn = false;
-        radarActive = false;
-        AIS = false;
-        SAT = false;
-        SS = false;
-        levelTurns = 0;
-        healthCount = 0;
-        patrols = 0;
-        birdCount = 0;
-        securityTurns = 0;
-        monitorClams = 0;
-        moraleTurns = 0;
-        tagCount = 0;
-    }
-
     public void EndTurn()
     {
         turn++;
@@ -684,19 +628,9 @@ public class PlayerState : ScriptableObject
         }
     }
 
-    public void StartTutorial()
-    {
-        inTutorial = true;
-    }
-
-    public void EndTutorial()
-    {
-        inTutorial = false;
-    }
-
     public bool CheckTutorial()
     {
-        return inTutorial;
+        return level == 0;
     }
 
     public List<string> GetObjectives()
@@ -953,5 +887,184 @@ public class PlayerState : ScriptableObject
     public void ResetHealthWarning()
     {
         sinceLastHealthCheck = 0;
+    }
+
+    public List<string> GetUnlockedUpgrades()
+    {
+        return unlockedUpgrades;
+    }
+
+    public List<string> GetBuiltUpgrades()
+    {
+        return builtUpgrades;
+    }
+
+
+    public void ResetData()
+    {
+        if (username == "")
+        {
+            username = "Juan";
+        }
+
+        money = 5000;
+        income = 0;
+        research = 250;
+        manpower = 6;
+        tourists = 0;
+        fishermen = 0;
+        morale = 50;
+        security = 50;
+        trueReefHealth = 100;
+        seenReefHealth = 50;
+        turn = 1;
+        level = 0;
+        checkHealthCD1 = 0;
+        checkHealthCD2 = 0;
+        checkHealthCD3 = 0;
+        birdCD = 0;
+        clamCD1 = 0;
+        clamCD2 = 0;
+        clamCD3 = 0;
+        turtleCD = 0;
+        researchCD = 0;
+        radarCD = 0;
+        basketballCD = 0;
+        recRoomCD = 0;
+
+        unlockedUpgrades = new List<string> { "Basketball Court", "Radio", "Service Boat" };
+        builtUpgrades = new List<string> { "Radio" };
+        touristsInspected = 0;
+        fishermenCaught = 0;
+        radarActive = false;
+        message = "";
+        currentObjectives = new List<string>();
+        daySpawn = false;
+        nightSpawn = false;
+        AIS = false;
+        SAT = false;
+        SS = false;
+        levelTurns = 0;
+        healthCount = 0;
+        patrols = 0;
+        birdCount = 0;
+        securityTurns = 0;
+        monitorClams = 0;
+        moraleTurns = 0;
+        tagCount = 0;
+
+        units = new List<SaveUnit>();
+        upgrades = new List<SaveUpgrade>();
+        time = new SaveTime();
+    }
+
+    public void LoadData(PlayerState playerState)
+    {
+        this.username = playerState.username;
+        this.money = playerState.GetMoney();
+        this.income = playerState.GetIncome();
+        this.research = playerState.GetResearch();
+        this.manpower = playerState.GetManpower();
+        this.tourists = playerState.GetTourists();
+        this.fishermen = playerState.GetFishermen();
+        this.morale = playerState.GetMorale();
+        this.security = playerState.GetSecurity();
+        this.trueReefHealth = playerState.GetTrueHealth();
+        this.seenReefHealth = playerState.GetHealth();
+        this.turn = playerState.GetTurn();
+        this.level = playerState.GetLevel();
+
+        this.checkHealthCD1 = playerState.FetchCD("CH1");
+        this.checkHealthCD2 = playerState.FetchCD("CH2");
+        this.checkHealthCD3 = playerState.FetchCD("CH3");
+        this.birdCD = playerState.FetchCD("B");
+        this.clamCD1 = playerState.FetchCD("C1");
+        this.clamCD2 = playerState.FetchCD("C2");
+        this.clamCD3 = playerState.FetchCD("C3");
+        this.turtleCD = playerState.FetchCD("T");
+        this.researchCD = playerState.FetchCD("R");
+        this.radarCD = playerState.FetchCD("RADAR");
+        this.basketballCD = playerState.FetchCD("BB");
+        this.recRoomCD = playerState.FetchCD("RR");
+
+        this.unlockedUpgrades = playerState.GetUnlockedUpgrades();
+        this.builtUpgrades = playerState.GetBuiltUpgrades();
+        this.touristsInspected = playerState.GetTouristScore();
+        this.fishermenCaught = playerState.GetCatchScore();
+        this.radarActive = playerState.GetRadarState();
+        this.message = "";
+        this.currentObjectives = playerState.GetObjectives();
+        this.daySpawn = playerState.SpawnedDay();
+        this.nightSpawn = playerState.SpawnedNight();
+        this.AIS = playerState.CheckAIS();
+        this.SAT = playerState.CheckSAT();
+        this.SS = playerState.CheckSS();
+        this.levelTurns = playerState.levelTurns;
+        this.healthCount = playerState.healthCount;
+        this.patrols = playerState.patrols;
+        this.birdCount = playerState.birdCount;
+        this.securityTurns = playerState.securityTurns;
+        this.monitorClams = playerState.monitorClams;
+        this.moraleTurns = playerState.moraleTurns;
+        this.tagCount = playerState.tagCount;
+
+        this.units = playerState.units;
+        this.upgrades = playerState.upgrades;
+        this.time = playerState.time;
+    }
+
+    public void SaveData(ref PlayerState playerState)
+    {
+        playerState.username = this.username;
+        playerState.money = this.GetMoney();
+        playerState.income = this.GetIncome();
+        playerState.research = this.GetResearch();
+        playerState.manpower = this.GetManpower();
+        playerState.tourists = this.GetTourists();
+        playerState.fishermen = this.GetFishermen();
+        playerState.morale = this.GetMorale();
+        playerState.security = this.GetSecurity();
+        playerState.trueReefHealth = this.GetTrueHealth();
+        playerState.seenReefHealth = this.GetHealth();
+        playerState.turn = this.GetTurn();
+        playerState.level = this.GetLevel();
+
+        playerState.checkHealthCD1 = this.FetchCD("CH1");
+        playerState.checkHealthCD2 = this.FetchCD("CH2");
+        playerState.checkHealthCD3 = this.FetchCD("CH3");
+        playerState.birdCD = this.FetchCD("B");
+        playerState.clamCD1 = this.FetchCD("C1");
+        playerState.clamCD2 = this.FetchCD("C2");
+        playerState.clamCD3 = this.FetchCD("C3");
+        playerState.turtleCD = this.FetchCD("T");
+        playerState.researchCD = this.FetchCD("R");
+        playerState.radarCD = this.FetchCD("RADAR");
+        playerState.basketballCD = this.FetchCD("BB");
+        playerState.recRoomCD = this.FetchCD("RR");
+
+        playerState.unlockedUpgrades = this.GetUnlockedUpgrades();
+        playerState.builtUpgrades = this.GetBuiltUpgrades();
+        playerState.touristsInspected = this.GetTouristScore();
+        playerState.fishermenCaught = this.GetCatchScore();
+        playerState.radarActive = this.GetRadarState();
+        playerState.message = "";
+        playerState.currentObjectives = this.GetObjectives();
+        playerState.daySpawn = this.SpawnedDay();
+        playerState.nightSpawn = this.SpawnedNight();
+        playerState.AIS = this.CheckAIS();
+        playerState.SAT = this.CheckSAT();
+        playerState.SS = this.CheckSS();
+        playerState.levelTurns = this.levelTurns;
+        playerState.healthCount = this.healthCount;
+        playerState.patrols = this.patrols;
+        playerState.birdCount = this.birdCount;
+        playerState.securityTurns = this.securityTurns;
+        playerState.monitorClams = this.monitorClams;
+        playerState.moraleTurns = this.moraleTurns;
+        playerState.tagCount = this.tagCount;
+
+        playerState.units = this.units;
+        playerState.upgrades = this.upgrades;
+        playerState.time = this.time;
     }
 }

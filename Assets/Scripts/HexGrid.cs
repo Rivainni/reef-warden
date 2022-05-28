@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.IO;
 
-public class HexGrid : MonoBehaviour
+public class HexGrid : MonoBehaviour, IDataPersistence
 {
     public int chunkCountX, chunkCountZ;
     public HexGridChunk chunkPrefab;
@@ -50,6 +50,7 @@ public class HexGrid : MonoBehaviour
     List<WaypointMarker> waypoints = new List<WaypointMarker>();
     HexCell rangerStation;
     PlayerBehaviour playerBehaviour;
+    PlayerState playerState;
     int patrolBoatSpawn, serviceBoatSpawn;
 
     void Awake()
@@ -61,13 +62,34 @@ public class HexGrid : MonoBehaviour
 
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
+        StartCoroutine(WaitForPlayerState());
+    }
+
+    IEnumerator WaitForPlayerState()
+    {
+        yield return new WaitUntil(() => playerState != null);
         CreateChunks();
         CreateCells();
         PopulateUpgradeCells();
 
-        spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
-        spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
-        spawner.AddUnitWaypoint(cells[serviceBoatSpawn]);
+        bool spawned = false;
+        foreach (SaveUnit unit in playerState.units)
+        {
+            spawned = true;
+            spawner.SpawnUnit(GetCells()[unit.location], unit.unitType);
+        }
+
+        foreach (SaveUpgrade upgrade in playerState.upgrades)
+        {
+            spawner.SpawnUpgrade(GetCells()[upgrade.location], upgrade.upgradeType, upgrade.buildTime, upgrade.researchCost, upgrade.buildCost, upgrade.upkeep);
+        }
+
+        if (!spawned)
+        {
+            spawner.SpawnUnit(cells[patrolBoatSpawn], "Tier 1 Patrol Boat");
+            spawner.SpawnUnit(cells[serviceBoatSpawn], "Service Boat");
+            spawner.AddUnitWaypoint(cells[serviceBoatSpawn]);
+        }
 
         TextRW.SetObjectives(objectives);
         TextRW.SetUpgrades(upgrades);
@@ -200,6 +222,7 @@ public class HexGrid : MonoBehaviour
         cell.uiRect = label.rectTransform;
 
         // add units *after* the cells have spawned
+
         switch (mapCreation.HasInitialUnit(check))
         {
             case 0:
@@ -485,5 +508,26 @@ public class HexGrid : MonoBehaviour
     public WaypointMarker GetWaypointMarker()
     {
         return waypointMarker;
+    }
+
+    public void LoadData(PlayerState playerState)
+    {
+        this.playerState = playerState;
+    }
+
+    public void SaveData(ref PlayerState playerState)
+    {
+        foreach (HexUnit unit in units)
+        {
+            playerState.units.Add(unit.Save());
+        }
+
+        foreach (HexStructure upgrade in structures)
+        {
+            if (upgrade is Upgrade)
+            {
+                playerState.upgrades.Add(((Upgrade)upgrade).Save());
+            }
+        }
     }
 }

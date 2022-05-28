@@ -59,7 +59,7 @@ public class StoryElement : MonoBehaviour
     IEnumerator WaitForState()
     {
         yield return new WaitUntil(() => mainUI.GetPlayerState() != null);
-        if (title == "Tutorial" && mainUI.GetPlayerState().CheckTutorial())
+        if (title == "Tutorial" && mainUI.GetPlayerState().GetLevel() == 0)
         {
             TriggerDialogue();
         }

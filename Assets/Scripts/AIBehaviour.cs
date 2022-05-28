@@ -103,6 +103,7 @@ public class AIBehaviour : MonoBehaviour
                     mainUI.UpdateUIElements();
                 }
                 currentUnit.Location.ResetColor();
+                currentUnit.DoubleActionPoints();
                 ChooseEscape();
                 stateChanged = true;
             }

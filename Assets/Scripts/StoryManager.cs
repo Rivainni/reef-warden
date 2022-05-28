@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StoryManager : MonoBehaviour
+public class StoryManager : MonoBehaviour, IDataPersistence
 {
     [SerializeField] GameObject storyUI;
     [SerializeField] MainUI mainUI;
@@ -16,11 +16,12 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject panelPrefab;
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] bool cutscene = true;
-    [SerializeField] PlayerState initState;
     [SerializeField] LevelLoader levelLoader;
     Queue<string> inputStream = new Queue<string>();
     bool pause = false;
     bool primarySpeaker = false;
+
+    PlayerState playerState;
 
     // Start is called before the first frame update
     void Start()
@@ -90,7 +91,7 @@ public class StoryManager : MonoBehaviour
                 AddSprite(newCharacter);
                 if (mainUI)
                 {
-                    if (!mainUI.GetPlayerState().CheckTutorial())
+                    if (mainUI.GetPlayerState().GetLevel() > 0)
                     {
                         primarySpeaker = false;
                     }
@@ -201,7 +202,7 @@ public class StoryManager : MonoBehaviour
                 }
             }
             string expression = current.Substring(0, stop);
-            storyText.text = string.Format(current.Substring(stop + 1), initState.GetName());
+            storyText.text = string.Format(current.Substring(stop + 1), playerState.GetName());
             SwitchSprites(characterName.text, expression);
         }
         else if (inputStream.Peek().Contains(":"))
@@ -247,18 +248,16 @@ public class StoryManager : MonoBehaviour
         {
             levelLoader.LoadLevel("Main Game");
             cutscene = false;
-            initState.StartTutorial();
         }
         else if (mainUI.GetPlayerState().CheckTutorial())
         {
-            mainUI.GetPlayerState().EndTutorial();
             mainUI.GetPlayerState().AddLevel();
         }
     }
 
     void SetName(InputField input, GameObject toRemove)
     {
-        initState.SetName(input.text);
+        playerState.SetName(input.text);
         Destroy(toRemove);
         pause = false;
         PrintDialogue();
@@ -556,5 +555,15 @@ public class StoryManager : MonoBehaviour
             }
             mainUI.GetPlayerState().RemoveObjective("Check the reef health.");
         }
+    }
+
+    public void LoadData(PlayerState playerState)
+    {
+        this.playerState = playerState;
+    }
+
+    public void SaveData(ref PlayerState playerState)
+    {
+
     }
 }

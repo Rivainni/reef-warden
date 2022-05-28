@@ -123,6 +123,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &54055811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 54055813}
+  - component: {fileID: 54055812}
+  m_Layer: 0
+  m_Name: DataPersistenceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &54055812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54055811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4e2bb0bbd67cc1459b59fef2e7a6f1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: autosave
+--- !u!4 &54055813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54055811}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &386724962
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,17 +1039,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a633f66b1f366e4e805980501fa9190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1095126138 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4980150210118722083, guid: ec6d9f0cda13e8845b6d064f251d034a, type: 3}
-  m_PrefabInstance: {fileID: 1361287537}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  levelLoader: {fileID: 1498644506}
+  dataPersistenceManager: {fileID: 54055812}
 --- !u!1001 &1361287537
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1107,7 +1143,7 @@ PrefabInstance:
     - target: {fileID: 2443790640497211968, guid: ec6d9f0cda13e8845b6d064f251d034a, type: 3}
       propertyPath: scaleText
       value: 
-      objectReference: {fileID: 1095126138}
+      objectReference: {fileID: 0}
     - target: {fileID: 2443790640497211968, guid: ec6d9f0cda13e8845b6d064f251d034a, type: 3}
       propertyPath: audioMixer
       value: 
@@ -2051,23 +2087,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5592627610950512188, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5592627610950512188, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1498644506}
+      objectReference: {fileID: 921723312}
     - target: {fileID: 5592627610950512188, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5592627610950512188, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoadLevel
+      value: StartGame
       objectReference: {fileID: 0}
     - target: {fileID: 5592627610950512188, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: LevelLoader, Assembly-CSharp
+      value: MainMenu, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5592627610950512188, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument

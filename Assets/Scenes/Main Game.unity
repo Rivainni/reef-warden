@@ -765,7 +765,6 @@ MonoBehaviour:
   panelPrefab: {fileID: 3570511537018259731, guid: afcb14234acda204193094e07159e97b, type: 3}
   buttonPrefab: {fileID: 938404568772974516, guid: c568ed6e8dab21a428ccec75ece7c5bf, type: 3}
   cutscene: 0
-  initState: {fileID: 11400000, guid: a429a786ca9053e4ebebb97060993ff9, type: 2}
   levelLoader: {fileID: 318412470}
 --- !u!1 &283238863
 GameObject:
@@ -4029,7 +4028,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8de68d13c8d07641a53ff1fab745f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: {fileID: 0}
   textPrefab: {fileID: 1507654928966155783, guid: 28ccfa1843a66e34d8240e47d2e607fd, type: 3}
 --- !u!1 &1385289247
 GameObject:
@@ -5759,7 +5757,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 306096920}
   spawner: {fileID: 356808183}
-  initState: {fileID: 11400000, guid: a429a786ca9053e4ebebb97060993ff9, type: 2}
   minigameData: {fileID: 11400000, guid: 70a41fb878899c54b87ab43b86a70fc8, type: 2}
   panelPrefab: {fileID: 3570511537018259731, guid: afcb14234acda204193094e07159e97b, type: 3}
   doublePanelPrefab: {fileID: 3570511537018259731, guid: f6ba87f59061a3446a3a83c2512a3b53, type: 3}

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MainUI : MonoBehaviour
+public class MainUI : MonoBehaviour, IDataPersistence
 {
     [SerializeField] HexGrid grid;
     [SerializeField] Spawner spawner;
@@ -12,8 +12,6 @@ public class MainUI : MonoBehaviour
     HexCell currentCell;
     HexCell playerLocation;
     HexUnit selectedUnit;
-
-    [SerializeField] PlayerState initState;
 
     PlayerState currentState;
     [SerializeField] MinigameData minigameData;
@@ -44,17 +42,6 @@ public class MainUI : MonoBehaviour
     {
         freeze = false;
         activeContextMenu = null;
-
-        if (currentState == null)
-        {
-            currentState = initState;
-            currentState.Clean();
-        }
-
-        if (!currentState.CheckTutorial())
-        {
-            currentState.SetObjectives(TextRW.GetObjectives(1));
-        }
 
         minigameData.SetInspection();
         grid.GetAudioManager().PlayMusic("BGM");
@@ -580,6 +567,10 @@ public class MainUI : MonoBehaviour
             {
                 matchText.text = "OFFICIAL COPY\n\n";
             }
+            else
+            {
+                matchText.text = "\n\n";
+            }
 
             if (correctValue)
             {
@@ -652,6 +643,7 @@ public class MainUI : MonoBehaviour
         }
         Destroy(toRemove);
         currentState.AddTouristScore();
+        currentState.AdjustMoney(1500);
         target.SetInteracted();
         FreezeTurnUI(false);
     }
@@ -727,6 +719,12 @@ public class MainUI : MonoBehaviour
         FreezeInput(false);
         cameraController.FreezeCamera(false);
         Destroy(remove);
+
+        if (target.Upgrade.GetUpkeep() < 0)
+        {
+            currentState.AdjustIncome(-target.Upgrade.GetUpkeep());
+        }
+
         if (target.Upgrade.UpgradeType == "AIS")
         {
             currentState.RemoveAIS();
@@ -984,11 +982,13 @@ public class MainUI : MonoBehaviour
         if (currentState.GetTrueHealth() <= 0)
         {
             GenerateEndScreen("Defeat.", "The reef has been irreparably damaged.");
+            currentState.ResetData();
             storyTriggers[2].TriggerDialogue();
         }
         else if (currentState.CheckResearched("Total Protection"))
         {
             GenerateEndScreen("Victory!", "You have managed to defend the reef.");
+            currentState.ResetData();
             storyTriggers[1].TriggerDialogue();
         }
     }
@@ -1603,5 +1603,14 @@ public class MainUI : MonoBehaviour
     public HexCell GetCurrentCell()
     {
         return currentCell;
+    }
+
+    public void LoadData(PlayerState playerState)
+    {
+        currentState = playerState;
+    }
+    public void SaveData(ref PlayerState playerState)
+    {
+
     }
 }

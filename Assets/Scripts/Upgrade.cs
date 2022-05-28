@@ -2,6 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public struct SaveUpgrade
+{
+    public string upgradeType;
+    public int location;
+    public int buildTime;
+    public int researchCost;
+    public int buildCost;
+    public int upkeep;
+    public bool built;
+}
+
 public class Upgrade : HexStructure
 {
     public string UpgradeType
@@ -70,5 +82,24 @@ public class Upgrade : HexStructure
     public int GetUpkeep()
     {
         return upkeep;
+    }
+
+    public SaveUpgrade Save()
+    {
+        SaveUpgrade saveUpgrade = new SaveUpgrade();
+        saveUpgrade.upgradeType = upgradeType;
+        saveUpgrade.location = Location.Index;
+        saveUpgrade.buildTime = buildTime;
+        saveUpgrade.researchCost = researchCost;
+        saveUpgrade.buildCost = buildCost;
+        saveUpgrade.upkeep = upkeep;
+        saveUpgrade.built = built;
+
+        return saveUpgrade;
+    }
+
+    public void Load(SaveUpgrade saveUpgrade)
+    {
+
     }
 }

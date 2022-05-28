@@ -6,11 +6,25 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] LevelLoader levelLoader;
+    [SerializeField] DataPersistenceManager dataPersistenceManager;
     void Start()
     {
         if (!Debug.isDebugBuild)
         {
             Destroy(GameObject.Find("Start Game (Skip Tutorial)"));
+        }
+    }
+
+    public void StartGame()
+    {
+        if (dataPersistenceManager.GetPlayerState().CheckTutorial())
+        {
+            levelLoader.LoadLevel("Cutscene");
+        }
+        else
+        {
+            levelLoader.LoadLevel("Main Game");
         }
     }
 

@@ -4,7 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TimeController : MonoBehaviour
+[System.Serializable]
+public struct SaveTime
+{
+    public DateTime currentTime;
+    public DateTime targetTime;
+    public float sunLightRotation;
+    public float sunLightIntensity;
+    public float moonLightIntensity;
+}
+
+public class TimeController : MonoBehaviour, IDataPersistence
 {
     [SerializeField] float timeMultiplier;
     [SerializeField] float startHour;
@@ -22,9 +32,10 @@ public class TimeController : MonoBehaviour
     DateTime targetTime;
     TimeSpan sunriseTime;
     TimeSpan sunsetTime;
+    PlayerState playerState;
     bool day;
     bool pause;
-    // Start is called before the first frame update
+
     void Start()
     {
         currentTime = DateTime.Now.Date + TimeSpan.FromHours(startHour);
@@ -130,5 +141,22 @@ public class TimeController : MonoBehaviour
     public bool CheckPause()
     {
         return pause;
+    }
+
+    public void LoadData(PlayerState playerState)
+    {
+        this.playerState = playerState;
+        this.currentTime = playerState.time.currentTime;
+        this.targetTime = playerState.time.targetTime;
+    }
+    public void SaveData(ref PlayerState playerState)
+    {
+        SaveTime saveTime = new SaveTime();
+
+        saveTime.currentTime = currentTime;
+        saveTime.targetTime = targetTime;
+        saveTime.sunLightRotation = sunLight.transform.rotation.y;
+        saveTime.sunLightIntensity = sunLight.intensity;
+        saveTime.moonLightIntensity = moonLight.intensity;
     }
 }
