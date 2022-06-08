@@ -1,6 +1,6 @@
 !Basketball Court!
 Provides +5%/10%/15% morale. Effect on use.
-Has a 5 turn cooldown. Cannot be used during certain turns due to the effects of high tide.
+Has a 5 turn cooldown.
 Unlocked from the start.
 Build Cost: 500
 Time: 1

@@ -158,6 +158,12 @@ public class TimeController : MonoBehaviour, IDataPersistence
         {
             this.currentTime = DateTime.ParseExact(temp.currentTime, "dd/MM/yyyy hh:mm:ss tt", null);
             this.targetTime = DateTime.ParseExact(temp.targetTime, "dd/MM/yyyy hh:mm:ss tt", null);
+
+            DateTime correctedTime = new DateTime();
+            correctedTime = correctedTime.Date.AddHours(currentTime.Hour);
+            currentTime = correctedTime;
+            targetTime = correctedTime;
+            timeIndicator.text = correctedTime.ToString("HH:mm");
         }
     }
     public void SaveData(ref PlayerState playerState)
