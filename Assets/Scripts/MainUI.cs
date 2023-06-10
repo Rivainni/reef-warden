@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MainUI : MonoBehaviour
+public class MainUI : MonoBehaviour, IDataPersistence
 {
     [SerializeField] HexGrid grid;
     [SerializeField] Spawner spawner;
@@ -13,8 +12,6 @@ public class MainUI : MonoBehaviour
     HexCell currentCell;
     HexCell playerLocation;
     HexUnit selectedUnit;
-
-    [SerializeField] PlayerState initState;
 
     PlayerState currentState;
     [SerializeField] MinigameData minigameData;
@@ -37,6 +34,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] CameraController cameraController;
     // allows us to access the dialogue stuff
     [SerializeField] StoryElement[] storyTriggers;
+    [SerializeField] LevelLoader levelLoader;
     GameObject activeContextMenu;
     bool freeze;
 
@@ -44,17 +42,6 @@ public class MainUI : MonoBehaviour
     {
         freeze = false;
         activeContextMenu = null;
-
-        if (currentState == null)
-        {
-            currentState = initState;
-            currentState.Clean();
-        }
-
-        if (!currentState.CheckTutorial())
-        {
-            currentState.SetObjectives(TextRW.GetObjectives(1));
-        }
 
         minigameData.SetInspection();
         grid.GetAudioManager().PlayMusic("BGM");
@@ -148,7 +135,7 @@ public class MainUI : MonoBehaviour
             {
                 selectedUnit = currentCell.Unit;
                 // Debug.Log("Selected " + selectedUnit.UnitType);
-                currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType);
+                currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType + ".  Moves left: " + selectedUnit.ActionPoints + ".");
                 grid.ShowUI(true);
             }
         }
@@ -182,6 +169,8 @@ public class MainUI : MonoBehaviour
     IEnumerator WaitForPlayerMovement()
     {
         yield return new WaitUntil(() => selectedUnit.movement == false);
+        currentState.SetMessage("Selected Unit: " + selectedUnit.UnitType + ".  Moves left: " + selectedUnit.ActionPoints + ".");
+        UpdateUIElements();
         FreezeInput(false);
         FreezeTurnUI(false);
     }
@@ -574,13 +563,22 @@ public class MainUI : MonoBehaviour
         {
             GameObject toShow = Instantiate(textPrefab, gamePanel.transform.GetChild(i).position, Quaternion.identity, gamePanel.transform.GetChild(i));
             Text matchText = toShow.GetComponent<Text>();
-            if (correctValue)
+            if (i == 0)
             {
-                matchText.text = minigameData.GenerateSet(random, correct);
+                matchText.text = "OFFICIAL COPY\n\n";
             }
             else
             {
-                matchText.text = minigameData.GenerateSet(random, correct + i);
+                matchText.text = "\n\n";
+            }
+
+            if (correctValue)
+            {
+                matchText.text += minigameData.GenerateSet(random, correct);
+            }
+            else
+            {
+                matchText.text += minigameData.GenerateSet(random, correct + i);
             }
         }
 
@@ -611,6 +609,7 @@ public class MainUI : MonoBehaviour
                 currentState.AddSecurity(5);
             }
             currentState.SetMessage("Inspection correct.");
+            currentState.AddMorale(2);
             UpdateUIElements();
             if (!currentState.CheckTutorial())
             {
@@ -635,6 +634,7 @@ public class MainUI : MonoBehaviour
                 currentState.AddSecurity(5);
             }
             currentState.SetMessage("Inspection correct.");
+            currentState.AddMorale(2);
             UpdateUIElements();
             if (!currentState.CheckTutorial())
             {
@@ -643,6 +643,7 @@ public class MainUI : MonoBehaviour
         }
         Destroy(toRemove);
         currentState.AddTouristScore();
+        currentState.AdjustMoney(1500);
         target.SetInteracted();
         FreezeTurnUI(false);
     }
@@ -653,6 +654,7 @@ public class MainUI : MonoBehaviour
         AIBehaviour current = target.GetComponent<AIBehaviour>();
         current.Moor();
         currentState.AddTouristScore();
+        currentState.AddMorale(2);
         target.Location.ResetColor();
         AfterAction(remove);
     }
@@ -671,6 +673,7 @@ public class MainUI : MonoBehaviour
             {
                 currentState.AddSecurity(2);
             }
+            currentState.AddMorale(5);
             AfterAction(remove);
             currentState.AddCatchScore();
         }
@@ -680,13 +683,14 @@ public class MainUI : MonoBehaviour
             switch (random)
             {
                 case 0:
-                    currentState.SetMessage("Catch failed. They got away!");
+                    currentState.SetMessage("Catch failed. They got away! We have to try again in a while.");
                     int current = currentState.GetTurn();
                     IEnumerator WaitNextTurn()
                     {
                         yield return new WaitUntil(() => currentState.GetTurn() > current);
                         target.FailedInteraction();
                     }
+                    AfterAction(remove);
                     StartCoroutine(WaitNextTurn());
                     break;
                 case 1:
@@ -715,6 +719,12 @@ public class MainUI : MonoBehaviour
         FreezeInput(false);
         cameraController.FreezeCamera(false);
         Destroy(remove);
+
+        if (target.Upgrade.GetUpkeep() < 0)
+        {
+            currentState.AdjustIncome(-target.Upgrade.GetUpkeep());
+        }
+
         if (target.Upgrade.UpgradeType == "AIS")
         {
             currentState.RemoveAIS();
@@ -822,6 +832,7 @@ public class MainUI : MonoBehaviour
         else
         {
             spawner.SpawnUnit(target, "Tier 2 Patrol Boat");
+            currentCell.Upgrade = null;
             currentState.AddManpower(-4);
             currentState.SetMessage("A new patrol boat has arrived.");
         }
@@ -863,9 +874,10 @@ public class MainUI : MonoBehaviour
         TextRW.UpgradeItem curr = TextRW.GetUpgrade(upgrade);
 
         toReplace.GetComponent<Text>().text = curr.Description;
-        toReplace.GetComponent<Text>().text += "Build: " + curr.BuildCost + "\n";
-        toReplace.GetComponent<Text>().text += "Research: " + curr.ResearchCost + "\n";
-        toReplace.GetComponent<Text>().text += "Upkeep: " + curr.Upkeep + "\n";
+        toReplace.GetComponent<Text>().text += "Money Cost: " + curr.BuildCost + "\n";
+        toReplace.GetComponent<Text>().text += "Research Cost: " + curr.ResearchCost + "\n";
+        toReplace.GetComponent<Text>().text += "Per-turn Upkeep: " + curr.Upkeep + "\n";
+        toReplace.GetComponent<Text>().text += "Build Time: " + curr.Turns + "\n";
         constructionTime = curr.Turns;
         researchCost = curr.ResearchCost;
         buildCost = curr.BuildCost;
@@ -932,6 +944,10 @@ public class MainUI : MonoBehaviour
             // Debug.Log("Error at " + item.gameObject.name);
             item.UpdateText();
         }
+
+        objectivesDisplay.DisplayObjectives();
+        endTurnButton.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
+        endTurnButton.transform.GetChild(3).GetComponentInChildren<Text>().text = "LVL " + currentState.GetLevel();
     }
 
     public PlayerState GetPlayerState()
@@ -943,8 +959,6 @@ public class MainUI : MonoBehaviour
     {
         grid.GetAudioManager().Play("Next", 0);
         currentState.EndTurn();
-        objectivesDisplay.DisplayObjectives();
-        clicked.GetComponentInChildren<Text>().text = "TURN " + currentState.GetTurn();
         grid.ResetPoints();
         selectedUnit = null;
         grid.GetPlayerBehaviour().ClearPath();
@@ -963,16 +977,19 @@ public class MainUI : MonoBehaviour
         }
         SpawnUnits();
         spawner.DestroyUnits();
+        UpdateUIQueue();
         UpdateUIElements();
 
         if (currentState.GetTrueHealth() <= 0)
         {
             GenerateEndScreen("Defeat.", "The reef has been irreparably damaged.");
+            currentState.ResetData();
             storyTriggers[2].TriggerDialogue();
         }
         else if (currentState.CheckResearched("Total Protection"))
         {
             GenerateEndScreen("Victory!", "You have managed to defend the reef.");
+            currentState.ResetData();
             storyTriggers[1].TriggerDialogue();
         }
     }
@@ -992,7 +1009,7 @@ public class MainUI : MonoBehaviour
 
     void ExitToMainMenu()
     {
-        SceneManager.LoadScene("Main Menu");
+        levelLoader.LoadLevel("Main Menu");
     }
 
     void SpawnUnits()
@@ -1000,13 +1017,13 @@ public class MainUI : MonoBehaviour
         if (!currentState.CheckTutorial())
         {
             int max;
-            if (currentState.GetLevel() == 1)
+            if (currentState.GetLevel() >= 4)
             {
-                max = 1;
+                max = 2;
             }
             else
             {
-                max = currentState.GetLevel() / 2;
+                max = 1;
             }
 
             if (currentState.SpawnedDay())
@@ -1036,7 +1053,7 @@ public class MainUI : MonoBehaviour
 
                 if (currentState.CheckMA())
                 {
-                    if (currentState.GetLevel() >= 3)
+                    if (currentState.GetLevel() >= 4)
                     {
                         max += 2;
                     }
@@ -1064,15 +1081,29 @@ public class MainUI : MonoBehaviour
 
                 currentState.ToggleDaySpawn();
                 currentState.ResetDaySpawn();
+                spawner.ClearSpawns();
                 storyTriggers[4].TriggerDialogue();
             }
-            else if (!timeController.IsDay() && !currentState.SpawnedNight() && currentState.GetFishermen() <= 2)
+            else if (!timeController.IsDay() && !currentState.SpawnedNight())
             {
+                if (currentState.GetLevel() >= 4)
+                {
+                    max = 3;
+                }
+                else if (currentState.GetLevel() >= 3)
+                {
+                    max = 2;
+                }
+                else
+                {
+                    max = 1;
+                }
+
                 int random = Random.Range(0, 100);
 
                 if (random + 10 > currentState.GetSecurity())
                 {
-                    for (int i = 0; i < max; i++)
+                    for (int i = 0; i <= max; i++)
                     {
                         spawner.RandomSpawn("Fishing Boat");
                         currentState.AddFisherman(1);
@@ -1153,6 +1184,8 @@ public class MainUI : MonoBehaviour
                     currentButton.onClick.AddListener(() => Close(infoPanel));
                 }
             }
+
+            contextMenuContent = null;
         }
     }
 
@@ -1194,6 +1227,7 @@ public class MainUI : MonoBehaviour
         }
 
         toReplace.GetComponent<Text>().text = curr.Description + cd;
+        toReplace.GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
 
         foreach (Button trash in rem)
         {
@@ -1222,13 +1256,14 @@ public class MainUI : MonoBehaviour
         {
             if (currentState.CheckResearched(button.GetComponentInChildren<Text>().text) ||
             TextRW.GetUpgrade(button.GetComponentInChildren<Text>().text).ResearchCost > currentState.GetResearch() ||
-            (currentState.CheckTutorial() && button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "X") ||
+            (currentState.CheckTutorial() && button.GetComponentInChildren<Text>().text != "RADAR" && button.GetComponentInChildren<Text>().text != "CLOSE") ||
             currentState.CheckResearchQueue(button.GetComponentInChildren<Text>().text) > 0)
             {
                 button.interactable = false;
             }
-            else if (button.GetComponentInChildren<Text>().text == "X")
+            else if (button.GetComponentInChildren<Text>().text == "CLOSE")
             {
+
                 button.onClick.AddListener(() => Close(researchPanel));
             }
             else
@@ -1247,7 +1282,7 @@ public class MainUI : MonoBehaviour
 
         grid.GetAudioManager().Play("Next", 0);
         string name = clicked.GetComponentInChildren<Text>().text;
-        GameObject window = clicked.transform.parent.parent.gameObject;
+        GameObject window = clicked.transform.parent.parent.parent.gameObject;
 
         int researchTime = 0;
         int researchCost = 0;
@@ -1307,7 +1342,7 @@ public class MainUI : MonoBehaviour
     void Use(string upgrade, GameObject toRemove)
     {
         int levelBonus = GetPlayerState().GetLevel() > 3 ? 3 : GetPlayerState().GetLevel();
-        if (upgrade == "Basketball Court")
+        if (upgrade == "Basketball Court" && currentState.FetchCD("BB") == 0)
         {
             currentState.ResetCD("BB");
             if (currentState.CheckSAT())
@@ -1319,7 +1354,7 @@ public class MainUI : MonoBehaviour
                 currentState.AddMorale(levelBonus * 5);
             }
         }
-        else if (upgrade == "Rec Room")
+        else if (upgrade == "Rec Room" && currentState.FetchCD("RR") == 0)
         {
             currentState.ResetCD("BB");
             if (currentState.CheckSAT())
@@ -1394,6 +1429,43 @@ public class MainUI : MonoBehaviour
         UpdateUIElements();
     }
 
+    void UpdateUIQueue()
+    {
+        Text[] check = queueDisplay.GetComponentsInChildren<Text>();
+        Text toUpdate = null;
+        string name = "";
+        int turns = 0;
+        for (int i = 1; i < check.Length; i++)
+        {
+            toUpdate = check[i];
+            name = check[i].text.Substring(3, (check[i].text.Length - 3) - (3 + 1));
+            if (check[i].text[check.Length - 2].ToString() == "")
+            {
+                turns = int.Parse(check[i].text[check[i].text.Length - 1].ToString());
+            }
+            else
+            {
+                turns = int.Parse(check[i].text[check[i].text.Length - 2].ToString() + check[i].text[check[i].text.Length - 1].ToString());
+            }
+
+
+            if (check[i].text[0].ToString() == "B")
+            {
+                toUpdate.text = "B: ";
+            }
+            else
+            {
+                toUpdate.text = "R: ";
+            }
+
+            toUpdate.text += name + " - ";
+            toUpdate.text += turns - 1;
+
+            check[i].text = toUpdate.text;
+        }
+        UpdateUIElements();
+    }
+
     public void UseRadar()
     {
         grid.GetAudioManager().Play("Next", 0);
@@ -1458,7 +1530,7 @@ public class MainUI : MonoBehaviour
                 {
                     found = true;
                 }
-                else if (toCheck != "Close" || found)
+                else if (toCheck != "Close" || toCheck != "CLOSE" || found)
                 {
                     button.interactable = false;
                 }
@@ -1527,5 +1599,19 @@ public class MainUI : MonoBehaviour
     public bool HasActiveContextMenu()
     {
         return activeContextMenu;
+    }
+
+    public HexCell GetCurrentCell()
+    {
+        return currentCell;
+    }
+
+    public void LoadData(PlayerState playerState)
+    {
+        currentState = playerState;
+    }
+    public void SaveData(ref PlayerState playerState)
+    {
+
     }
 }

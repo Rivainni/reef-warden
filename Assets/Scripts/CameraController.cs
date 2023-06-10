@@ -151,7 +151,7 @@ public class CameraController : MonoBehaviour
     {
         // hardcode for now
         minX = -230.0f;
-        minZoomY = -20.0f;
+        minZoomY = -10.0f;
         minZoomZ = 25.0f;
         minZ = -230.0f;
         maxX = 1004f;

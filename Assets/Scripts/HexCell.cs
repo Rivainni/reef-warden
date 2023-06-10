@@ -95,7 +95,6 @@ public class HexCell : MonoBehaviour
         }
     }
     int featureIndex;
-
     Renderer cellRenderer;
     Color defaultColor;
     Feature feature;
@@ -140,6 +139,13 @@ public class HexCell : MonoBehaviour
         Text label = uiRect.GetChild(2).GetComponent<Text>();
         label.text = text;
     }
+
+    public string GetLabel()
+    {
+        Text label = uiRect.GetChild(2).GetComponent<Text>();
+        return label.text;
+    }
+
     public void DisableHighlight()
     {
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();

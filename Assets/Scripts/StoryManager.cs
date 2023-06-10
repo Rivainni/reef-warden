@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
-public class StoryManager : MonoBehaviour
+public class StoryManager : MonoBehaviour, IDataPersistence
 {
     [SerializeField] GameObject storyUI;
     [SerializeField] MainUI mainUI;
@@ -17,10 +16,12 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject panelPrefab;
     [SerializeField] GameObject buttonPrefab;
     [SerializeField] bool cutscene = true;
-    [SerializeField] PlayerState initState;
+    [SerializeField] LevelLoader levelLoader;
     Queue<string> inputStream = new Queue<string>();
     bool pause = false;
     bool primarySpeaker = false;
+
+    PlayerState playerState;
 
     // Start is called before the first frame update
     void Start()
@@ -90,7 +91,7 @@ public class StoryManager : MonoBehaviour
                 AddSprite(newCharacter);
                 if (mainUI)
                 {
-                    if (!mainUI.GetPlayerState().CheckTutorial())
+                    if (mainUI.GetPlayerState().GetLevel() > 0)
                     {
                         primarySpeaker = false;
                     }
@@ -201,7 +202,7 @@ public class StoryManager : MonoBehaviour
                 }
             }
             string expression = current.Substring(0, stop);
-            storyText.text = string.Format(current.Substring(stop + 1), initState.GetName());
+            storyText.text = string.Format(current.Substring(stop + 1), playerState.GetName());
             SwitchSprites(characterName.text, expression);
         }
         else if (inputStream.Peek().Contains(":"))
@@ -237,24 +238,26 @@ public class StoryManager : MonoBehaviour
         storyText.text = "";
         characterName.text = "";
         inputStream.Clear();
-        storyUI.SetActive(false);
+
+        if (!cutscene)
+        {
+            storyUI.SetActive(false);
+        }
 
         if (cutscene)
         {
-            SceneManager.LoadSceneAsync("Main Game");
+            levelLoader.LoadLevel("Main Game");
             cutscene = false;
-            initState.StartTutorial();
         }
         else if (mainUI.GetPlayerState().CheckTutorial())
         {
-            mainUI.GetPlayerState().EndTutorial();
             mainUI.GetPlayerState().AddLevel();
         }
     }
 
     void SetName(InputField input, GameObject toRemove)
     {
-        initState.SetName(input.text);
+        playerState.SetName(input.text);
         Destroy(toRemove);
         pause = false;
         PrintDialogue();
@@ -337,7 +340,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Patrol"));
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Patrol") && mainUI.GetCurrentCell() == mainUI.GetHexGrid().GetCells()[260]);
                 mainUI.RailroadContextMenu("Patrol");
                 yield return new WaitUntil(() => mainUI.GetHexGrid().GetUnits()[0].Location == mainUI.GetHexGrid().GetCells()[260]);
                 mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[260]));
@@ -355,7 +358,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Check Reef Health"));
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Check Reef Health") && mainUI.GetCurrentCell() == mainUI.GetHexGrid().GetCells()[259]);
                 mainUI.RailroadContextMenu("Check Reef Health");
                 yield return new WaitUntil(() => !mainUI.GetPlayerState().CheckHealthNeeded() && mainUI.GetHexGrid().GetUnits()[0].Location == mainUI.GetHexGrid().GetCells()[259]);
                 mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[259]));
@@ -470,12 +473,12 @@ public class StoryManager : MonoBehaviour
         else if (action == "MoveBack")
         {
             storyUI.SetActive(false);
-            mainUI.DisplayTutorialObjective("Return to the ranger station (next to the boat).");
+            mainUI.DisplayTutorialObjective("Return to the marked tile near the Ranger Station.");
             mainUI.GetSpawner().AddCellWaypoint(mainUI.GetHexGrid().GetCells()[261]);
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Patrol"));
                 mainUI.RailroadContextMenu("Patrol");
                 yield return new WaitUntil(() => mainUI.GetPlayerLocation().coordinates.ToString() == "(6, 10)");
                 mainUI.GetSpawner().DestroyWaypoint(mainUI.GetHexGrid().FindWaypoint(mainUI.GetHexGrid().GetCells()[261]));
@@ -502,7 +505,7 @@ public class StoryManager : MonoBehaviour
             StartCoroutine(WaitForPlayer());
             IEnumerator WaitForPlayer()
             {
-                yield return new WaitUntil(() => mainUI.HasActiveContextMenu());
+                yield return new WaitUntil(() => mainUI.HasActiveContextMenu() && mainUI.FindInContextMenu("Build Upgrade"));
                 mainUI.RailroadContextMenu("Build Upgrade");
                 yield return new WaitUntil(() => mainUI.GetPlayerState().CheckBuilt("RADAR"));
                 storyUI.SetActive(true);
@@ -552,5 +555,15 @@ public class StoryManager : MonoBehaviour
             }
             mainUI.GetPlayerState().RemoveObjective("Check the reef health.");
         }
+    }
+
+    public void LoadData(PlayerState playerState)
+    {
+        this.playerState = playerState;
+    }
+
+    public void SaveData(ref PlayerState playerState)
+    {
+
     }
 }

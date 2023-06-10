@@ -1,6 +1,23 @@
 using UnityEngine;
+using UnityEngine.Pool;
 using System.Collections;
 using System.Collections.Generic;
+
+[System.Serializable]
+public struct SaveUnit
+{
+    public string unitType;
+    public int visionRange;
+    public int actionPoints, maxActionPoints, reducedActionPoints;
+    public float hp;
+    public int location;
+    public float orientation;
+    public bool busy;
+    public bool interacted;
+    public bool moored;
+    const float travelSpeed = 3.0f;
+    const float rotationSpeed = 180f;
+}
 
 public class HexUnit : MonoBehaviour
 {
@@ -166,7 +183,6 @@ public class HexUnit : MonoBehaviour
     {
         Grid.GetAudioManager().Play("Boat", 0);
         Vector3 a, b, c = pathToTravel[0].Position;
-        // transform.localPosition = c;
         yield return LookAt(pathToTravel[1].Position);
 
         float t = Time.deltaTime * travelSpeed;
@@ -191,7 +207,6 @@ public class HexUnit : MonoBehaviour
         currentTravelLocation = null;
 
         a = c;
-        // b = pathToTravel[pathToTravel.Count - 1].Position;
         b = location.Position;
         c = b;
 
@@ -359,5 +374,43 @@ public class HexUnit : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void DoubleActionPoints()
+    {
+        maxActionPoints = 2 * actionPoints;
+        reducedActionPoints = maxActionPoints;
+    }
+
+    public SaveUnit Save()
+    {
+        SaveUnit saveUnit = new SaveUnit();
+        saveUnit.unitType = unitType;
+        saveUnit.location = location.Index;
+        // saveUnit.visionRange = visionRange;
+        // saveUnit.actionPoints = actionPoints;
+        // saveUnit.maxActionPoints = maxActionPoints;
+        // saveUnit.reducedActionPoints = reducedActionPoints;
+        // saveUnit.hp = hp;
+        // saveUnit.orientation = orientation;
+        // saveUnit.busy = busy;
+        // saveUnit.interacted = interacted;
+        // saveUnit.moored = moored;
+
+        return saveUnit;
+    }
+
+    public void Load(SaveUnit saveUnit)
+    {
+        this.UnitType = saveUnit.unitType;
+        // this.visionRange = saveUnit.visionRange;
+        // this.actionPoints = saveUnit.actionPoints;
+        // this.reducedActionPoints = saveUnit.reducedActionPoints;
+        // this.maxActionPoints = saveUnit.maxActionPoints;
+        // this.hp = saveUnit.hp;
+        // this.orientation = saveUnit.orientation;
+        // this.busy = saveUnit.busy;
+        // this.interacted = saveUnit.interacted;
+        // this.moored = saveUnit.moored;
     }
 }

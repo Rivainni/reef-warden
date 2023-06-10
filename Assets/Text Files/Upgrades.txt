@@ -1,6 +1,6 @@
 !Basketball Court!
 Provides +5%/10%/15% morale. Effect on use.
-Has a 5 turn cooldown. Cannot be used during certain turns due to the effects of high tide.
+Has a 5 turn cooldown.
 Unlocked from the start.
 Build Cost: 500
 Time: 1
@@ -11,18 +11,19 @@ Provides +10%/15%/20% morale.
 Has a 5 turn cooldown.
 Build Cost: 500
 Research Cost: 100
-Upkeep: 100
+Upkeep: 50
 Time: 1
 Manpower: 1
 END
 !Double-engine Patrol Boat!
-Faster and bigger than the single-engine starter boat. Limit 1, does not take up slots.
-Requires 4 manpower to operate.
+Faster and bigger than the single-engine starter boat. Limit 1.
 Can move up to 14 tiles, depending on health.
 Build Cost: 8000
 Research Cost: 1000
 Time: 1
 Manpower: 4
+4 manpower to build and operate.
+This boat can only be summoned on an available and reachable ocean tile adjacent to the station.
 END
 !Radio!
 Lets the player warn oncoming boats to stay away from the reef.
@@ -32,7 +33,7 @@ END
 Lets the player see the path of vessels that are permitted to be there.
 Build Cost: 2000
 Research Cost: 750
-Upkeep: 1
+Upkeep: 50
 Time: 1
 Manpower: 1
 END
@@ -41,7 +42,7 @@ When triggered, it gives the player map-wide visibility for one turn.
 May be used again after 5 turns.
 Build Cost: 2000
 Research Cost: 250
-Upkeep: 200
+Upkeep: 100
 Time: 1
 Manpower: 1
 END
@@ -49,7 +50,7 @@ END
 Gives +20% base bonus to security and base morale
 Build Cost: 2000
 Research Cost: 500
-Upkeep: 200
+Upkeep: 100
 Time: 4
 Manpower: 1
 END
@@ -64,10 +65,10 @@ Manpower: 1
 END
 !3rd Party Marketing Agencies!
 Advertises tourism opportunities to the reef
-Increases maximum tourists by 1 (Level 1+) or 2 (Level 3+) per turn.
+Increases maximum tourists by 1 (Level 1+) or 2 (Level 4+) per day.
 Build Cost: 4000
 Research Cost: 500
-Upkeep: 250
+Upkeep: 125
 Time: 4
 Manpower: 2
 END

@@ -19,44 +19,51 @@ public class UITextUpdate : MonoBehaviour
     {
         PlayerState currentState = mainUI.GetPlayerState();
 
-        if (current.text.Contains("GP: "))
+        if (current.name == "Money")
         {
-            current.text = "GP: " + currentState.GetMoney();
-        }
-        else if (current.text.Contains("RP: "))
-        {
-            current.text = "RP: " + currentState.GetResearch();
-        }
-        else if (current.text.Contains("MANPOWER: "))
-        {
-            current.text = "MANPOWER: " + currentState.GetManpower();
-        }
-        else if (current.text.Contains("TOURISTS: "))
-        {
-            current.text = "TOURISTS: " + currentState.GetTourists();
-        }
-        else if (current.text.Contains("MOR: "))
-        {
-            current.text = "MOR: " + Mathf.Round(currentState.GetMorale());
-        }
-        else if (current.text.Contains("SEC: "))
-        {
-            current.text = "SEC: " + Mathf.Round(currentState.GetSecurity());
-        }
-        else if (current.text.Contains("HP: "))
-        {
-            if (currentState.GetLastHealthCheck() >= 5)
+            if (mainUI.GetPlayerState().GetIncome() < 0)
             {
-                current.text = "HP: " + "!!!";
+                current.text = currentState.GetMoney() + " (" + currentState.GetIncome() + ")";
             }
             else
             {
-                current.text = "HP: " + Mathf.Round(currentState.GetHealth());
+                current.text = "" + currentState.GetMoney();
+            }
+        }
+        else if (current.name == "Research")
+        {
+            current.text = "" + currentState.GetResearch();
+        }
+        else if (current.name == "Manpower")
+        {
+            current.text = "" + currentState.GetManpower();
+        }
+        else if (current.name == "Tourists")
+        {
+            current.text = "" + currentState.GetTourists();
+        }
+        else if (current.name == "Morale")
+        {
+            current.text = "" + Mathf.Round(currentState.GetMorale());
+        }
+        else if (current.name == "Security")
+        {
+            current.text = "" + Mathf.Round(currentState.GetSecurity());
+        }
+        else if (current.name == "HP")
+        {
+            if (currentState.GetLastHealthCheck() >= 5)
+            {
+                current.text = "" + "!!!";
+            }
+            else
+            {
+                current.text = "" + Mathf.Round(currentState.GetHealth());
             }
         }
         else if (current.text.Contains(":"))
         {
-            current.text = ": " + currentState.GetMessage();
+            current.text = ":" + currentState.GetMessage();
         }
     }
 

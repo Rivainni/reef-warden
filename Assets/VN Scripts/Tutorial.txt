@@ -7,13 +7,13 @@ Happy:Use the W, A, S, D keyboard buttons or move the mouse to the corner of the
 [ACTION=WASD]Happy:To zoom in, use the Mousewheel, R, or F.
 [ACTION=RF]Happy:There we go, now let's move on to the patrol.
 Idle:Since we can only travel so much in 2 hours, the Patrol Boat can move only 10 tiles per turn.
-Happy:Click on the boat and right click on the spot you want to go to.
+Happy:Left click on the Patrol Boat (silver) and right click on the spot you want to go to.
 Happy:Then, click on the prompt ‘Patrol’.
 Happy:Do this on the spot I marked on the map.
 [ACTION=Patrol]Idle:Next on our agenda is to check on the reef’s state.
-Happy:Click on the boat and select a spot close to one of the buoys.
-Happy:Right click on the reef and select ‘Check Reef Health’.
-Happy:Do this on the spot I marked on the map.
+Happy:Left click on the boat and mouse over the designated waypoint. The reef icon denotes it as part of the reef.
+Happy:If you look at the map, you can see the reef icon glow.
+Happy:Right click on it and select ‘Check Reef Health’.
 [ACTION=CheckReefHealth]Happy:Ok, well the reef is looking great and healthy. Our job is to make sure that it’s health doesn’t go down to the point that there would be nothing to save anymore, where’s the fun in that right?
 Happy:We also need to document its condition everytime we check on the reef.
 Happy:We can maintain its health by looking out for stuff like rowdy tourists doing things that can hurt the reef or illegal fishermen looking for stuff to catch and sell.
@@ -33,8 +33,9 @@ Happy:The accredited companies should know the rules and therefore would have sl
 Concerned:If these hold up then we can let them go, but if it not, they need to pay a fine.
 Concerned:We also need to report to the Management Office in the mainland about our inspections if ever we might face up against violators in court.
 [ACTION=InspectTourist2]Idle:After inspecting the tourists, they need our help in mooring their boat on the dive spot.
+Idle: We might need to wait a few turns before they reach the diving spot.
 Happy:Wait for them to reach the spot and they’ll alert us with the red highlight.
-Idle:Move right next to them and right click.
+Idle:Once that happens, right click a spot next to them.
 Idle:Click Moor and we’re done.
 [ACTION=InspectTourist3]Idle:See the exclamation mark on the left of your screen?
 Happy:Click on it and it will bring out the Info Menu
@@ -58,7 +59,8 @@ Happy:The radar is just one of the many upgrades you can make for the station an
 Happy:Each upgrade can do unique things that will help you in your daily tasks or add boosts to the resources.
 Happy:Doing tasks like checking reef health, doing bird counts, monitoring clams and assisting research boats can give you research points.
 [ACTION=Research]Idle:Now that it’s ready, try building it. Select one of the tiles adjacent to the station and right-click.
-[ACTION=Build]Idle:Click on the Radar button near the Research button.
+Idle:Note that some upgrades are restricted to certain tiles. Make sure to read the upgrade descriptions carefully.
+[ACTION=Build]Idle:Click on the RADAR button at the bottom of the screen, near the Research button.
 [ACTION=UseRADAR]Concerned:It looks like we spotted some unidentified ships with the radar, a good thing too since those pesky illegal fishermen mostly come at night when it’s hard to spot them.
 Idle:So I’m going to send the report to the Office about this possible confrontation with violators.
 Concerned:This is going to be a hassle in court and for Julio haha, since he is the Protocol Officer.
@@ -70,4 +72,6 @@ Idle:We gotta go back to the station and detain these violators there until Mana
 Idle:And we need to make another report detailing everything that happened and what we found about these guys.
 Concerned:Julio might also have to go to the Mainland for a while to testify as a witness during the trial of these guys.
 Happy:Well it looks like that’s it for today, we can head back to the station now.
+Happy:I’m pretty sure I got you sped up on all of the things needed, so I’ll be staying back in the station manning the radio.
+Happy:Remember to just check your objectives list if you ever get lost!
 EndQueue

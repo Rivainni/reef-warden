@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 // this class is for allied and enemy units
 public class AIBehaviour : MonoBehaviour
@@ -16,7 +17,6 @@ public class AIBehaviour : MonoBehaviour
     bool stateChanged;
     bool satisfied;
     int turnStopped;
-    List<HexCell> fullPath;
     int[] distances;
     int[] heuristics;
 
@@ -41,6 +41,7 @@ public class AIBehaviour : MonoBehaviour
     {
         if (currentUnit.Location != finalDestination)
         {
+
             if (mainUI.GetPlayerState().CheckAIS() && currentUnit.UnitType != "Fishing Boat")
             {
                 if (!currentPathExists)
@@ -53,7 +54,10 @@ public class AIBehaviour : MonoBehaviour
             else
             {
                 SetMovementTarget(finalDestination);
-                StartCoroutine(TurnMove());
+                if (currentPathExists)
+                {
+                    StartCoroutine(TurnMove());
+                }
             }
 
             // this may look stupid, but this is for when the unit has no more final destinations
@@ -76,7 +80,7 @@ public class AIBehaviour : MonoBehaviour
             if (currentUnit.UnitType == "Fishing Boat")
             {
                 CheckForPatrolBoat();
-                mainUI.GetPlayerState().DecreaseHealth(2 + (1 * mainUI.GetPlayerState().GetLevel()));
+                mainUI.GetPlayerState().DecreaseHealth(4 * mainUI.GetPlayerState().GetLevel());
 
                 if (chaseState || mainUI.GetTimeController().IsDay())
                 {
@@ -86,7 +90,7 @@ public class AIBehaviour : MonoBehaviour
                     stateChanged = true;
                 }
             }
-            else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 3)
+            else if (currentUnit.UnitType == "Tourist Boat" && mainUI.GetPlayerState().GetTurn() >= turnStopped + 2)
             {
                 if (!satisfied)
                 {
@@ -99,6 +103,7 @@ public class AIBehaviour : MonoBehaviour
                     mainUI.UpdateUIElements();
                 }
                 currentUnit.Location.ResetColor();
+                currentUnit.DoubleActionPoints();
                 ChooseEscape();
                 stateChanged = true;
             }
@@ -111,11 +116,11 @@ public class AIBehaviour : MonoBehaviour
                 if (mainUI.GetPlayerState().CheckSS())
                 {
                     int levelBonus = mainUI.GetPlayerState().GetLevel() > 3 ? 3 : mainUI.GetPlayerState().GetLevel();
-                    mainUI.GetPlayerState().AdjustMoney((int)(250 + (250 * 0.1f * levelBonus)));
+                    mainUI.GetPlayerState().AdjustMoney((int)(1500 + (1500 * 0.1f * levelBonus)));
                 }
                 else
                 {
-                    mainUI.GetPlayerState().AdjustMoney(250);
+                    mainUI.GetPlayerState().AdjustMoney(1500);
                 }
             }
         }
@@ -160,7 +165,7 @@ public class AIBehaviour : MonoBehaviour
         {
             for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
             {
-                if (distances[c.Index] <= currentUnit.ActionPoints)
+                if (distances[c.Index] <= currentUnit.ActionPoints && c.Unit == null)
                 {
                     currentDestination = c;
                     break;
@@ -180,13 +185,17 @@ public class AIBehaviour : MonoBehaviour
         if (currentUnit.UnitType == "Tourist Boat" || currentUnit.UnitType == "Fishing Boat")
         {
             ChooseBuoy();
+            if (finalDestination == null)
+            {
+                spawner.DestroyUnit(currentUnit);
+            }
         }
     }
 
     void ChooseBuoy()
     {
         int maxDistance = 0;
-        int currentIndex = 0;
+        int currentIndex = -1;
         for (int i = 0; i < grid.GetBuoyCells().Count; i++)
         {
             finalDestination = grid.GetBuoyCells()[i];
@@ -197,7 +206,7 @@ public class AIBehaviour : MonoBehaviour
             }
 
             int currDistance = distances[finalDestination.Index];
-            if (currDistance < maxDistance)
+            if (currDistance < maxDistance && finalDestination.Unit == null)
             {
                 currentIndex = finalDestination.Index;
             }
@@ -207,7 +216,14 @@ public class AIBehaviour : MonoBehaviour
             }
         }
 
-        finalDestination = grid.GetCells()[currentIndex];
+        if (currentIndex != -1)
+        {
+            finalDestination = grid.GetCells()[currentIndex];
+        }
+        else
+        {
+            finalDestination = null;
+        }
     }
 
     void ChooseEscape()
@@ -266,7 +282,7 @@ public class AIBehaviour : MonoBehaviour
             distances[i] = int.MaxValue;
         }
 
-        List<HexCell> frontier = new List<HexCell>();
+        List<HexCell> frontier = ListPool<HexCell>.Get();
         distances[fromCell.Index] = 0;
         frontier.Add(fromCell);
         while (frontier.Count > 0)
@@ -280,8 +296,6 @@ public class AIBehaviour : MonoBehaviour
                 return true;
             }
 
-            int currentTurn = (distances[currentIndex] - 1) / speed;
-
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
@@ -290,15 +304,12 @@ public class AIBehaviour : MonoBehaviour
                     continue;
                 }
 
-                // we can remove this?
-                int neighborIndex = neighbor.Index;
-
                 int moveCost = 1;
-                if (neighbor == null || distances[neighborIndex] != int.MaxValue)
+                if (neighbor == null || distances[neighbor.Index] != int.MaxValue)
                 {
                     continue;
                 }
-                if (GlobalCellCheck.IsImpassable(neighbor) || neighbor.Unit || GlobalCellCheck.IsNotReachable(neighborIndex))
+                if (GlobalCellCheck.IsImpassable(neighbor) || neighbor.Unit || GlobalCellCheck.IsNotReachable(neighbor.Index))
                 {
                     continue;
                 }
@@ -308,13 +319,14 @@ public class AIBehaviour : MonoBehaviour
                 }
 
                 int distance = distances[currentIndex] + moveCost;
-                distances[neighborIndex] = distance;
+                distances[neighbor.Index] = distance;
                 neighbor.PathFrom = current;
-                heuristics[neighborIndex] = neighbor.coordinates.DistanceTo(toCell.coordinates);
+                heuristics[neighbor.Index] = neighbor.coordinates.DistanceTo(toCell.coordinates);
                 frontier.Add(neighbor);
                 frontier.Sort((x, y) => GetPriority(x.Index).CompareTo(GetPriority(y.Index)));
             }
         }
+        ListPool<HexCell>.Release(frontier);
         return false;
     }
 
@@ -328,12 +340,9 @@ public class AIBehaviour : MonoBehaviour
         if (currentPathExists)
         {
             HexCell current = currentPathTo;
-            int currentIndex;
             while (current != currentPathFrom)
             {
-                currentIndex = current.Index;
-                int turn = (distances[currentIndex] - 1) / speed;
-                current.SetLabel((turn + 1).ToString());
+                current.SetLabel("M");
                 current.EnableHighlight(Color.green);
                 current.HasOverlap = true;
                 current = current.PathFrom;
@@ -343,7 +352,7 @@ public class AIBehaviour : MonoBehaviour
         currentPathFrom.EnableHighlight(Color.blue);
         if (!grid.GetBuoyCells().Contains(currentPathTo))
         {
-            currentPathTo.EnableHighlight(Color.red);
+            currentPathTo.EnableHighlight(Color.green);
         }
     }
 
@@ -416,7 +425,7 @@ public class AIBehaviour : MonoBehaviour
             return null;
         }
 
-        List<HexCell> path = new List<HexCell>(); // ListPool is only available in 2021 oof
+        List<HexCell> path = ListPool<HexCell>.Get();
         for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
         {
             path.Add(c);
@@ -448,7 +457,7 @@ public class AIBehaviour : MonoBehaviour
 
     public bool HasStopped()
     {
-        return turnStopped > 0;
+        return turnStopped > 0 && finalDestination == currentUnit.Location;
     }
 
     public void Moor()
